@@ -358,6 +358,28 @@ for dir in common typescript python golang; do
 done
 
 # ============================================================
+# Step 8.5: Copy prompts and commands
+# ============================================================
+
+step "8.5/10" "Install ECC prompts and commands..."
+
+PROMPTS_SRC="$ECC_DIR/.opencode/prompts"
+PROMPTS_DST="$OPENCODE_CONFIG_DIR/prompts"
+if [ -d "$PROMPTS_SRC" ]; then
+    mkdir -p "$PROMPTS_DST/agents"
+    cp -r "$PROMPTS_SRC/agents/"* "$PROMPTS_DST/agents/" 2>/dev/null
+    ok "prompts/agents"
+fi
+
+COMMANDS_SRC="$ECC_DIR/.opencode/commands"
+COMMANDS_DST="$OPENCODE_CONFIG_DIR/commands"
+if [ -d "$COMMANDS_SRC" ]; then
+    mkdir -p "$COMMANDS_DST"
+    cp -r "$COMMANDS_SRC/"* "$COMMANDS_DST/" 2>/dev/null
+    ok "commands"
+fi
+
+# ============================================================
 # Step 9: Set environment variables
 # ============================================================
 

@@ -549,6 +549,28 @@ foreach ($dir in $ruleDirs) {
 }
 
 # ============================================================
+# Step 8.5: Copy prompts and commands
+# ============================================================
+
+Write-Step "8.5/10" "Install ECC prompts and commands..."
+
+$promptsSrc = "$ECC_DIR\.opencode\prompts"
+$promptsDst = "$OPENCODE_CONFIG_DIR\prompts"
+if (Test-Path $promptsSrc) {
+    New-Item -ItemType Directory -Force -Path "$promptsDst\agents" | Out-Null
+    Copy-Item -Recurse "$promptsSrc\agents\*" "$promptsDst\agents\" -Force
+    Write-OK "prompts/agents"
+}
+
+$commandsSrc = "$ECC_DIR\.opencode\commands"
+$commandsDst = "$OPENCODE_CONFIG_DIR\commands"
+if (Test-Path $commandsSrc) {
+    New-Item -ItemType Directory -Force -Path $commandsDst | Out-Null
+    Copy-Item -Recurse "$commandsSrc\*" "$commandsDst\" -Force
+    Write-OK "commands"
+}
+
+# ============================================================
 # Step 9: Set environment variables
 # ============================================================
 
