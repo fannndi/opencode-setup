@@ -92,8 +92,8 @@ Write-Host "  Last sync 9Router: $($routerLastSHA.Substring(0,7)) ($($state.'9ro
 # Get current SHAs
 # ============================================================
 
-$eccCurrentSHA = (git -C $ECC_DIR log -1 --format="%H")
-$routerCurrentSHA = (git -C $ROUTER_DIR log -1 --format="%H")
+$eccCurrentSHA = $(git -C $ECC_DIR log -1 --format="%H")
+$routerCurrentSHA = $(git -C $ROUTER_DIR log -1 --format="%H")
 
 $eccHasChanges = ($eccLastSHA -ne $eccCurrentSHA)
 $routerHasChanges = ($routerLastSHA -ne $routerCurrentSHA)
@@ -115,7 +115,7 @@ if ($eccHasChanges) {
     Write-Step "1/2" "ECC Changelog ($($eccLastSHA.Substring(0,7))..$($eccCurrentSHA.Substring(0,7)))..."
     Write-Host ""
 
-    $eccCommits = git -C $ECC_DIR log "$eccLastSHA..$eccCurrentSHA" --format="%H|%ai|%an|%s" 2>$null
+    $eccCommits = $(git -C $ECC_DIR log "$eccLastSHA..$eccCurrentSHA" --format="%H|%ai|%an|%s" 2>$null)
 
     if ($eccCommits) {
         $opencodeChanges = 0
@@ -170,7 +170,7 @@ if ($routerHasChanges) {
     Write-Step "2/2" "9Router Changelog ($($routerLastSHA.Substring(0,7))..$($routerCurrentSHA.Substring(0,7)))..."
     Write-Host ""
 
-    $routerCommits = git -C $ROUTER_DIR log "$routerLastSHA..$routerCurrentSHA" --format="%H|%ai|%an|%s" 2>$null
+    $routerCommits = $(git -C $ROUTER_DIR log "$routerLastSHA..$routerCurrentSHA" --format="%H|%ai|%an|%s" 2>$null)
 
     if ($routerCommits) {
         $opencodeChanges = 0
@@ -246,7 +246,7 @@ switch ($choice) {
         if ($eccHasChanges) {
             Write-Host ""
             Write-Host "  ECC:" -ForegroundColor Yellow
-            git -C $ECC_DIR log "$eccLastSHA..$eccCurrentSHA" --oneline 2>$null | ForEach-Object {
+            $(git -C $ECC_DIR log "$eccLastSHA..$eccCurrentSHA" --oneline 2>$null) | ForEach-Object {
                 $isOpencode = Test-OpencodeRelated $_
                 $tag = if ($isOpencode) { " ← [opencode]" } else { "" }
                 Write-Host "    $_$tag" -ForegroundColor $(if ($isOpencode) { "Yellow" } else { "Gray" })
@@ -255,7 +255,7 @@ switch ($choice) {
         if ($routerHasChanges) {
             Write-Host ""
             Write-Host "  9Router:" -ForegroundColor Yellow
-            git -C $ROUTER_DIR log "$routerLastSHA..$routerCurrentSHA" --oneline 2>$null | ForEach-Object {
+            $(git -C $ROUTER_DIR log "$routerLastSHA..$routerCurrentSHA" --oneline 2>$null) | ForEach-Object {
                 $isOpencode = Test-OpencodeRelated $_
                 $tag = if ($isOpencode) { " ← [opencode]" } else { "" }
                 Write-Host "    $_$tag" -ForegroundColor $(if ($isOpencode) { "Yellow" } else { "Gray" })

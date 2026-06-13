@@ -52,7 +52,7 @@ Write-Host ""
 # Step 1: Clone ECC
 # ============================================================
 
-Write-Step "1/2" "Clone ECC (fannndi/ECC)..."
+Write-Step "1/2" "Clone ECC..."
 
 if (Test-Path "$ECC_DIR\.git") {
     if ($Force) {
@@ -70,17 +70,31 @@ if (Test-Path "$ECC_DIR\.git") {
     git clone --quiet https://github.com/fannndi/ECC.git $ECC_DIR
 }
 
-$eccSHA = (git -C $ECC_DIR log -1 --format="%H")
-$eccDate = (git -C $ECC_DIR log -1 --format="%ai")
-$eccVersion = (Get-Content "$ECC_DIR\VERSION" -ErrorAction SilentlyContinue)
-if (-not $eccVersion) { $eccVersion = "unknown" }
-Write-OK "ECC cloned (SHA: $($eccSHA.Substring(0,7)), Version: $eccVersion, Date: $eccDate)"
+$eccSHA = ""
+$eccDate = ""
+$eccVersion = "unknown"
+
+try {
+    Push-Location $ECC_DIR
+    $eccSHA = git log -1 --format="%H"
+    $eccDate = git log -1 --format="%ai"
+    Pop-Location
+} catch {
+    Pop-Location
+}
+
+if (Test-Path "$ECC_DIR\VERSION") {
+    $eccVersion = Get-Content "$ECC_DIR\VERSION" -ErrorAction SilentlyContinue
+}
+
+$shortSHA = if ($eccSHA -and $eccSHA.Length -ge 7) { $eccSHA.Substring(0,7) } else { "unknown" }
+Write-OK ("ECC cloned (SHA: " + $shortSHA + ", Version: " + $eccVersion + ", Date: " + $eccDate + ")")
 
 # ============================================================
 # Step 2: Clone 9Router
 # ============================================================
 
-Write-Step "2/2" "Clone 9Router (fannndi/9router)..."
+Write-Step "2/2" "Clone 9Router..."
 
 if (Test-Path "$ROUTER_DIR\.git") {
     if ($Force) {
@@ -98,9 +112,20 @@ if (Test-Path "$ROUTER_DIR\.git") {
     git clone --quiet https://github.com/fannndi/9router.git $ROUTER_DIR
 }
 
-$routerSHA = (git -C $ROUTER_DIR log -1 --format="%H")
-$routerDate = (git -C $ROUTER_DIR log -1 --format="%ai")
-Write-OK "9Router cloned (SHA: $($routerSHA.Substring(0,7)), Date: $routerDate)"
+$routerSHA = ""
+$routerDate = ""
+
+try {
+    Push-Location $ROUTER_DIR
+    $routerSHA = git log -1 --format="%H"
+    $routerDate = git log -1 --format="%ai"
+    Pop-Location
+} catch {
+    Pop-Location
+}
+
+$shortRouterSHA = if ($routerSHA -and $routerSHA.Length -ge 7) { $routerSHA.Substring(0,7) } else { "unknown" }
+Write-OK ("9Router cloned (SHA: " + $shortRouterSHA + ", Date: " + $routerDate + ")")
 
 # ============================================================
 # Update .sync-state.json
@@ -138,6 +163,6 @@ Write-Host "  ECC:     $ECC_DIR" -ForegroundColor White
 Write-Host "  9Router: $ROUTER_DIR" -ForegroundColor White
 Write-Host ""
 Write-Host "  SHA:" -ForegroundColor Yellow
-Write-Host "    ECC:     $($eccSHA.Substring(0,7)) ($eccVersion)" -ForegroundColor White
-Write-Host "    9Router: $($routerSHA.Substring(0,7))" -ForegroundColor White
+Write-Host ("    ECC:     " + $shortSHA + " (" + $eccVersion + ")") -ForegroundColor White
+Write-Host ("    9Router: " + $shortRouterSHA) -ForegroundColor White
 Write-Host ""
