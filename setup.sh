@@ -80,7 +80,7 @@ if [ -d "$ROUTER_DIR/.git" ]; then
     cd "$ROUTER_DIR" && git pull --quiet && cd "$SETUP_DIR"
 else
     echo -e "  ${GRAY}Cloning decolua/9router...${NC}"
-    git clone --quiet https://github.com/decolua/9router.git "$ROUTER_DIR"
+    git clone --quiet https://github.com/fannndi/9router.git "$ROUTER_DIR"
 fi
 ok "9Router cloned"
 

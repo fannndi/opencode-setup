@@ -120,7 +120,7 @@ if (-not $SkipClone) {
         Pop-Location
     } else {
         Write-Host "  Cloning decolua/9router..." -ForegroundColor Gray
-        git clone --quiet https://github.com/decolua/9router.git $ROUTER_DIR
+        git clone --quiet https://github.com/fannndi/9router.git $ROUTER_DIR
     }
     Write-OK "9Router cloned"
 } else {

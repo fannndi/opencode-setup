@@ -10,7 +10,14 @@ One command setup: ECC (agents/skills) + 9Router (RTK/Caveman/auto-fallback).
                └── Auto-fallback: subscription → cheap → free
 ```
 
-## Quick Start
+## Two Install Paths
+
+| Path | Script | When to use |
+|------|--------|-------------|
+| **Full setup** | `setup.ps1` | Laptop baru — clone + install dari nol |
+| **Quick re-apply** | `install.ps1 -Profile go` | Ganti profile / pindah laptop tanpa re-clone |
+
+## Quick Start (Full Setup)
 
 ### Windows (PowerShell)
 
@@ -29,12 +36,24 @@ chmod +x setup.sh
 ./setup.sh
 ```
 
+## Quick Re-Apply (Sudah Clone Sebelumnya)
+
+```powershell
+# Ganti profile
+.\install.ps1 -Profile go
+
+# Atau
+.\install.ps1 -Profile gratis
+```
+
+Config lama otomatis di-backup.
+
 ## What It Does
 
 Setup script will automatically:
 
 1. Clone ECC (agents/skills/hooks) from `fannndi/ECC`
-2. Clone 9Router (RTK/Caveman/fallback) from `decolua/9router`
+2. Clone 9Router (RTK/Caveman/fallback) from `fannndi/9router`
 3. Install & build ECC OpenCode plugin
 4. Install 9Router globally
 5. Ask your profile (free / go / custom)
@@ -131,21 +150,64 @@ cd ecc && npm run build:opencode && cd ..
 
 ```
 opencode-setup/
-├── README.md          # This file
-├── setup.ps1          # Windows setup script
-├── setup.sh           # macOS/Linux setup script
-├── ecc/               # ECC fork (auto-cloned)
-│   ├── .opencode/     # OpenCode plugin
-│   ├── agents/        # 24 specialized agents
-│   ├── skills/        # 262 workflow skills
-│   ├── commands/      # 31 slash commands
-│   ├── rules/         # Language rules
-│   ├── hooks/         # Event automations
-│   └── fanndi/        # Your setup profiles
-└── 9router/           # 9Router (auto-cloned)
-    ├── src/           # Router source
-    └── dashboard/     # Web UI
+├── README.md              # This file
+├── setup.ps1              # Full auto setup (Windows)
+├── setup.sh               # Full auto setup (macOS/Linux)
+├── install.ps1            # Quick re-apply (Windows)
+├── install.sh             # Quick re-apply (macOS/Linux)
+├── caveman-mode.md        # Caveman Mode reference
+├── profiles/
+│   ├── gratis/
+│   │   └── opencode.jsonc # Static config: free models
+│   └── go/
+│       └── opencode.jsonc # Static config: Go models
+├── ecc/                   # ECC fork (auto-cloned)
+│   ├── .opencode/         # OpenCode plugin
+│   ├── agents/            # 24 specialized agents
+│   ├── skills/            # 262 workflow skills
+│   ├── commands/          # 31 slash commands
+│   ├── rules/             # Language rules
+│   ├── hooks/             # Event automations
+│   └── fanndi/            # Your setup profiles
+└── 9router/               # 9Router (auto-cloned)
+    ├── src/               # Router source
+    └── dashboard/         # Web UI
 ```
+
+## Profiles Reference
+
+### Gratis (Free)
+
+| Agent | Model |
+|-------|-------|
+| build (primary) | `9router/oc/mimo-v2.5-free` |
+| planner, architect | `9router/oc/deepseek-v4-flash-free` |
+| code-reviewer, security | `9router/oc/deepseek-v4-flash-free` |
+| build-error-resolver | `9router/oc/mimo-v2.5-free` |
+
+Fallback chain: MiMo → DeepSeek → Kiro Claude 4.5 (free Claude!)
+
+### Go ($5/mo first month)
+
+| Agent | Model |
+|-------|-------|
+| build (primary) | `9router/go/kimi-k2.7` |
+| planner, architect | `9router/go/qwen3.7-max` |
+| code-reviewer, security | `9router/go/deepseek-v4-pro` |
+| build-error-resolver | `9router/go/deepseek-v4-flash` |
+
+Fallback chain: Kimi → Qwen → DeepSeek → OpenCode Free
+
+## Caveman Mode
+
+Terse-style prompting. Same technical accuracy, fewer tokens.
+
+| Before | After |
+|--------|-------|
+| "I've analyzed the code and found that there's a missing null check..." | "Missing null check in auth.ts:42. Fix: `const token = user?.token ?? '';`" |
+| ~200-500 tokens/response | ~50-150 tokens/response |
+
+Caveman Mode is handled by 9Router (not ECC). Toggle in Dashboard → Endpoint settings.
 
 ## Troubleshooting
 
@@ -174,6 +236,26 @@ Check Dashboard → Endpoint settings → RTK Token Saver → Toggle ON
 ### Caveman not working
 
 Check Dashboard → Endpoint settings → Caveman Mode → Toggle ON
+
+### Config tidak ke-load
+
+```bash
+# Cek config
+cat ~/.config/opencode/opencode.jsonc
+
+# Cek file exist
+ls -la ~/.config/opencode/
+```
+
+### Plugin hooks tidak jalan
+
+```bash
+cd ecc && npm run build:opencode
+```
+
+### Rate limit (gratis)
+
+Switch ke go profile atau tunggu reset. Atau connect Kiro AI (free Claude unlimited).
 
 ## License
 
