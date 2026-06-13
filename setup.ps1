@@ -100,31 +100,24 @@ Write-OK "OpenCode installed"
 Write-Step "2/10" "Clone repositories..."
 
 if (-not $SkipClone) {
-    # Clone ECC
-    if (Test-Path "$ECC_DIR\.git") {
-        Write-Skip "ECC already cloned, pulling latest..."
-        Push-Location $ECC_DIR
-        git pull --quiet
-        Pop-Location
-    } else {
-        Write-Host "  Cloning fannndi/ECC..." -ForegroundColor Gray
-        git clone --quiet https://github.com/fannndi/ECC.git $ECC_DIR
-    }
-    Write-OK "ECC cloned"
-
-    # Clone 9Router
-    if (Test-Path "$ROUTER_DIR\.git") {
-        Write-Skip "9Router already cloned, pulling latest..."
-        Push-Location $ROUTER_DIR
-        git pull --quiet
-        Pop-Location
-    } else {
-        Write-Host "  Cloning decolua/9router..." -ForegroundColor Gray
-        git clone --quiet https://github.com/fannndi/9router.git $ROUTER_DIR
-    }
-    Write-OK "9Router cloned"
+    # Use dedicated clone script
+    & "$SETUP_DIR\clone-repo.ps1"
 } else {
     Write-Skip "Clone skipped (--SkipClone)"
+}
+
+# ============================================================
+# Step 2.5: Check for changes
+# ============================================================
+
+Write-Step "2.5/10" "Checking for changes since last sync..."
+
+if (Test-Path "$SETUP_DIR\.sync-state.json") {
+    Write-Host "  Running sync-changelog (info only)..." -ForegroundColor Gray
+    & "$SETUP_DIR\sync-changelog.ps1" -Apply 2>$null
+    Write-OK "Changelog checked"
+} else {
+    Write-Skip "No sync state found (first run)"
 }
 
 # ============================================================

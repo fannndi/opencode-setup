@@ -1,12 +1,13 @@
 # ECC Setup Installer for OpenCode
-# Usage: .\install.ps1 -Profile gratis|go [-ECCRoot <path>]
+# Usage: .\install.ps1 -Profile gratis|go [-ECCRoot <path>] [-SyncFirst]
 
 param(
     [Parameter(Mandatory=$true)]
     [ValidateSet("gratis", "go")]
     [string]$Profile,
 
-    [string]$ECCRoot
+    [string]$ECCRoot,
+    [switch]$SyncFirst
 )
 
 $ErrorActionPreference = "Stop"
@@ -34,6 +35,17 @@ Write-Host "========================================" -ForegroundColor Cyan
 Write-Host " ECC OpenCode Setup - Profile: $Profile" -ForegroundColor Cyan
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
+
+# --- Step 0: Sync first (optional) ---
+if ($SyncFirst) {
+    Write-Host "[*] Syncing changelog first..." -ForegroundColor Gray
+    $syncScript = "$ScriptDir\sync-changelog.ps1"
+    if (Test-Path $syncScript) {
+        & $syncScript
+    } else {
+        Write-Host "  [SKIP] sync-changelog.ps1 not found" -ForegroundColor Yellow
+    }
+}
 
 # --- Step 1: Backup existing config ---
 if (Test-Path $ConfigFile) {

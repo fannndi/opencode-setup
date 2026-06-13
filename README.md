@@ -10,6 +10,34 @@ One command setup: ECC (agents/skills) + 9Router (RTK/Caveman/auto-fallback).
                └── Auto-fallback: subscription → cheap → free
 ```
 
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `clone-repo.ps1` | Clone ECC + 9Router repos |
+| `sync-changelog.ps1` | Show changes since last sync |
+| `setup.ps1` | Full setup (clone + config + start) |
+| `install.ps1 -Profile gratis` | Quick re-apply config |
+
+## Daily Workflow
+
+```powershell
+# First time / fresh install
+.\clone-repo.ps1
+.\sync-changelog.ps1
+.\setup.ps1
+
+# Check for updates
+.\sync-changelog.ps1
+
+# Apply updates
+.\setup.ps1
+
+# Quick re-apply (ganti profile)
+.\install.ps1 -Profile go
+.\install.ps1 -Profile gratis -SyncFirst
+```
+
 ## Two Install Paths
 
 | Path | Script | When to use |
@@ -151,11 +179,16 @@ cd ecc && npm run build:opencode && cd ..
 ```
 opencode-setup/
 ├── README.md              # This file
+├── clone-repo.ps1         # Clone ECC + 9Router (Windows)
+├── clone-repo.sh          # Clone ECC + 9Router (macOS/Linux)
+├── sync-changelog.ps1     # Show changes since last sync (Windows)
+├── sync-changelog.sh      # Show changes since last sync (macOS/Linux)
 ├── setup.ps1              # Full auto setup (Windows)
 ├── setup.sh               # Full auto setup (macOS/Linux)
 ├── install.ps1            # Quick re-apply (Windows)
 ├── install.sh             # Quick re-apply (macOS/Linux)
 ├── caveman-mode.md        # Caveman Mode reference
+├── .sync-state.json       # SHA tracking (committed for zip backup)
 ├── profiles/
 │   ├── gratis/
 │   │   └── opencode.jsonc # Static config: free models
@@ -163,9 +196,9 @@ opencode-setup/
 │       └── opencode.jsonc # Static config: Go models
 ├── ecc/                   # ECC fork (auto-cloned)
 │   ├── .opencode/         # OpenCode plugin
-│   ├── agents/            # 24 specialized agents
+│   ├── agents/            # 64 specialized agents
 │   ├── skills/            # 262 workflow skills
-│   ├── commands/          # 31 slash commands
+│   ├── commands/          # 84 command shims
 │   ├── rules/             # Language rules
 │   ├── hooks/             # Event automations
 │   └── fanndi/            # Your setup profiles

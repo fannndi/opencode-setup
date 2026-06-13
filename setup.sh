@@ -64,25 +64,22 @@ ok "OpenCode installed"
 
 step "2/10" "Clone repositories..."
 
-# ECC
-if [ -d "$ECC_DIR/.git" ]; then
-    skip "ECC already cloned, pulling latest..."
-    cd "$ECC_DIR" && git pull --quiet && cd "$SETUP_DIR"
-else
-    echo -e "  ${GRAY}Cloning fannndi/ECC...${NC}"
-    git clone --quiet https://github.com/fannndi/ECC.git "$ECC_DIR"
-fi
-ok "ECC cloned"
+# Use dedicated clone script
+bash "$SETUP_DIR/clone-repo.sh"
 
-# 9Router
-if [ -d "$ROUTER_DIR/.git" ]; then
-    skip "9Router already cloned, pulling latest..."
-    cd "$ROUTER_DIR" && git pull --quiet && cd "$SETUP_DIR"
+# ============================================================
+# Step 2.5: Check for changes
+# ============================================================
+
+step "2.5/10" "Checking for changes since last sync..."
+
+if [[ -f "$SETUP_DIR/.sync-state.json" ]]; then
+    echo -e "  ${GRAY}Running sync-changelog (info only)...${NC}"
+    bash "$SETUP_DIR/sync-changelog.sh" --apply 2>/dev/null
+    ok "Changelog checked"
 else
-    echo -e "  ${GRAY}Cloning decolua/9router...${NC}"
-    git clone --quiet https://github.com/fannndi/9router.git "$ROUTER_DIR"
+    skip "No sync state found (first run)"
 fi
-ok "9Router cloned"
 
 # ============================================================
 # Step 3: Install ECC dependencies

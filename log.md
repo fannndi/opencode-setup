@@ -148,6 +148,31 @@ cd ecc && npm run build:opencode && cd ..
 
 ---
 
+### 11. Clone-Repo + Sync-Changelog System (2026-06-14)
+
+- Buat `clone-repo.ps1` / `clone-repo.sh` — clone ECC + 9Router + record SHA
+- Buat `sync-changelog.ps1` / `sync-changelog.sh` — fetch changes + display changelog
+- `.sync-state.json` — SHA tracking file (committed, masuk zip backup)
+- Highlight opencode-related changes otomatis (keyword filter)
+- Tanya user: "Apakah ada perubahan berarti yang mempengaruhi setupmu?"
+- Update `setup.ps1` / `setup.sh` — integrate clone + sync
+- Update `install.ps1` / `install.sh` — tambah `-SyncFirst` / `--sync-first`
+- Update `README.md` — tambah Commands + Daily Workflow section
+- Update `.gitignore` — keep `.sync-state.json`
+
+**SHA saat init:**
+- ECC: `7b39012` (v2.0.0, 2026-06-13)
+- 9Router: `23da7b1` (2026-06-13)
+
+**Workflow:**
+```
+.\clone-repo.ps1          # Clone repos
+.\sync-changelog.ps1      # Lihat changes
+.\setup.ps1               # Apply config
+```
+
+---
+
 ## Key Decisions
 
 1. **Model strategy:** Gratis dulu, upgrade ke Go kalau perlu

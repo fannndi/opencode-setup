@@ -1,7 +1,7 @@
 # Dependencies
 node_modules/
 
-# Cloned repos (will be cloned by setup)
+# Cloned repos (will be cloned by clone-repo)
 ecc/
 9router/
 
@@ -11,3 +11,5 @@ ecc/
 # OS
 .DS_Store
 Thumbs.db
+
+# .sync-state.json is NOT ignored (committed for zip backup)

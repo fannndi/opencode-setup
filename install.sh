@@ -1,23 +1,26 @@
 #!/usr/bin/env bash
 # ECC Setup Installer for OpenCode (macOS/Linux)
-# Usage: ./install.sh --profile gratis|go [--ecc-root <path>]
+# Usage: ./install.sh --profile gratis|go [--ecc-root <path>] [--sync-first]
 
 set -euo pipefail
 
 # --- Parse args ---
 PROFILE=""
 ECC_ROOT=""
+SYNC_FIRST=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
         --profile) PROFILE="$2"; shift 2 ;;
         --ecc-root) ECC_ROOT="$2"; shift 2 ;;
+        --sync-first) SYNC_FIRST=true; shift ;;
         -h|--help)
-            echo "Usage: $0 --profile <gratis|go> [--ecc-root <path>]"
+            echo "Usage: $0 --profile <gratis|go> [--ecc-root <path>] [--sync-first]"
             echo ""
             echo "Options:"
             echo "  --profile    Model profile (required): gratis or go"
             echo "  --ecc-root   Path to ECC repo root (auto-detected if not set)"
+            echo "  --sync-first Run sync-changelog before applying config"
             exit 0
             ;;
         *) echo "Unknown option: $1"; exit 1 ;;
@@ -58,6 +61,17 @@ echo "========================================"
 echo " ECC OpenCode Setup - Profile: $PROFILE"
 echo "========================================"
 echo ""
+
+# --- Step 0: Sync first (optional) ---
+if [[ "$SYNC_FIRST" == "true" ]]; then
+    echo "[*] Syncing changelog first..."
+    SYNC_SCRIPT="$SCRIPT_DIR/sync-changelog.sh"
+    if [[ -f "$SYNC_SCRIPT" ]]; then
+        bash "$SYNC_SCRIPT"
+    else
+        echo "  [SKIP] sync-changelog.sh not found"
+    fi
+fi
 
 # --- Step 1: Backup existing config ---
 if [[ -f "$CONFIG_FILE" ]]; then
