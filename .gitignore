@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+
+# Cloned repos (will be cloned by setup)
+ecc/
+9router/
+
+# Config backups
+*.bak.*
+
+# OS
+.DS_Store
+Thumbs.db
