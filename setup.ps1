@@ -94,6 +94,47 @@ if (-not (Test-Command "opencode")) {
 Write-OK "OpenCode installed"
 
 # ============================================================
+# Step 1.5: Check API Key
+# ============================================================
+
+$apiKeyFile = "$SETUP_DIR\api-key.txt"
+$apiKeyValue = ""
+
+if (Test-Path $apiKeyFile) {
+    $apiKeyContent = (Get-Content $apiKeyFile -Raw).Trim()
+    # Remove comments and empty lines
+    $apiKeyLines = $apiKeyContent -split "`n" | Where-Object { $_ -notmatch '^\s*#' -and $_.Trim() -ne '' }
+    if ($apiKeyLines.Count -gt 0) {
+        $apiKeyLine = $apiKeyLines[0].Trim()
+        # Support both "KEY=value" and just "value" formats
+        if ($apiKeyLine -match '=') {
+            $apiKeyValue = ($apiKeyLine -split '=', 2)[1].Trim()
+        } else {
+            $apiKeyValue = $apiKeyLine
+        }
+    }
+}
+
+if ([string]::IsNullOrWhiteSpace($apiKeyValue)) {
+    Write-Host ""
+    Write-Host "  ╔══════════════════════════════════════════════════╗" -ForegroundColor Yellow
+    Write-Host "  ║  ⚠️  API KEY BELUM DIISI                       ║" -ForegroundColor Yellow
+    Write-Host "  ╠══════════════════════════════════════════════════╣" -ForegroundColor Yellow
+    Write-Host "  ║  Edit file: api-key.txt                         ║" -ForegroundColor Yellow
+    Write-Host "  ║  Isi dengan key dari:                           ║" -ForegroundColor Yellow
+    Write-Host "  ║  - https://opencode.ai/console                  ║" -ForegroundColor Yellow
+    Write-Host "  ║  - http://localhost:20128/dashboard              ║" -ForegroundColor Yellow
+    Write-Host "  ╚══════════════════════════════════════════════════╝" -ForegroundColor Yellow
+    Write-Host ""
+    Write-Skip "API key not set (setup will continue, but 9Router won't work)"
+} else {
+    Write-OK "API key found ($($apiKeyValue.Substring(0, [Math]::Min(8, $apiKeyValue.Length)))...)"
+    [Environment]::SetEnvironmentVariable('NINEROUTER_API_KEY', $apiKeyValue, 'User')
+    $env:NINEROUTER_API_KEY = $apiKeyValue
+    Write-OK "NINEROUTER_API_KEY set"
+}
+
+# ============================================================
 # Step 2: Clone repos
 # ============================================================
 
@@ -516,13 +557,16 @@ Write-Step "9/10" "Set environment variables..."
 [Environment]::SetEnvironmentVariable('ECC_HOOK_PROFILE', 'standard', 'User')
 [Environment]::SetEnvironmentVariable('ECC_AGENT_DATA_HOME', "$env:USERPROFILE\.opencode\ecc", 'User')
 
-# Set NINEROUTER_API_KEY placeholder (user will set real key from dashboard)
+# Set NINEROUTER_API_KEY from api-key.txt or placeholder
 $existingKey = [Environment]::GetEnvironmentVariable('NINEROUTER_API_KEY', 'User')
-if ([string]::IsNullOrWhiteSpace($existingKey)) {
-    [Environment]::SetEnvironmentVariable('NINEROUTER_API_KEY', 'SET-YOUR-KEY-FROM-DASHBOARD', 'User')
-    Write-OK "NINEROUTER_API_KEY placeholder set (update from dashboard)"
-} else {
+if (-not [string]::IsNullOrWhiteSpace($apiKeyValue)) {
+    # Already set from api-key.txt in Step 1.5
+    Write-OK "NINEROUTER_API_KEY set from api-key.txt"
+} elseif ($existingKey -and $existingKey -ne 'SET-YOUR-KEY-FROM-DASHBOARD') {
     Write-OK "NINEROUTER_API_KEY already set"
+} else {
+    [Environment]::SetEnvironmentVariable('NINEROUTER_API_KEY', 'SET-YOUR-KEY-FROM-DASHBOARD', 'User')
+    Write-Host "  [!] NINEROUTER_API_KEY not set. Edit api-key.txt or set from dashboard" -ForegroundColor Yellow
 }
 
 Write-OK "ECC_HOOK_PROFILE=standard"

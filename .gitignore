@@ -5,6 +5,9 @@ node_modules/
 ecc/
 9router/
 
+# API keys (sensitive)
+api-key.txt
+
 # Config backups
 *.bak.*
 

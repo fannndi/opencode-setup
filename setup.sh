@@ -59,6 +59,53 @@ command -v opencode >/dev/null 2>&1 || fail "OpenCode not found. Install: npm in
 ok "OpenCode installed"
 
 # ============================================================
+# Step 1.5: Check API Key
+# ============================================================
+
+API_KEY_FILE="$SETUP_DIR/api-key.txt"
+API_KEY_VALUE=""
+
+if [[ -f "$API_KEY_FILE" ]]; then
+    # Remove comments and empty lines, get first value
+    API_KEY_LINE=$(grep -v '^\s*#' "$API_KEY_FILE" | grep -v '^\s*$' | head -1)
+    if [[ -n "$API_KEY_LINE" ]]; then
+        # Support both "KEY=value" and just "value" formats
+        if [[ "$API_KEY_LINE" == *"="* ]]; then
+            API_KEY_VALUE=$(echo "$API_KEY_LINE" | cut -d'=' -f2-)
+        else
+            API_KEY_VALUE="$API_KEY_LINE"
+        fi
+        API_KEY_VALUE=$(echo "$API_KEY_VALUE" | xargs) # trim
+    fi
+fi
+
+if [[ -z "$API_KEY_VALUE" ]]; then
+    echo ""
+    echo -e "  ${YELLOW}╔══════════════════════════════════════════════════╗${NC}"
+    echo -e "  ${YELLOW}║  ⚠️  API KEY BELUM DIISI                       ║${NC}"
+    echo -e "  ${YELLOW}╠══════════════════════════════════════════════════╣${NC}"
+    echo -e "  ${YELLOW}║  Edit file: api-key.txt                         ║${NC}"
+    echo -e "  ${YELLOW}║  Isi dengan key dari:                           ║${NC}"
+    echo -e "  ${YELLOW}║  - https://opencode.ai/console                  ║${NC}"
+    echo -e "  ${YELLOW}║  - http://localhost:20128/dashboard              ║${NC}"
+    echo -e "  ${YELLOW}╚══════════════════════════════════════════════════╝${NC}"
+    echo ""
+    skip "API key not set (setup will continue, but 9Router won't work)"
+else
+    ok "API key found (${API_KEY_VALUE:0:8}...)"
+    export NINEROUTER_API_KEY="$API_KEY_VALUE"
+    # Persist to shell profile
+    SHELL_RC=""
+    [[ -f "$HOME/.bashrc" ]] && SHELL_RC="$HOME/.bashrc"
+    [[ -f "$HOME/.zshrc" ]] && SHELL_RC="$HOME/.zshrc"
+    if [[ -n "$SHELL_RC" ]]; then
+        sed -i '/^export NINEROUTER_API_KEY=/d' "$SHELL_RC"
+        echo "export NINEROUTER_API_KEY='$API_KEY_VALUE'" >> "$SHELL_RC"
+    fi
+    ok "NINEROUTER_API_KEY set"
+fi
+
+# ============================================================
 # Step 2: Clone repos
 # ============================================================
 
