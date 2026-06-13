@@ -571,6 +571,23 @@ if (Test-Path $commandsSrc) {
 }
 
 # ============================================================
+# Step 8.6: Fix agent references in commands
+# ============================================================
+
+Write-Step "8.6/10" "Fix agent references in commands..."
+
+$commandFiles = Get-ChildItem "$commandsDst\*.md" -ErrorAction SilentlyContinue
+foreach ($file in $commandFiles) {
+    $content = Get-Content $file.FullName -Raw
+    if ($content -match 'everything-claude-code:') {
+        $content = $content -replace 'everything-claude-code:', ''
+        Set-Content $file.FullName $content -NoNewline
+        Write-OK "Fixed: $($file.Name)"
+    }
+}
+Write-OK "Agent references fixed"
+
+# ============================================================
 # Step 9: Set environment variables
 # ============================================================
 

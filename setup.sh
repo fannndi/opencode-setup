@@ -380,6 +380,20 @@ if [ -d "$COMMANDS_SRC" ]; then
 fi
 
 # ============================================================
+# Step 8.6: Fix agent references in commands
+# ============================================================
+
+step "8.6/10" "Fix agent references in commands..."
+
+for file in "$COMMANDS_DST"/*.md; do
+    if [ -f "$file" ] && grep -q "everything-claude-code:" "$file" 2>/dev/null; then
+        sed -i 's/everything-claude-code://g' "$file"
+        ok "Fixed: $(basename "$file")"
+    fi
+done
+ok "Agent references fixed"
+
+# ============================================================
 # Step 9: Set environment variables
 # ============================================================
 
