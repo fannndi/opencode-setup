@@ -1,0 +1,275 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "9router/oc/mimo-v2.5-free",
+  "small_model": "9router/oc/deepseek-v4-flash-free",
+  "default_agent": "build",
+
+  "provider": {
+    "9router": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Local 9Router",
+      "options": {
+        "baseURL": "http://localhost:20128/v1",
+        "apiKey": "{env:NINEROUTER_API_KEY}"
+      },
+      "models": {
+        "oc/mimo-v2.5-free": { "name": "MiMo V2.5 Free" },
+        "oc/deepseek-v4-flash-free": { "name": "DeepSeek V4 Flash Free" },
+        "oc/nemotron-3-ultra-free": { "name": "Nemotron 3 Ultra Free" },
+        "oc/north-mini-code-free": { "name": "North Mini Code Free" },
+        "oc/big-pickle": { "name": "Big Pickle" }
+      }
+    }
+  },
+  "instructions": [
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/AGENTS.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/CONTRIBUTING.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/tdd-workflow/SKILL.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/security-review/SKILL.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/coding-standards/SKILL.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/frontend-patterns/SKILL.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/frontend-slides/SKILL.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/backend-patterns/SKILL.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/e2e-testing/SKILL.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/verification-loop/SKILL.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/api-design/SKILL.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/strategic-compact/SKILL.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/eval-harness/SKILL.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router/SKILL.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-chat/SKILL.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-image/SKILL.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-web-search/SKILL.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-web-fetch/SKILL.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-tts/SKILL.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-stt/SKILL.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-embeddings/SKILL.md"
+  ],
+  "plugin": [
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/plugins"
+  ],
+  "skills": {
+    "paths": [
+      "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills"
+    ]
+  },
+  "agent": {
+    "build": {
+      "description": "Primary coding agent",
+      "mode": "primary",
+      "model": "9router/oc/mimo-v2.5-free",
+      "tools": {
+        "write": true,
+        "edit": true,
+        "bash": true,
+        "read": true,
+        "changed-files": true
+      }
+    },
+    "planner": {
+      "description": "Expert planning specialist.",
+      "mode": "subagent",
+      "model": "9router/oc/mimo-v2.5-free",
+      "prompt": "{file:prompts/agents/planner.txt}",
+      "tools": { "read": true, "bash": true, "write": false, "edit": false }
+    },
+    "architect": {
+      "description": "Software architecture specialist.",
+      "mode": "subagent",
+      "model": "9router/oc/mimo-v2.5-free",
+      "prompt": "{file:prompts/agents/architect.txt}",
+      "tools": { "read": true, "bash": true, "write": false, "edit": false }
+    },
+    "code-reviewer": {
+      "description": "Expert code review specialist.",
+      "mode": "subagent",
+      "model": "9router/oc/deepseek-v4-flash-free",
+      "prompt": "{file:prompts/agents/code-reviewer.txt}",
+      "tools": { "read": true, "bash": true, "write": false, "edit": false }
+    },
+    "security-reviewer": {
+      "description": "Security vulnerability detection specialist.",
+      "mode": "subagent",
+      "model": "9router/oc/mimo-v2.5-free",
+      "prompt": "{file:prompts/agents/security-reviewer.txt}",
+      "tools": { "read": true, "bash": true, "write": true, "edit": true }
+    },
+    "tdd-guide": {
+      "description": "Test-Driven Development specialist.",
+      "mode": "subagent",
+      "model": "9router/oc/mimo-v2.5-free",
+      "prompt": "{file:prompts/agents/tdd-guide.txt}",
+      "tools": { "read": true, "write": true, "edit": true, "bash": true }
+    },
+    "build-error-resolver": {
+      "description": "Build error resolution specialist.",
+      "mode": "subagent",
+      "model": "9router/oc/deepseek-v4-flash-free",
+      "prompt": "{file:prompts/agents/build-error-resolver.txt}",
+      "tools": { "read": true, "write": true, "edit": true, "bash": true }
+    },
+    "e2e-runner": {
+      "description": "End-to-end testing specialist.",
+      "mode": "subagent",
+      "model": "9router/oc/mimo-v2.5-free",
+      "prompt": "{file:prompts/agents/e2e-runner.txt}",
+      "tools": { "read": true, "write": true, "edit": true, "bash": true }
+    },
+    "doc-updater": {
+      "description": "Documentation specialist.",
+      "mode": "subagent",
+      "model": "9router/oc/deepseek-v4-flash-free",
+      "prompt": "{file:prompts/agents/doc-updater.txt}",
+      "tools": { "read": true, "write": true, "edit": true, "bash": true }
+    },
+    "refactor-cleaner": {
+      "description": "Dead code cleanup specialist.",
+      "mode": "subagent",
+      "model": "9router/oc/deepseek-v4-flash-free",
+      "prompt": "{file:prompts/agents/refactor-cleaner.txt}",
+      "tools": { "read": true, "write": true, "edit": true, "bash": true }
+    },
+    "go-reviewer": {
+      "description": "Expert Go code reviewer.",
+      "mode": "subagent",
+      "model": "9router/oc/deepseek-v4-flash-free",
+      "prompt": "{file:prompts/agents/go-reviewer.txt}",
+      "tools": { "read": true, "bash": true, "write": false, "edit": false }
+    },
+    "go-build-resolver": {
+      "description": "Go build resolution.",
+      "mode": "subagent",
+      "model": "9router/oc/deepseek-v4-flash-free",
+      "prompt": "{file:prompts/agents/go-build-resolver.txt}",
+      "tools": { "read": true, "write": true, "edit": true, "bash": true }
+    },
+    "database-reviewer": {
+      "description": "PostgreSQL database specialist.",
+      "mode": "subagent",
+      "model": "9router/oc/mimo-v2.5-free",
+      "prompt": "{file:prompts/agents/database-reviewer.txt}",
+      "tools": { "read": true, "write": true, "edit": true, "bash": true }
+    },
+    "cpp-reviewer": {
+      "description": "Expert C++ code reviewer.",
+      "mode": "subagent",
+      "model": "9router/oc/deepseek-v4-flash-free",
+      "prompt": "{file:prompts/agents/cpp-reviewer.txt}",
+      "tools": { "read": true, "bash": true, "write": false, "edit": false }
+    },
+    "cpp-build-resolver": {
+      "description": "C++ build resolution.",
+      "mode": "subagent",
+      "model": "9router/oc/deepseek-v4-flash-free",
+      "prompt": "{file:prompts/agents/cpp-build-resolver.txt}",
+      "tools": { "read": true, "write": true, "edit": true, "bash": true }
+    },
+    "docs-lookup": {
+      "description": "Documentation specialist.",
+      "mode": "subagent",
+      "model": "9router/oc/deepseek-v4-flash-free",
+      "prompt": "{file:prompts/agents/docs-lookup.txt}",
+      "tools": { "read": true, "bash": true, "write": false, "edit": false }
+    },
+    "harness-optimizer": {
+      "description": "Analyze and improve local agent harness.",
+      "mode": "subagent",
+      "model": "9router/oc/mimo-v2.5-free",
+      "prompt": "{file:prompts/agents/harness-optimizer.txt}",
+      "tools": { "read": true, "bash": true, "edit": true }
+    },
+    "java-reviewer": {
+      "description": "Expert Java reviewer.",
+      "mode": "subagent",
+      "model": "9router/oc/deepseek-v4-flash-free",
+      "prompt": "{file:prompts/agents/java-reviewer.txt}",
+      "tools": { "read": true, "bash": true, "write": false, "edit": false }
+    },
+    "java-build-resolver": {
+      "description": "Java build resolution.",
+      "mode": "subagent",
+      "model": "9router/oc/deepseek-v4-flash-free",
+      "prompt": "{file:prompts/agents/java-build-resolver.txt}",
+      "tools": { "read": true, "write": true, "edit": true, "bash": true }
+    },
+    "kotlin-reviewer": {
+      "description": "Kotlin reviewer.",
+      "mode": "subagent",
+      "model": "9router/oc/deepseek-v4-flash-free",
+      "prompt": "{file:prompts/agents/kotlin-reviewer.txt}",
+      "tools": { "read": true, "bash": true, "write": false, "edit": false }
+    },
+    "kotlin-build-resolver": {
+      "description": "Kotlin build resolution.",
+      "mode": "subagent",
+      "model": "9router/oc/deepseek-v4-flash-free",
+      "prompt": "{file:prompts/agents/kotlin-build-resolver.txt}",
+      "tools": { "read": true, "write": true, "edit": true, "bash": true }
+    },
+    "loop-operator": {
+      "description": "Operate autonomous agent loops.",
+      "mode": "subagent",
+      "model": "9router/oc/deepseek-v4-flash-free",
+      "prompt": "{file:prompts/agents/loop-operator.txt}",
+      "tools": { "read": true, "bash": true, "edit": true }
+    },
+    "php-reviewer": {
+      "description": "Expert PHP reviewer.",
+      "mode": "subagent",
+      "model": "9router/oc/deepseek-v4-flash-free",
+      "prompt": "{file:prompts/agents/php-reviewer.txt}",
+      "tools": { "read": true, "bash": true, "write": false, "edit": false }
+    },
+    "python-reviewer": {
+      "description": "Expert Python reviewer.",
+      "mode": "subagent",
+      "model": "9router/oc/deepseek-v4-flash-free",
+      "prompt": "{file:prompts/agents/python-reviewer.txt}",
+      "tools": { "read": true, "bash": true, "write": false, "edit": false }
+    },
+    "rust-reviewer": {
+      "description": "Expert Rust reviewer.",
+      "mode": "subagent",
+      "model": "9router/oc/deepseek-v4-flash-free",
+      "prompt": "{file:prompts/agents/rust-reviewer.txt}",
+      "tools": { "read": true, "bash": true, "write": false, "edit": false }
+    },
+    "rust-build-resolver": {
+      "description": "Rust build resolution.",
+      "mode": "subagent",
+      "model": "9router/oc/deepseek-v4-flash-free",
+      "prompt": "{file:prompts/agents/rust-build-resolver.txt}",
+      "tools": { "read": true, "write": true, "edit": true, "bash": true }
+    }
+  },
+  "command": {
+    "plan": { "description": "Create implementation plan", "template": "{file:commands/plan.md}\n\n$ARGUMENTS", "agent": "planner", "subtask": true },
+    "tdd": { "description": "Enforce TDD workflow", "template": "{file:commands/tdd.md}\n\n$ARGUMENTS", "agent": "tdd-guide", "subtask": true },
+    "code-review": { "description": "Review code quality", "template": "{file:commands/code-review.md}\n\n$ARGUMENTS", "agent": "code-reviewer", "subtask": true },
+    "security": { "description": "Run security review", "template": "{file:commands/security.md}\n\n$ARGUMENTS", "agent": "security-reviewer", "subtask": true },
+    "build-fix": { "description": "Fix build errors", "template": "{file:commands/build-fix.md}\n\n$ARGUMENTS", "agent": "build-error-resolver", "subtask": true },
+    "e2e": { "description": "Generate E2E tests", "template": "{file:commands/e2e.md}\n\n$ARGUMENTS", "agent": "e2e-runner", "subtask": true },
+    "refactor-clean": { "description": "Remove dead code", "template": "{file:commands/refactor-clean.md}\n\n$ARGUMENTS", "agent": "refactor-cleaner", "subtask": true },
+    "orchestrate": { "description": "Orchestrate multiple agents", "template": "{file:commands/orchestrate.md}\n\n$ARGUMENTS", "agent": "planner", "subtask": true },
+    "learn": { "description": "Extract patterns", "template": "{file:commands/learn.md}\n\n$ARGUMENTS" },
+    "checkpoint": { "description": "Save state", "template": "{file:commands/checkpoint.md}\n\n$ARGUMENTS" },
+    "verify": { "description": "Run verification loop", "template": "{file:commands/verify.md}\n\n$ARGUMENTS" },
+    "eval": { "description": "Evaluate against criteria", "template": "{file:commands/eval.md}\n\n$ARGUMENTS" },
+    "update-docs": { "description": "Update docs", "template": "{file:commands/update-docs.md}\n\n$ARGUMENTS", "agent": "doc-updater", "subtask": true },
+    "update-codemaps": { "description": "Update codemaps", "template": "{file:commands/update-codemaps.md}\n\n$ARGUMENTS", "agent": "doc-updater", "subtask": true },
+    "test-coverage": { "description": "Analyze coverage", "template": "{file:commands/test-coverage.md}\n\n$ARGUMENTS", "agent": "tdd-guide", "subtask": true },
+    "setup-pm": { "description": "Configure package manager", "template": "{file:commands/setup-pm.md}\n\n$ARGUMENTS" },
+    "go-review": { "description": "Go code review", "template": "{file:commands/go-review.md}\n\n$ARGUMENTS", "agent": "go-reviewer", "subtask": true },
+    "go-test": { "description": "Go TDD workflow", "template": "{file:commands/go-test.md}\n\n$ARGUMENTS", "agent": "tdd-guide", "subtask": true },
+    "go-build": { "description": "Fix Go build errors", "template": "{file:commands/go-build.md}\n\n$ARGUMENTS", "agent": "go-build-resolver", "subtask": true },
+    "skill-create": { "description": "Generate skills from git history", "template": "{file:commands/skill-create.md}\n\n$ARGUMENTS" },
+    "instinct-status": { "description": "View instincts", "template": "{file:commands/instinct-status.md}\n\n$ARGUMENTS" },
+    "instinct-import": { "description": "Import instincts", "template": "{file:commands/instinct-import.md}\n\n$ARGUMENTS" },
+    "instinct-export": { "description": "Export instincts", "template": "{file:commands/instinct-export.md}\n\n$ARGUMENTS" },
+    "evolve": { "description": "Cluster instincts", "template": "{file:commands/evolve.md}\n\n$ARGUMENTS" },
+    "promote": { "description": "Promote instincts", "template": "{file:commands/promote.md}\n\n$ARGUMENTS" },
+    "projects": { "description": "List projects", "template": "{file:commands/projects.md}\n\n$ARGUMENTS" }
+  },
+  "permission": {
+    "mcp_*": "ask"
+  }
+}
