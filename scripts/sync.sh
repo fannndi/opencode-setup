@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Fetch changes since last sync and display changelog
-# Usage: ./sync-changelog.sh [--apply]
+# Usage: ./sync.sh [--apply]
 
 set -euo pipefail
 

@@ -11,7 +11,8 @@ Jalankan daily workflow untuk go models.
 
 1. Jalankan script berikut:
 ```powershell
-C:\Users\FANNNDI\Documents\opencode-setup\scripts\start.ps1 -Profile go
+cd opencode-setup
+.\scripts\start.ps1 -Profile go
 ```
 
 2. Review output workflow

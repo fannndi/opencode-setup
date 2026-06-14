@@ -112,7 +112,7 @@ fi
 step "2/10" "Clone repositories..."
 
 # Use dedicated clone script
-bash "$SETUP_DIR/clone-repo.sh"
+bash "$SETUP_DIR/clone.sh"
 
 # ============================================================
 # Step 2.5: Check for changes
@@ -122,7 +122,7 @@ step "2.5/10" "Checking for changes since last sync..."
 
 if [[ -f "$SETUP_DIR/.sync-state.json" ]]; then
     echo -e "  ${GRAY}Running sync-changelog (info only)...${NC}"
-    bash "$SETUP_DIR/sync-changelog.sh" --apply 2>/dev/null
+    bash "$SETUP_DIR/sync.sh" --apply 2>/dev/null
     ok "Changelog checked"
 else
     skip "No sync state found (first run)"

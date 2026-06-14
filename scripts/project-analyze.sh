@@ -279,7 +279,7 @@ $(for R in "${MATCHED_RULES[@]}"; do echo "- $R"; done)
 ### Skills to Load
 \`\`\`json
 "instructions": [
-$(for S in "${MATCHED_SKILLS[@]}"; do echo "    \"C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/$S/SKILL.md\","; done)
+$(for S in "${MATCHED_SKILLS[@]}"; do echo "    \"$ROOT_DIR/ecc/skills/$S/SKILL.md\","; done)
 ]
 \`\`\`
 

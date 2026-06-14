@@ -300,7 +300,7 @@ $(foreach ($r in $matchedRules) { "- $r" })
 ### Skills to Load
 ```json
 "instructions": [
-$(foreach ($s in $matchedSkills) { "    `"C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/$s/SKILL.md`"," })
+$(foreach ($s in $matchedSkills) { "    `"$($ROOT_DIR.Replace('\', '/'))/ecc/skills/$s/SKILL.md`"," })
 ]
 ```
 

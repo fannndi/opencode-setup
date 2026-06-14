@@ -330,19 +330,21 @@ if (Test-Path $OPENCODE_CONFIG) {
 
 # Build skills paths
 $skillPaths = @()
+$skillRoot = "$ROOT_DIR/ecc/skills"
 foreach ($skill in $allSkills) {
-    $skillPath = "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/$skill/SKILL.md"
-    if (Test-Path "C:\Users\FANNNDI\Documents\opencode-setup\ecc\skills\$skill\SKILL.md") {
-        $skillPaths += $skillPath
+    $skillPath = "$skillRoot/$skill/SKILL.md"
+    if (Test-Path $skillPath) {
+        $skillPaths += $skillPath.Replace('\', '/')
     }
 }
 
 # Build rules paths
 $rulesPaths = @()
+$rulesRoot = "$ROOT_DIR/ecc/rules"
 foreach ($rule in $detail.rules) {
-    $rulePath = "C:/Users/FANNNDI/Documents/opencode-setup/ecc/rules/$rule"
-    if (Test-Path "C:\Users\FANNNDI\Documents\opencode-setup\ecc\rules\$rule") {
-        $rulesPaths += $rulePath
+    $rulePath = "$rulesRoot/$rule"
+    if (Test-Path $rulePath) {
+        $rulesPaths += $rulePath.Replace('\', '/')
     }
 }
 
@@ -372,12 +374,12 @@ $config = @{
         }
     }
     instructions = @(
-        "C:/Users/FANNNDI/Documents/opencode-setup/ecc/AGENTS.md",
-        "C:/Users/FANNNDI/Documents/opencode-setup/ecc/CONTRIBUTING.md"
+        "$($ROOT_DIR.Replace('\', '/'))/ecc/AGENTS.md",
+        "$($ROOT_DIR.Replace('\', '/'))/ecc/CONTRIBUTING.md"
     ) + $skillPaths
-    plugin = @("C:/Users/FANNNDI/Documents/opencode-setup/ecc/plugins")
+    plugin = @("$($ROOT_DIR.Replace('\', '/'))/ecc/plugins")
     skills = @{
-        paths = @("C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills")
+        paths = @("$($ROOT_DIR.Replace('\', '/'))/ecc/skills")
     }
     permission = @{
         mcp_* = "ask"
@@ -386,15 +388,15 @@ $config = @{
 
 # Add commands
 $config.command = @{
-    "plan" = @{ description = "Create implementation plan"; template = "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/commands/plan.md}`n`n`$ARGUMENTS"; agent = "planner"; subtask = $true }
-    "tdd" = @{ description = "Enforce TDD workflow"; template = "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/commands/tdd.md}`n`n`$ARGUMENTS"; agent = "tdd-guide"; subtask = $true }
-    "code-review" = @{ description = "Review code quality"; template = "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/commands/code-review.md}`n`n`$ARGUMENTS"; agent = "code-reviewer"; subtask = $true }
-    "security" = @{ description = "Run security review"; template = "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/commands/security.md}`n`n`$ARGUMENTS"; agent = "security-reviewer"; subtask = $true }
-    "build-fix" = @{ description = "Fix build errors"; template = "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/commands/build-fix.md}`n`n`$ARGUMENTS"; agent = "build-error-resolver"; subtask = $true }
-    "verify" = @{ description = "Run verification loop"; template = "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/commands/verify.md}`n`n`$ARGUMENTS" }
-    "analyze-project" = @{ description = "Analyze project stack"; template = "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/analyze-project.md}`n`n`$ARGUMENTS" }
-    "start-free" = @{ description = "Daily workflow - free models"; template = "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/start-free.md}`n`n`$ARGUMENTS" }
-    "start-go" = @{ description = "Daily workflow - go models"; template = "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/start-go.md}`n`n`$ARGUMENTS" }
+    "plan" = @{ description = "Create implementation plan"; template = "{file:$($ROOT_DIR.Replace('\', '/'))/ecc/.opencode/commands/plan.md}`n`n`$ARGUMENTS"; agent = "planner"; subtask = $true }
+    "tdd" = @{ description = "Enforce TDD workflow"; template = "{file:$($ROOT_DIR.Replace('\', '/'))/ecc/.opencode/commands/tdd.md}`n`n`$ARGUMENTS"; agent = "tdd-guide"; subtask = $true }
+    "code-review" = @{ description = "Review code quality"; template = "{file:$($ROOT_DIR.Replace('\', '/'))/ecc/.opencode/commands/code-review.md}`n`n`$ARGUMENTS"; agent = "code-reviewer"; subtask = $true }
+    "security" = @{ description = "Run security review"; template = "{file:$($ROOT_DIR.Replace('\', '/'))/ecc/.opencode/commands/security.md}`n`n`$ARGUMENTS"; agent = "security-reviewer"; subtask = $true }
+    "build-fix" = @{ description = "Fix build errors"; template = "{file:$($ROOT_DIR.Replace('\', '/'))/ecc/.opencode/commands/build-fix.md}`n`n`$ARGUMENTS"; agent = "build-error-resolver"; subtask = $true }
+    "verify" = @{ description = "Run verification loop"; template = "{file:$($ROOT_DIR.Replace('\', '/'))/ecc/.opencode/commands/verify.md}`n`n`$ARGUMENTS" }
+    "analyze-project" = @{ description = "Analyze project stack"; template = "{file:$($ROOT_DIR.Replace('\', '/'))/commands/analyze-project.md}`n`n`$ARGUMENTS" }
+    "start-free" = @{ description = "Daily workflow - free models"; template = "{file:$($ROOT_DIR.Replace('\', '/'))/commands/start-free.md}`n`n`$ARGUMENTS" }
+    "start-go" = @{ description = "Daily workflow - go models"; template = "{file:$($ROOT_DIR.Replace('\', '/'))/commands/start-go.md}`n`n`$ARGUMENTS" }
 }
 
 # Write config

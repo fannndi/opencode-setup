@@ -39,7 +39,7 @@ Write-Host ""
 # --- Step 0: Sync first (optional) ---
 if ($SyncFirst) {
     Write-Host "[*] Syncing changelog first..." -ForegroundColor Gray
-    $syncScript = "$ScriptDir\sync-changelog.ps1"
+    $syncScript = "$ScriptDir\sync.ps1"
     if (Test-Path $syncScript) {
         & $syncScript
     } else {

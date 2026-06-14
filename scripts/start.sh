@@ -278,7 +278,7 @@ fi
 for MODEL in "${MODELS_TO_TEST[@]}"; do
     RESP=$(curl -s -X POST "$API_URL/v1/chat/completions" \
         -H "Content-Type: application/json" \
-        -H "Cookie: $(cat /tmp/9router-cookies.txt 2>/dev/null | grep 9router | awk '{print $6"="$7}')" \
+        -b /tmp/9router-cookies.txt 2>/dev/null \
         -d "{\"model\":\"$MODEL\",\"messages\":[{\"role\":\"user\",\"content\":\"hi\"}],\"max_tokens\":10}" \
         --max-time 15 2>/dev/null || echo '{"error":"timeout"}')
 

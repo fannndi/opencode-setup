@@ -240,16 +240,16 @@ IFS=' ' read -ra SKILLS <<< "$ALL_SKILLS"
 for SKILL in "${SKILLS[@]}"; do
     SKILL_FILE="$ECC_DIR/skills/$SKILL/SKILL.md"
     if [[ -f "$SKILL_FILE" ]]; then
-        SKILL_PATHS="$SKILL_PATHS    \"C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/$SKILL/SKILL.md\",\n"
+        SKILL_PATHS="$SKILL_PATHS    \"$ROOT_DIR/ecc/skills/$SKILL/SKILL.md\",\n"
     fi
 done
 
 # Generate config
 mkdir -p "$OPENCODE_DIR"
 
-cat > "$OPENCODE_CONFIG" << 'CONFIGEOF'
+cat > "$OPENCODE_CONFIG" << CONFIGEOF
 {
-  "$schema": "https://opencode.ai/config.json",
+  "\$schema": "https://opencode.ai/config.json",
   "model": "9router/gratis",
   "small_model": "9router/gratis-small",
   "default_agent": "build",
@@ -273,43 +273,43 @@ cat > "$OPENCODE_CONFIG" << 'CONFIGEOF'
     }
   },
   "instructions": [
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/AGENTS.md",
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/CONTRIBUTING.md",
+    "$ROOT_DIR/ecc/AGENTS.md",
+    "$ROOT_DIR/ecc/CONTRIBUTING.md",
 CONFIGEOF
 
 # Add skill paths
 IFS=' ' read -ra SKILLS <<< "$ALL_SKILLS"
 for SKILL in "${SKILLS[@]}"; do
     if [[ -f "$ECC_DIR/skills/$SKILL/SKILL.md" ]]; then
-        echo "    \"C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/$SKILL/SKILL.md\"," >> "$OPENCODE_CONFIG"
+        echo "    \"$ROOT_DIR/ecc/skills/$SKILL/SKILL.md\"," >> "$OPENCODE_CONFIG"
     fi
 done
 
 # Close instructions and add rest
-cat >> "$OPENCODE_CONFIG" << 'CONFIGEOF'
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router/SKILL.md",
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-chat/SKILL.md",
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-image/SKILL.md",
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-web-search/SKILL.md",
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-web-fetch/SKILL.md",
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-tts/SKILL.md",
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-stt/SKILL.md",
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-embeddings/SKILL.md"
+cat >> "$OPENCODE_CONFIG" << CONFIGEOF
+    "$ROOT_DIR/ecc/skills/9router/SKILL.md",
+    "$ROOT_DIR/ecc/skills/9router-chat/SKILL.md",
+    "$ROOT_DIR/ecc/skills/9router-image/SKILL.md",
+    "$ROOT_DIR/ecc/skills/9router-web-search/SKILL.md",
+    "$ROOT_DIR/ecc/skills/9router-web-fetch/SKILL.md",
+    "$ROOT_DIR/ecc/skills/9router-tts/SKILL.md",
+    "$ROOT_DIR/ecc/skills/9router-stt/SKILL.md",
+    "$ROOT_DIR/ecc/skills/9router-embeddings/SKILL.md"
   ],
-  "plugin": ["C:/Users/FANNNDI/Documents/opencode-setup/ecc/plugins"],
+  "plugin": ["$ROOT_DIR/ecc/plugins"],
   "skills": {
-    "paths": ["C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills"]
+    "paths": ["$ROOT_DIR/ecc/skills"]
   },
   "command": {
-    "plan": { "description": "Create implementation plan", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/commands/plan.md}\n\n$ARGUMENTS", "agent": "planner", "subtask": true },
-    "tdd": { "description": "Enforce TDD workflow", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/commands/tdd.md}\n\n$ARGUMENTS", "agent": "tdd-guide", "subtask": true },
-    "code-review": { "description": "Review code quality", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/commands/code-review.md}\n\n$ARGUMENTS", "agent": "code-reviewer", "subtask": true },
-    "security": { "description": "Run security review", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/commands/security.md}\n\n$ARGUMENTS", "agent": "security-reviewer", "subtask": true },
-    "build-fix": { "description": "Fix build errors", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/commands/build-fix.md}\n\n$ARGUMENTS", "agent": "build-error-resolver", "subtask": true },
-    "verify": { "description": "Run verification loop", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/commands/verify.md}\n\n$ARGUMENTS" },
-    "analyze-project": { "description": "Analyze project stack", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/analyze-project.md}\n\n$ARGUMENTS" },
-    "start-free": { "description": "Daily workflow - free models", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/start-free.md}\n\n$ARGUMENTS" },
-    "start-go": { "description": "Daily workflow - go models", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/start-go.md}\n\n$ARGUMENTS" }
+    "plan": { "description": "Create implementation plan", "template": "{file:$ROOT_DIR/ecc/.opencode/commands/plan.md}\n\n\$ARGUMENTS", "agent": "planner", "subtask": true },
+    "tdd": { "description": "Enforce TDD workflow", "template": "{file:$ROOT_DIR/ecc/.opencode/commands/tdd.md}\n\n\$ARGUMENTS", "agent": "tdd-guide", "subtask": true },
+    "code-review": { "description": "Review code quality", "template": "{file:$ROOT_DIR/ecc/.opencode/commands/code-review.md}\n\n\$ARGUMENTS", "agent": "code-reviewer", "subtask": true },
+    "security": { "description": "Run security review", "template": "{file:$ROOT_DIR/ecc/.opencode/commands/security.md}\n\n\$ARGUMENTS", "agent": "security-reviewer", "subtask": true },
+    "build-fix": { "description": "Fix build errors", "template": "{file:$ROOT_DIR/ecc/.opencode/commands/build-fix.md}\n\n\$ARGUMENTS", "agent": "build-error-resolver", "subtask": true },
+    "verify": { "description": "Run verification loop", "template": "{file:$ROOT_DIR/ecc/.opencode/commands/verify.md}\n\n\$ARGUMENTS" },
+    "analyze-project": { "description": "Analyze project stack", "template": "{file:$ROOT_DIR/commands/analyze-project.md}\n\n\$ARGUMENTS" },
+    "start-free": { "description": "Daily workflow - free models", "template": "{file:$ROOT_DIR/commands/start-free.md}\n\n\$ARGUMENTS" },
+    "start-go": { "description": "Daily workflow - go models", "template": "{file:$ROOT_DIR/commands/start-go.md}\n\n\$ARGUMENTS" }
   },
   "permission": { "mcp_*": "ask" }
 }

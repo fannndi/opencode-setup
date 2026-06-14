@@ -65,7 +65,7 @@ echo ""
 # --- Step 0: Sync first (optional) ---
 if [[ "$SYNC_FIRST" == "true" ]]; then
     echo "[*] Syncing changelog first..."
-    SYNC_SCRIPT="$SCRIPT_DIR/sync-changelog.sh"
+    SYNC_SCRIPT="$SCRIPT_DIR/sync.sh"
     if [[ -f "$SYNC_SCRIPT" ]]; then
         bash "$SYNC_SCRIPT"
     else

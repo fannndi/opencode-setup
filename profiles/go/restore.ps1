@@ -31,6 +31,13 @@ if (-not (Test-Path $SOURCE_CONFIG)) {
 }
 
 Copy-Item $SOURCE_CONFIG $CONFIG_FILE -Force
+
+# Fix hardcoded paths → dynamic
+$ROOT_DIR = Resolve-Path "$SCRIPT_DIR\..\.."
+$oldPath = "C:/Users/FANNNDI/Documents/opencode-setup"
+$configContent = Get-Content $CONFIG_FILE -Raw
+$configContent = $configContent.Replace($oldPath, $ROOT_DIR.ToString().Replace('\', '/'))
+Set-Content -Path $CONFIG_FILE -Value $configContent -Encoding UTF8
 Write-Host "Restored: $CONFIG_FILE" -ForegroundColor Green
 
 # Verify 9Router

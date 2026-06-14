@@ -1,5 +1,5 @@
 # Fetch changes since last sync and display changelog
-# Usage: .\sync-changelog.ps1 [-Apply]
+# Usage: .\sync.ps1 [-Apply]
 
 param(
     [switch]$Apply

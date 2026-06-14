@@ -142,7 +142,7 @@ Write-Step "2/10" "Clone repositories..."
 
 if (-not $SkipClone) {
     # Use dedicated clone script
-    & "$SETUP_DIR\clone-repo.ps1"
+    & "$SETUP_DIR\clone.ps1"
 } else {
     Write-Skip "Clone skipped (--SkipClone)"
 }
@@ -155,7 +155,7 @@ Write-Step "2.5/10" "Checking for changes since last sync..."
 
 if (Test-Path "$SETUP_DIR\.sync-state.json") {
     Write-Host "  Running sync-changelog (info only)..." -ForegroundColor Gray
-    & "$SETUP_DIR\sync-changelog.ps1" -Apply 2>$null
+    & "$SETUP_DIR\sync.ps1" -Apply 2>$null
     Write-OK "Changelog checked"
 } else {
     Write-Skip "No sync state found (first run)"
