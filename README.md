@@ -245,3 +245,36 @@ opencode-setup/
 | [Scripts](docs/04-usage/02-scripts.md) | Referensi scripts |
 | [Analyze Project](docs/04-usage/04-analyze-project.md) | Deteksi stack |
 | [Troubleshooting](docs/08-troubleshooting/01-common-issues.md) | FAQ |
+
+---
+
+## Workflow Development
+
+Untuk mengembangkan project opencode-setup ini sendiri.
+
+### Update ECC + 9Router
+
+```powershell
+.\scripts\admin-update.ps1
+```
+
+Atau via OpenCode:
+```
+/admin-update
+```
+
+### Changelogs
+
+| File | Isi |
+|------|-----|
+| [changelog-ecc.md](changelog-ecc.md) | Perubahan ECC (skills, agents, commands) |
+| [changelog-9router.md](changelog-9router.md) | Perubahan 9Router (models, features) |
+| [log-admin.md](log-admin.md) | History update admin |
+
+### Development Flow
+
+1. `.\scripts\admin-update.ps1` — update ECC + 9Router + doctor
+2. `.\scripts\start.ps1 -Profile gratis` — test model
+3. `opencode` — verify commands jalan
+4. `git add -A && git commit -m "feat: ..."` — save perubahan
+5. `git push` — push ke repo

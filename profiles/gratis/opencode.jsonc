@@ -283,7 +283,8 @@
     "reset-session": { "description": "Reset session state", "template": "Reset session: jalankan .\\scripts\\session-manager.ps1 -Action reset" },
     "set-project": { "description": "Set project path untuk Master Control", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/set-project.md}\n\n$ARGUMENTS" },
     "current-project": { "description": "Tampilkan project path yang aktif", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/current-project.md}\n\n$ARGUMENTS" },
-    "project-skills": { "description": "Tampilkan skills yang cocok untuk project", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/project-skills.md}\n\n$ARGUMENTS" }
+    "project-skills": { "description": "Tampilkan skills yang cocok untuk project", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/project-skills.md}\n\n$ARGUMENTS" },
+    "admin": { "description": "Update ECC + 9Router, rebuild plugin, doctor check", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/admin.md}\n\n$ARGUMENTS" }
   },
 
   "permission": {
