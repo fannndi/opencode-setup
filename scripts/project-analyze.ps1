@@ -1,14 +1,64 @@
 # Project Analyze — Analisa PRD dan buat ai-notes.md
-# Usage: .\project-analyze.ps1
+# Usage: .\project-analyze.ps1 [-ProjectPath "C:\path\to\project"]
+
+param(
+    [string]$ProjectPath
+)
 
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
 $SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ROOT_DIR = Split-Path -Parent $SETUP_DIR
+$SESSION_FILE = "$ROOT_DIR\.opencode-session.json"
 $ECC_DIR = "$ROOT_DIR\ecc"
 $SKILL_LIST = "$ROOT_DIR\Skill\skill-list.md"
 $FEATURE_LIST = "$ROOT_DIR\Feature\list.md"
+
+# ============================================================
+# Resolve Project Path
+# ============================================================
+
+function Get-ProjectPath {
+    if ($ProjectPath) { return $ProjectPath }
+    $sessionPath = Read-SessionKey -Key "current_project"
+    if ($sessionPath) {
+        Write-Host "  [SESSION] Using project: $sessionPath" -ForegroundColor Gray
+        return $sessionPath
+    }
+    return Split-Path -Parent $ROOT_DIR
+}
+
+function Read-SessionKey {
+    param([string]$Key)
+    if (-not (Test-Path $SESSION_FILE)) { return $null }
+    try {
+        $session = Get-Content $SESSION_FILE -Raw | ConvertFrom-Json
+        if ($session.PSObject.Properties.Name -contains $Key) { return $session.$Key }
+    } catch {}
+    return $null
+}
+
+function Write-SessionKey {
+    param([string]$Key, [string]$Value)
+    $existing = @{}
+    if (Test-Path $SESSION_FILE) {
+        try { $existing = Get-Content $SESSION_FILE -Raw | ConvertFrom-Json } catch {}
+    }
+    $existing.$Key = $Value
+    $existing | ConvertTo-Json -Depth 5 | Set-Content -Path $SESSION_FILE -Encoding UTF8
+}
+
+$PROJECT_DIR = Get-ProjectPath
+if (-not (Test-Path $PROJECT_DIR)) {
+    Write-Host "  [ERROR] Path not found: $PROJECT_DIR" -ForegroundColor Red
+    Write-Host "  Usage: .\project-analyze.ps1 -ProjectPath 'C:\path\to\project'" -ForegroundColor Yellow
+    exit 1
+}
+Write-SessionKey -Key "current_project" -Value $PROJECT_DIR
+
+$PRD_FILE = "$PROJECT_DIR\prd.md"
+$AI_NOTES = "$PROJECT_DIR\ai-notes.md"
 
 # ============================================================
 # Helpers

@@ -280,7 +280,9 @@
     "project-analyze": { "description": "Analisa PRD dan buat ai-notes.md", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/project-analyze.md}\n\n$ARGUMENTS" },
     "code-analyze": { "description": "Scan source code dan buat ai-notes.md", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/code-analyze.md}\n\n$ARGUMENTS" },
     "template": { "description": "Load project template", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/template.md}\n\n$ARGUMENTS" },
-    "reset-session": { "description": "Reset session state", "template": "Reset session: jalankan .\\scripts\\session-manager.ps1 -Action reset" }
+    "reset-session": { "description": "Reset session state", "template": "Reset session: jalankan .\\scripts\\session-manager.ps1 -Action reset" },
+    "set-project": { "description": "Set project path untuk Master Control", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/set-project.md}\n\n$ARGUMENTS" },
+    "current-project": { "description": "Tampilkan project path yang aktif", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/current-project.md}\n\n$ARGUMENTS" }
   },
 
   "permission": {

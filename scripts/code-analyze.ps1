@@ -1,15 +1,71 @@
 # Code Analyze — Scan existing source code → ai-notes.md
-# Usage: .\code-analyze.ps1
+# Usage: .\code-analyze.ps1 [-ProjectPath "C:\path\to\project"]
+
+param(
+    [string]$ProjectPath
+)
 
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
 $SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ROOT_DIR = Split-Path -Parent $SETUP_DIR
-$PROJECT_DIR = Split-Path -Parent $ROOT_DIR
+$SESSION_FILE = "$ROOT_DIR\.opencode-session.json"
 $SKILL_LIST = "$ROOT_DIR\Skill\skill-list.md"
-$AI_NOTES = "$PROJECT_DIR\ai-notes.md"
 $ECC_DIR = "$ROOT_DIR\ecc"
+
+# ============================================================
+# Resolve Project Path
+# ============================================================
+
+function Get-ProjectPath {
+    if ($ProjectPath) { return $ProjectPath }
+    
+    $sessionPath = Read-SessionKey -Key "current_project"
+    if ($sessionPath) {
+        Write-Host "  [SESSION] Using project: $sessionPath" -ForegroundColor Gray
+        return $sessionPath
+    }
+    
+    # Fallback: parent dir
+    return Split-Path -Parent $ROOT_DIR
+}
+
+function Read-SessionKey {
+    param([string]$Key)
+    if (-not (Test-Path $SESSION_FILE)) { return $null }
+    try {
+        $session = Get-Content $SESSION_FILE -Raw | ConvertFrom-Json
+        if ($session.PSObject.Properties.Name -contains $Key) {
+            return $session.$Key
+        }
+    } catch {}
+    return $null
+}
+
+function Write-SessionKey {
+    param([string]$Key, [string]$Value)
+    $session = @{}
+    if (Test-Path $SESSION_FILE) {
+        try { $session = Get-Content $SESSION_FILE -Raw | ConvertFrom-Json | ConvertTo-Json -Depth 10 } catch {}
+    }
+    $existing = @{}
+    try { $existing = Get-Content $SESSION_FILE -Raw | ConvertFrom-Json | ForEach-Object { $_ } } catch {}
+    $existing.$Key = $Value
+    $existing | ConvertTo-Json -Depth 10 | Set-Content -Path $SESSION_FILE -Encoding UTF8
+}
+
+$PROJECT_DIR = Get-ProjectPath
+if (-not (Test-Path $PROJECT_DIR)) {
+    Write-Host "  [ERROR] Path not found: $PROJECT_DIR" -ForegroundColor Red
+    Write-Host "  Usage: .\code-analyze.ps1 -ProjectPath 'C:\path\to\project'" -ForegroundColor Yellow
+    exit 1
+}
+
+# Save to session
+Write-SessionKey -Key "current_project" -Value $PROJECT_DIR
+
+$AI_NOTES = "$PROJECT_DIR\ai-notes.md"
 
 # Ignore folders
 $ignoreDirs = @(

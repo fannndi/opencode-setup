@@ -77,6 +77,7 @@ function Write-Session {
         "ai_notes_generated" { $session.workflow_state.ai_notes_generated = [bool]$Value }
         "analyze_project_done" { $session.workflow_state.analyze_project_done = [bool]$Value }
         "last_action" { $session.last_action = $Value }
+        "current_project" { $session.current_project = $Value }
     }
     
     $session.updated_at = $timestamp
@@ -116,6 +117,7 @@ function Show-Status {
     Write-Host "    Profile:        $($session.last_profile)" -ForegroundColor White
     Write-Host "    Stack:          $($session.stack)" -ForegroundColor White
     Write-Host "    Skills loaded:  $($session.skills_loaded.Count)" -ForegroundColor White
+    Write-Host "    Current project: $($session.current_project)" -ForegroundColor White
     Write-Host "    Last action:    $($session.last_action)" -ForegroundColor White
     Write-Host "    Created:        $($session.created_at)" -ForegroundColor Gray
     Write-Host "    Updated:        $($session.updated_at)" -ForegroundColor Gray

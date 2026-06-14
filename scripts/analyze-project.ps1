@@ -1,15 +1,62 @@
 # Analyze Project - Detect stack and load appropriate skills
-# Usage: .\analyze-project.ps1
+# Usage: .\analyze-project.ps1 [-ProjectPath "C:\path\to\project"]
+
+param(
+    [string]$ProjectPath
+)
 
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
 $SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ROOT_DIR = Split-Path -Parent $SETUP_DIR
+$SESSION_FILE = "$ROOT_DIR\.opencode-session.json"
 $ECC_DIR = "$ROOT_DIR\ecc"
 $OPENCODE_DIR = "$env:USERPROFILE\.config\opencode"
 $OPENCODE_CONFIG = "$OPENCODE_DIR\opencode.jsonc"
 $STACK_MAPPINGS = "$ECC_DIR\config\project-stack-mappings.json"
+
+# ============================================================
+# Resolve Project Path
+# ============================================================
+
+function Get-ProjectPath {
+    if ($ProjectPath) { return $ProjectPath }
+    $sessionPath = Read-SessionKey -Key "current_project"
+    if ($sessionPath) {
+        Write-Host "  [SESSION] Using project: $sessionPath" -ForegroundColor Gray
+        return $sessionPath
+    }
+    return Split-Path -Parent $ROOT_DIR
+}
+
+function Read-SessionKey {
+    param([string]$Key)
+    if (-not (Test-Path $SESSION_FILE)) { return $null }
+    try {
+        $session = Get-Content $SESSION_FILE -Raw | ConvertFrom-Json
+        if ($session.PSObject.Properties.Name -contains $Key) { return $session.$Key }
+    } catch {}
+    return $null
+}
+
+function Write-SessionKey {
+    param([string]$Key, [string]$Value)
+    $existing = @{}
+    if (Test-Path $SESSION_FILE) {
+        try { $existing = Get-Content $SESSION_FILE -Raw | ConvertFrom-Json } catch {}
+    }
+    $existing.$Key = $Value
+    $existing | ConvertTo-Json -Depth 5 | Set-Content -Path $SESSION_FILE -Encoding UTF8
+}
+
+$PROJECT_DIR = Get-ProjectPath
+if (-not (Test-Path $PROJECT_DIR)) {
+    Write-Host "  [ERROR] Path not found: $PROJECT_DIR" -ForegroundColor Red
+    Write-Host "  Usage: .\analyze-project.ps1 -ProjectPath 'C:\path\to\project'" -ForegroundColor Yellow
+    exit 1
+}
+Write-SessionKey -Key "current_project" -Value $PROJECT_DIR
 
 # ============================================================
 # Helpers
@@ -59,8 +106,7 @@ $totalSteps = 5
 
 Write-Step "1/$totalSteps" "Locating project root..."
 
-# Project root = 1 level up from opencode-setup
-$PROJECT_DIR = Split-Path -Parent $ROOT_DIR
+# Project root = 1 level up from opencode-setup (or from session)
 
 Write-Host "  Project: $PROJECT_DIR" -ForegroundColor White
 Write-Host "  From:    $ROOT_DIR" -ForegroundColor Gray

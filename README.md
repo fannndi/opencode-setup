@@ -157,6 +157,50 @@ Existing Code:  source code → /code-analyze → ai-notes.md
 
 ---
 
+## Master Control Mode
+
+Kontrol semua project dari satu repo opencode-setup, tanpa clone di dalam project.
+
+### Setup
+
+```powershell
+git clone https://github.com/fannndi/opencode-setup.git
+cd opencode-setup
+.\scripts\setup.ps1
+```
+
+### Daily Workflow
+
+```powershell
+cd opencode-setup
+opencode
+/start-free
+/set-project C:\Users\FANNNDI\Documents\expense_tracker  ← set project
+/code-analyze          ← scan source code → ai-notes.md
+/analyze-project       ← load skills sesuai stack
+restart
+```
+
+### Ganti Project
+
+```powershell
+/set-project C:\Users\FANNNDI\Documents\project-lain
+/code-analyze
+/analyze-project
+```
+
+### Commands Master Control
+
+| Command | Fungsi |
+|---------|--------|
+| `/set-project [path]` | Set project path aktif |
+| `/current-project` | Lihat project path aktif |
+| `/code-analyze` | Scan project aktif → ai-notes.md |
+| `/analyze-project` | Deteksi stack project aktif |
+| `/project-analyze` | Analisa PRD project aktif |
+
+---
+
 ## Yang Kamu Dapat
 
 | Komponen | Jumlah | Fungsi |
@@ -250,6 +294,8 @@ Ganti profile:
 | `/start-free` | Daily workflow (gratis) |
 | `/start-go` | Daily workflow (go) |
 | `/reset-session` | Reset session state |
+| `/set-project` | Set project path untuk Master Control |
+| `/current-project` | Lihat project path yang aktif |
 | `/plan` | Buat rencana implementasi |
 
 ### Development Commands
