@@ -365,20 +365,31 @@ if ($Profile -eq "gratis") {
 
 foreach ($model in $modelsToTest) {
     try {
-        $body = @{
-            model = $model
-            messages = @(@{ role = "user"; content = "hi" })
-            max_tokens = 10
-        } | ConvertTo-Json -Depth 5
-
         $response = Invoke-RestMethod -Uri "$API_URL/v1/chat/completions" `
             -Method POST `
-            -Body $body `
+            -Body "{`"model`":`"$model`",`"messages`":[{`"role`":`"user`",`"content`":`"hi`"}],`"max_tokens`":10}" `
             -ContentType "application/json" `
             -WebSession $httpSession `
             -TimeoutSec 15
 
-        $reply = $response.choices[0].message.content
+        # Parse SSE response (9Router returns data: {json}\n\ndata: [DONE])
+        $reply = ""
+        if ($response -is [string]) {
+            $lines = $response -split "`n"
+            foreach ($line in $lines) {
+                if ($line -match '^data: (.+)$' -and $Matches[1] -ne "[DONE]") {
+                    try {
+                        $json = $Matches[1] | ConvertFrom-Json
+                        if ($json.choices[0].message.content) {
+                            $reply = $json.choices[0].message.content
+                        }
+                    } catch {}
+                }
+            }
+        } elseif ($response.choices) {
+            $reply = $response.choices[0].message.content
+        }
+
         if ($reply) {
             Write-OK "$model : responding ($($reply.Substring(0, [Math]::Min(30, $reply.Length)))...)"
         } else {
@@ -458,12 +469,12 @@ Write-Host ""
 
 if ($Profile -eq "gratis") {
     Write-Host "  Combo chain:" -ForegroundColor Yellow
-    Write-Host "    oc/mimo-v2.5-free → oc/deepseek-v4-flash-free → kr/claude-sonnet-4.5" -ForegroundColor White
+    Write-Host "    mmf/mimo-auto → oc/deepseek-v4-flash-free → oc/mimo-v2.5-free" -ForegroundColor White
+    Write-Host "    Emergency: nemotron-3-ultra-free → big-pickle → north-mini-code-free" -ForegroundColor Gray
     Write-Host "    Cost: FREE forever" -ForegroundColor Green
 } else {
-    Write-Host "  Combo chain:" -ForegroundColor Yellow
-    Write-Host "    ocg/kimi-k2.6 → ocg/qwen3.6-plus → ocg/glm-5.1" -ForegroundColor White
-    Write-Host "    Cost: Limited quota" -ForegroundColor Yellow
+    Write-Host "  Profile go: (skipped)" -ForegroundColor Yellow
+    Write-Host "    Gunakan profile gratis untuk sekarang" -ForegroundColor Gray
 }
 
 Write-Host ""

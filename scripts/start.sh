@@ -444,12 +444,12 @@ echo ""
 
 if [[ "$PROFILE" == "gratis" ]]; then
     echo -e "  ${YELLOW}Combo chain:${NC}"
-    echo -e "  ${WHITE}    oc/mimo-v2.5-free → oc/deepseek-v4-flash-free → kr/claude-sonnet-4.5${NC}"
+    echo -e "  ${WHITE}    mmf/mimo-auto → oc/deepseek-v4-flash-free → oc/mimo-v2.5-free${NC}"
+    echo -e "  ${GRAY}    Emergency: nemotron-3-ultra-free → big-pickle → north-mini-code-free${NC}"
     echo -e "  ${GREEN}    Cost: FREE forever${NC}"
 else
-    echo -e "  ${YELLOW}Combo chain:${NC}"
-    echo -e "  ${WHITE}    ocg/kimi-k2.6 → ocg/qwen3.6-plus → ocg/glm-5.1${NC}"
-    echo -e "  ${YELLOW}    Cost: Limited quota${NC}"
+    echo -e "  ${YELLOW}Go profile: (skipped)${NC}"
+    echo -e "  ${GRAY}    Gunakan profile gratis untuk sekarang${NC}"
 fi
 
 echo ""
