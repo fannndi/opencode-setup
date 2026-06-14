@@ -81,74 +81,78 @@ Setelah `/start-free` atau `/start-go` selesai, baru jalankan workflow lain:
 
 ---
 
-## Workflow Lengkap
+## Workflow
 
-### Step 1: Clone Project
+### Start Project (prd.md)
+Untuk project baru yang punya Product Requirements Document.
 
 ```powershell
+# 1. Clone project
 git clone https://github.com/user/my-project.git
 cd my-project
-```
 
-### Step 2: Clone opencode-setup
-
-```powershell
+# 2. Clone opencode-setup
 git clone https://github.com/fannndi/opencode-setup.git
+
+# 3. Buka OpenCode
+opencode
+
+# 4. Start (WAJIB)
+/start-free    # atau /start-go
+
+# 5. Analisa PRD → ai-notes.md
+/project-analyze
+
+# 6. Deteksi stack + load skills
+/analyze-project
+
+# 7. Restart OpenCode
+# Ctrl+C dulu, lalu: opencode
+
+# 8. Mulai coding
+/tdd buat fitur baru
 ```
 
-### Step 3: Buka OpenCode
+### Existing Code (sudah ada source)
+Untuk project yang sudah berjalan, tanpa PRD.
 
 ```powershell
+# 1. Clone project
+git clone https://github.com/user/existing-project.git
+cd existing-project
+
+# 2. Clone opencode-setup
+git clone https://github.com/fannndi/opencode-setup.git
+
+# 3. Buka OpenCode
 opencode
-```
 
-### Step 4: Start (WAJIB)
-
-```
+# 4. Start (WAJIB)
 /start-free    # atau /start-go
-```
 
-### Step 5: Analisa PRD
+# 5. Analisa source code → ai-notes.md
+/code-analyze          ← scan imports, deps, framework
+                       ← generate ai-notes.md
 
-```
-/project-analyze
-```
-
-AI membaca `prd.md` dan generate `ai-notes.md` berisi rekomendasi skills, commands, dan architecture.
-
-### Step 6: Deteksi Stack
-
-```
+# 6. Deteksi stack + load skills
 /analyze-project
+
+# 7. Restart OpenCode
+# Ctrl+C dulu, lalu: opencode
+
+# 8. Mulai improve code
+/code-review src/
+/security api/
+/tdd buat unit test
 ```
-
-AI mendeteksi indicator files dan load skills yang sesuai.
-
-### Step 7: Restart OpenCode
-
-```
-# Ctrl+C dulu, lalu:
-opencode
-```
-
-### Step 8: Mulai Coding
-
-```
-/tdd buat function login
-/code-review src/auth.ts
-/security src/api/
-```
-
----
 
 ## Alur Singkat
 
 ```
-setup.ps1 → opencode → /start-free → /project-analyze → /analyze-project
-                                                              ↓
-                                                       restart opencode
-                                                              ↓
-                                                       mulai coding
+Start Project:  prd.md → /project-analyze → ai-notes.md
+Existing Code:  source code → /code-analyze → ai-notes.md
+                                    ↓
+                          /analyze-project → restart → coding
 ```
 
 ---
@@ -240,6 +244,7 @@ Ganti profile:
 | Command | Fungsi |
 |---------|--------|
 | `/project-analyze` | Analisa PRD → generate ai-notes.md |
+| `/code-analyze` | Scan source code → generate ai-notes.md |
 | `/analyze-project` | Deteksi stack + load skills |
 | `/template` | Load project template |
 | `/start-free` | Daily workflow (gratis) |
