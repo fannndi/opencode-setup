@@ -1,14 +1,56 @@
 #!/usr/bin/env bash
-# Code Analyze — Scan existing source code → ai-notes.md (macOS/Linux)
-# Usage: ./code-analyze.sh
+# Code Analyze — Scan existing source code → ai-notes.md (Master Control)
+# Usage: ./code-analyze.sh [--project-path "C:\path\to\project"]
 
 set -euo pipefail
 
+# ============================================================
+# Parse args
+# ============================================================
+
+PROJECT_PATH=""
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --project-path) PROJECT_PATH="$2"; shift 2 ;;
+        -h|--help) echo "Usage: $0 [--project-path <path>]"; exit 0 ;;
+        *) echo "Unknown option: $1"; exit 1 ;;
+    esac
+done
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-PROJECT_DIR="$(cd "$ROOT_DIR/.." && pwd)"
+SESSION_FILE="$ROOT_DIR/.opencode-session.json"
 SKILL_LIST="$ROOT_DIR/Skill/skill-list.md"
 ECC_DIR="$ROOT_DIR/ecc"
+
+# ============================================================
+# Resolve Project Path
+# ============================================================
+
+if [[ -z "$PROJECT_PATH" ]]; then
+    if [[ -f "$SESSION_FILE" ]]; then
+        PROJECT_PATH=$(python3 -c "import json; print(json.load(open('$SESSION_FILE')).get('current_project',''))" 2>/dev/null || echo "")
+        [[ -n "$PROJECT_PATH" ]] && echo -e "  ${GRAY}[SESSION] Using project: $PROJECT_PATH${NC}"
+    fi
+fi
+
+if [[ -z "$PROJECT_PATH" ]]; then
+    echo "[ERROR] No project path specified."
+    exit 1
+fi
+
+if [[ ! -d "$PROJECT_PATH" ]]; then
+    echo "[ERROR] Path not found: $PROJECT_PATH"
+    exit 1
+fi
+
+# Save to session
+if [[ -f "$SESSION_FILE" ]]; then
+    python3 -c "import json; d=json.load(open('$SESSION_FILE')); d['current_project']='$PROJECT_PATH'; json.dump(d,open('$SESSION_FILE','w'))" 2>/dev/null || true
+fi
+
+PROJECT_DIR="$PROJECT_PATH"
 AI_NOTES="$PROJECT_DIR/ai-notes.md"
 
 IGNORE_DIRS="node_modules|.git|build|dist|target|.dart_tool|.next|coverage|__pycache__|.venv|venv|vendor|.opencode|assets|.github|pub-cache|.packages|.pub-preload-cache|.idea|.vscode|.vs|bin|obj|.flutter-plugins|.flutter|android|ios|macos|windows|linux|web"

@@ -1,11 +1,13 @@
-# OpenCode Daily Workflow
+# OpenCode Daily Workflow (Master Control)
 # Check repos, sync, test models, apply profile
-# Usage: .\start.ps1 -Profile gratis|go
+# Usage: .\start.ps1 -Profile gratis|go [-ProjectPath "C:\path\to\project"]
 
 param(
     [Parameter(Mandatory=$true)]
     [ValidateSet("gratis", "go")]
-    [string]$Profile
+    [string]$Profile,
+
+    [string]$ProjectPath
 )
 
 $ErrorActionPreference = "Stop"
@@ -22,6 +24,23 @@ $OPENCODE_CONFIG = "$OPENCODE_DIR\opencode.jsonc"
 $PROFILE_CONFIG = "$ROOT_DIR\profiles\$Profile\opencode.jsonc"
 $API_URL = "http://localhost:20128"
 $API_PASS = "123456"
+
+# ============================================================
+# Resolve Project Path (Master Control)
+# ============================================================
+
+if (-not $ProjectPath) {
+    try {
+        if (Test-Path $SESSION_FILE) {
+            $session = Get-Content $SESSION_FILE -Raw | ConvertFrom-Json
+            if ($session.PSObject.Properties.Name -contains "current_project") {
+                $ProjectPath = $session.current_project
+            }
+        }
+    } catch {}
+}
+
+if ($ProjectPath) { Write-Host "  [SESSION] Project: $ProjectPath" -ForegroundColor Gray }
 
 # ============================================================
 # Helpers

@@ -1,14 +1,54 @@
 #!/usr/bin/env bash
-# Analyze Project - Detect stack and load appropriate skills (macOS/Linux)
-# Usage: ./analyze-project.sh
+# Analyze Project - Detect stack and load appropriate skills (Master Control)
+# Usage: ./analyze-project.sh [--project-path "C:\path\to\project"]
 
 set -euo pipefail
 
+# ============================================================
+# Parse args
+# ============================================================
+
+PROJECT_PATH=""
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --project-path) PROJECT_PATH="$2"; shift 2 ;;
+        -h|--help) echo "Usage: $0 [--project-path <path>]"; exit 0 ;;
+        *) echo "Unknown option: $1"; exit 1 ;;
+    esac
+done
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+SESSION_FILE="$ROOT_DIR/.opencode-session.json"
 ECC_DIR="$ROOT_DIR/ecc"
 OPENCODE_DIR="$HOME/.config/opencode"
 OPENCODE_CONFIG="$OPENCODE_DIR/opencode.jsonc"
+
+# ============================================================
+# Resolve Project Path
+# ============================================================
+
+if [[ -z "$PROJECT_PATH" ]]; then
+    if [[ -f "$SESSION_FILE" ]]; then
+        PROJECT_PATH=$(python3 -c "import json; print(json.load(open('$SESSION_FILE')).get('current_project',''))" 2>/dev/null || echo "")
+        [[ -n "$PROJECT_PATH" ]] && echo -e "  ${GRAY}[SESSION] Using project: $PROJECT_PATH${NC}"
+    fi
+fi
+
+if [[ -z "$PROJECT_PATH" ]]; then
+    echo "[ERROR] No project path specified."
+    echo "Usage: $0 --project-path 'C:\path\to\project'"
+    echo "Or set project with: /set-project C:\path\to\project"
+    exit 1
+fi
+
+# Save to session
+if [[ -f "$SESSION_FILE" ]]; then
+    python3 -c "import json; d=json.load(open('$SESSION_FILE')); d['current_project']='$PROJECT_PATH'; json.dump(d,open('$SESSION_FILE','w'))" 2>/dev/null || true
+fi
+
+PROJECT_DIR="$PROJECT_PATH"
 
 # ============================================================
 # Colors
@@ -43,8 +83,6 @@ echo -e "${NC}"
 # ============================================================
 
 step "1/5" "Locating project root..."
-
-PROJECT_DIR="$(cd "$ROOT_DIR/.." && pwd)"
 
 echo -e "  ${WHITE}Project: $PROJECT_DIR${NC}"
 echo -e "  ${GRAY}From:    $ROOT_DIR${NC}"

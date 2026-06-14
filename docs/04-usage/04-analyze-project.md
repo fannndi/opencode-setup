@@ -3,15 +3,12 @@
 ## Alur Lengkap
 
 ```
-1. clone project repo (prd.md only)
-2. cd project
-3. clone opencode-setup
-4. opencode
-5. /plan → analisa PRD
-6. /project-analyze → buat ai-notes.md
-7. /analyze-project → deteksi stack + load skills
-8. restart opencode
-9. mulai coding
+1. cd opencode-setup (Master Control)
+2. opencode
+3. /start-free
+4. /set-project C:\path\ke\project
+5. /project-analyze
+6. /analyze-project
 ```
 
 ## /project-analyze

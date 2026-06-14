@@ -92,15 +92,16 @@ OpenCode Setup adalah **asisten coding AI** yang bisa kamu clone ke dalam projec
 ## Alur Cepat
 
 ```
-1. git clone project-repo (prd.md only)
-2. cd project-repo
-3. git clone opencode-setup
+1. git clone opencode-setup (SEKALI)
+2. cd opencode-setup
+3. .\scripts\setup.ps1
 4. opencode
-5. /plan → analisa PRD
-6. /project-analyze → buat ai-notes.md
-7. /analyze-project → deteksi stack + load skills
-8. restart opencode
-9. mulai coding
+5. /start-free
+6. /set-project C:\path\ke\project-anda
+7. /code-analyze atau /project-analyze
+8. /analyze-project
+9. restart opencode
+10. mulai coding
 ```
 
 ### Full Workflow

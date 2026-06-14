@@ -9,10 +9,14 @@ Scan existing source code, deteksi stack, architecture, patterns, dan generate a
 
 ## Workflow
 
-1. Jalankan script:
+1. Set project path dulu atau kasih parameter:
 ```powershell
-cd opencode-setup
-.\scripts\code-analyze.ps1
+C:\Users\FANNNDI\Documents\opencode-setup\scripts\code-analyze.ps1 -ProjectPath "C:\path\to\project"
+```
+
+Atau kalau sudah pakai session:
+```powershell
+C:\Users\FANNNDI\Documents\opencode-setup\scripts\code-analyze.ps1
 ```
 
 2. Script akan melakukan:

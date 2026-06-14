@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-# OpenCode Daily Workflow (macOS/Linux)
-# Check repos, sync, test models, apply profile
-# Usage: ./start.sh --profile gratis|go
+# OpenCode Daily Workflow (Master Control)
+# Usage: ./start.sh --profile gratis|go [--project-path "C:\path\to\project"]
 
 set -euo pipefail
 
@@ -10,12 +9,14 @@ set -euo pipefail
 # ============================================================
 
 PROFILE=""
+PROJECT_PATH=""
 
 while [[ $# -gt 0 ]]; do
     case $1 in
         --profile) PROFILE="$2"; shift 2 ;;
+        --project-path) PROJECT_PATH="$2"; shift 2 ;;
         -h|--help)
-            echo "Usage: $0 --profile <gratis|go>"
+            echo "Usage: $0 --profile <gratis|go> [--project-path <path>]"
             exit 0
             ;;
         *) echo "Unknown option: $1"; exit 1 ;;

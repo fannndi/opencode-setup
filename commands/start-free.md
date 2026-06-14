@@ -9,10 +9,9 @@ Jalankan daily workflow untuk free models.
 
 ## Instructions
 
-1. Jalankan script berikut:
+1. Jalankan script berikut (dari mana saja):
 ```powershell
-cd opencode-setup
-.\scripts\start.ps1 -Profile gratis
+C:\Users\FANNNDI\Documents\opencode-setup\scripts\start.ps1 -Profile gratis
 ```
 
 2. Review output workflow

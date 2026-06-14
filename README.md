@@ -3,17 +3,16 @@
 Asisten coding AI yang bisa kamu clone ke dalam project manapun.
 
 ```
-my-project/
-├── prd.md                 # Product Requirements Document
-├── frontend/              # Source code frontend
-├── backend/               # Source code backend
-├── lib/                   # Source code library/shared
-├── ai-notes.md            # Rekomendasi dari AI
-├── docs/                  # Rencana implementasi
-└── opencode-setup/        # Clone ini di sini
-    ├── ecc/               # 270+ skills, 64 agents
-    ├── 9router/           # AI gateway
-    └── profiles/          # Config profiles
+opencode-setup/              ← Master repo (clone sekali)
+    ├── ecc/                 # 270+ skills, 64 agents
+    ├── 9router/             # AI gateway
+    ├── profiles/            # Config profiles
+    ├── scripts/             # Automation scripts (control semua project)
+    ├── commands/            # Command templates
+    ├── templates/           # Project templates
+    ├── Feature/             # Feature inventory
+    ├── Skill/               # Skill catalog
+    └── docs/                # Dokumentasi
 ```
 
 ---
@@ -68,94 +67,91 @@ opencode
 - Config terapply
 - Skills terload
 
-### Step 4: Mulai Pakai
+### Step 4: Set Project (Master Control)
 
-Setelah `/start-free` atau `/start-go` selesai, baru jalankan workflow lain:
+```powershell
+# Di OpenCode, set project yang akan di-handle:
+/set-project C:\Users\FANNNDI\Documents\expense_tracker
 
+# Atau ganti ke project lain kapan saja:
+/set-project C:\Users\FANNNDI\Documents\project-lain
 ```
-/project-analyze    # Analisa PRD
-/analyze-project    # Deteksi stack
-/plan               # Buat rencana
-/tdd                # Mulai coding
+
+### Step 5: Mulai Pakai
+
+Setelah `/start-free` dan `/set-project` selesai, jalankan sesuai kebutuhan:
+
+```powershell
+# Project existing (source code sudah ada):
+/code-analyze          # Scan source code → ai-notes.md
+/analyze-project       # Deteksi stack + load skills
+
+# Project baru (pake PRD):
+/project-analyze       # Analisa PRD → ai-notes.md
+/analyze-project       # Deteksi stack + load skills
+
+# Setelah restart opencode:
+/plan                  # Buat rencana
+/tdd                   # Mulai coding
+/code-review           # Review kode
+/security              # Security audit
 ```
 
 ---
 
 ## Workflow
 
-### Start Project (prd.md)
-Untuk project baru yang punya Product Requirements Document.
+### Master Control (Recommended)
+Satu repo opencode-setup untuk semua project.
 
 ```powershell
-# 1. Clone project
-git clone https://github.com/user/my-project.git
-cd my-project
-
-# 2. Clone opencode-setup
+# Setup sekali:
 git clone https://github.com/fannndi/opencode-setup.git
+cd opencode-setup
+.\scripts\setup.ps1
 
-# 3. Buka OpenCode
+# Setiap hari — control project dari sini:
 opencode
+/start-free
+/set-project C:\Users\FANNNDI\Documents\expense_tracker  ← ganti sesuai project
 
-# 4. Start (WAJIB)
-/start-free    # atau /start-go
+# Analisa existing code:
+/code-analyze          ← scan source code → ai-notes.md
+/analyze-project       ← load skills sesuai stack
+restart opencode
 
-# 5. Analisa PRD → ai-notes.md
-/project-analyze
+# Review & improve:
+/code-review lib/
+/security api/
+/tdd
 
-# 6. Deteksi stack + load skills
+# Ganti project:
+/set-project C:\Users\FANNNDI\Documents\project-lain
+/code-analyze
 /analyze-project
-
-# 7. Restart OpenCode
-# Ctrl+C dulu, lalu: opencode
-
-# 8. Mulai coding
-/tdd buat fitur baru
 ```
 
-### Existing Code (sudah ada source)
-Untuk project yang sudah berjalan, tanpa PRD.
+### Project Baru (dengan PRD)
 
 ```powershell
-# 1. Clone project
-git clone https://github.com/user/existing-project.git
-cd existing-project
-
-# 2. Clone opencode-setup
-git clone https://github.com/fannndi/opencode-setup.git
-
-# 3. Buka OpenCode
-opencode
-
-# 4. Start (WAJIB)
-/start-free    # atau /start-go
-
-# 5. Analisa source code → ai-notes.md
-/code-analyze          ← scan imports, deps, framework
-                       ← generate ai-notes.md
-
-# 6. Deteksi stack + load skills
-/analyze-project
-
-# 7. Restart OpenCode
-# Ctrl+C dulu, lalu: opencode
-
-# 8. Mulai improve code
-/code-review src/
-/security api/
-/tdd buat unit test
+/set-project C:\Users\FANNNDI\Documents\project-baru
+/project-analyze          ← analisa PRD → ai-notes.md
+/analyze-project          ← load skills
+restart opencode
+/tdd buat fitur
 ```
 
 ## Alur Singkat
 
 ```
-Start Project:  prd.md → /project-analyze → ai-notes.md
-Existing Code:  source code → /code-analyze → ai-notes.md
-                                    ↓
-                          /analyze-project → restart → coding
-```
+Clone sekali:
+opencode-setup/ → setup.ps1 → opencode → /start-free
 
----
+Setiap hari:
+/set-project [path] → /code-analyze → /analyze-project → restart → coding
+               atau
+/set-project [path] → /project-analyze → /analyze-project → restart → coding
+```
 
 ## Master Control Mode
 
@@ -372,41 +368,40 @@ opencode-setup/
 ### Flutter Project
 
 ```powershell
-git clone https://github.com/user/flutter-app.git
-cd flutter-app
-git clone https://github.com/fannndi/opencode-setup.git
+# Terminal — di opencode-setup (Master Control):
+cd C:\Users\FANNNDI\Documents\opencode-setup
 opencode
 
 # Di OpenCode:
 /start-free                           # WAJIB dulu
-/project-analyze                      # → ai-notes.md
+/set-project C:\Users\User\flutter-app  # Set project
+/code-analyze                         # → ai-notes.md (flutter detected)
 /analyze-project                      # → load dart-flutter-patterns
-# Restart
-opencode
+restart opencode
 
-# Mulai coding:
-/tdd buat halaman login
+# Review & improve:
 /code-review lib/screens/
+/tdd buat halaman login
 ```
 
 ### Go API Project
 
 ```powershell
-git clone https://github.com/user/go-api.git
-cd go-api
-git clone https://github.com/fannndi/opencode-setup.git
+# Terminal — di opencode-setup (Master Control):
+cd C:\Users\FANNNDI\Documents\opencode-setup
 opencode
 
 # Di OpenCode:
 /start-free                           # WAJIB dulu
-/project-analyze                      # → ai-notes.md
+/set-project C:\Users\User\go-api      # Set project
+/code-analyze                         # → ai-notes.md (golang detected)
 /analyze-project                      # → load golang-patterns
-# Restart
-opencode
+restart opencode
 
-# Mulai coding:
-/tdd buat endpoint /api/users
+# Review & improve:
+/code-review internal/handler/
 /security internal/auth/
+/tdd buat endpoint /api/users
 ```
 
 ---

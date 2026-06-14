@@ -1,11 +1,26 @@
 #!/usr/bin/env bash
-# Project Analyze — Analisa PRD dan buat ai-notes.md (macOS/Linux)
-# Usage: ./project-analyze.sh
+# Project Analyze — Analisa PRD dan buat ai-notes.md (Master Control)
+# Usage: ./project-analyze.sh [--project-path "C:\path\to\project"]
 
 set -euo pipefail
 
+# ============================================================
+# Parse args
+# ============================================================
+
+PROJECT_PATH=""
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --project-path) PROJECT_PATH="$2"; shift 2 ;;
+        -h|--help) echo "Usage: $0 [--project-path <path>]"; exit 0 ;;
+        *) echo "Unknown option: $1"; exit 1 ;;
+    esac
+done
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+SESSION_FILE="$ROOT_DIR/.opencode-session.json"
 ECC_DIR="$ROOT_DIR/ecc"
 SKILL_LIST="$ROOT_DIR/Skill/skill-list.md"
 FEATURE_LIST="$ROOT_DIR/Feature/list.md"
@@ -39,14 +54,35 @@ echo "  ╚═══════════════════════
 echo -e "${NC}"
 
 # ============================================================
+# Resolve Project Path
+# ============================================================
+
+if [[ -z "$PROJECT_PATH" ]]; then
+    if [[ -f "$SESSION_FILE" ]]; then
+        PROJECT_PATH=$(python3 -c "import json; print(json.load(open('$SESSION_FILE')).get('current_project',''))" 2>/dev/null || echo "")
+        [[ -n "$PROJECT_PATH" ]] && echo -e "  ${GRAY}[SESSION] Using project: $PROJECT_PATH${NC}"
+    fi
+fi
+
+if [[ -z "$PROJECT_PATH" ]]; then
+    echo "[ERROR] No project path specified."
+    exit 1
+fi
+
+# Save to session
+if [[ -f "$SESSION_FILE" ]]; then
+    python3 -c "import json; d=json.load(open('$SESSION_FILE')); d['current_project']='$PROJECT_PATH'; json.dump(d,open('$SESSION_FILE','w'))" 2>/dev/null || true
+fi
+
+PROJECT_DIR="$PROJECT_PATH"
+PRD_FILE="$PROJECT_DIR/prd.md"
+AI_NOTES="$PROJECT_DIR/ai-notes.md"
+
+# ============================================================
 # [1/5] Locate project root
 # ============================================================
 
 step "1/5" "Locating project root..."
-
-PROJECT_DIR="$(cd "$ROOT_DIR/.." && pwd)"
-PRD_FILE="$PROJECT_DIR/prd.md"
-AI_NOTES="$PROJECT_DIR/ai-notes.md"
 
 echo -e "  ${WHITE}Project: $PROJECT_DIR${NC}"
 

@@ -1,5 +1,7 @@
 # Quick Start — Setup 1 Menit
 
+Setup **Master Control** — clone sekali, kelola semua project dari satu tempat.
+
 ## Prasyarat
 
 - [Node.js](https://nodejs.org) terinstall
@@ -35,4 +37,9 @@ chmod +x scripts/setup.sh
 
 ## Selanjutnya
 
-Baca [Setelah Setup](03-after-setup.md) untuk konfigurasi API key dan dashboard.
+1. Baca [Setelah Setup](03-after-setup.md) untuk API key
+2. Buka OpenCode: `opencode`
+3. `/start-free` — start dulu
+4. `/set-project C:\path\ke\project` — set project
+5. `/code-analyze` — scan source code
+6. `/analyze-project` — load skills

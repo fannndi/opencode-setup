@@ -50,22 +50,28 @@ Dashboard tersedia di: `http://localhost:20128/dashboard`
 2. Add provider dengan API key OpenCode Go
 3. Pilih model: Kimi K2.6, Qwen3.6 Plus, dll
 
-## 4. Mulai Coding
+## 4. Mulai Coding (Master Control)
 
-```bash
-# Dalam folder project kamu
+```powershell
+cd C:\Users\FANNNDI\Documents\opencode-setup
 opencode
+/start-free
+/set-project C:\path\ke\project-anda
+/code-analyze
+/analyze-project
+restart opencode
 ```
 
-## 5. (Opsional) Analyze Project
+## 5. Analyze Project (Master Control)
 
-Jika kamu clone opencode-setup di dalam project:
+Dari repo opencode-setup, tanpa perlu clone di dalam project:
 
-```bash
-cd opencode-setup
+```powershell
 opencode
-# Ketik di OpenCode:
-/analyze-project
+# Di OpenCode:
+/start-free
+/set-project C:\path\ke\project-anda   # Set project target
+/analyze-project                          # Deteksi stack + load skills
 ```
 
 Ini akan:

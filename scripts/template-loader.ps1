@@ -1,18 +1,44 @@
-# Template Loader — Copy template docs ke project
-# Usage: .\template-loader.ps1 -Template flutter-firebase|go-api|nextjs-fullstack|python-fastapi
+# Template Loader — Copy template docs ke project (Master Control)
+# Usage: .\template-loader.ps1 -Template flutter-firebase [-ProjectPath "C:\path\to\project"]
 
 param(
     [Parameter(Mandatory=$true)]
     [ValidateSet("flutter-firebase", "go-api", "nextjs-fullstack", "python-fastapi")]
-    [string]$Template
+    [string]$Template,
+
+    [string]$ProjectPath
 )
 
 $ErrorActionPreference = "Stop"
+$ProgressPreference = "SilentlyContinue"
 
 $SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ROOT_DIR = Split-Path -Parent $SETUP_DIR
 $TEMPLATE_DIR = "$ROOT_DIR\templates\$Template"
-$PROJECT_DIR = Split-Path -Parent $ROOT_DIR
+$SESSION_FILE = "$ROOT_DIR\.opencode-session.json"
+
+# ============================================================
+# Resolve Project Path
+# ============================================================
+
+if (-not $ProjectPath) {
+    try {
+        if (Test-Path $SESSION_FILE) {
+            $session = Get-Content $SESSION_FILE -Raw | ConvertFrom-Json
+            if ($session.PSObject.Properties.Name -contains "current_project") {
+                $ProjectPath = $session.current_project
+            }
+        }
+    } catch {}
+}
+
+if (-not $ProjectPath) {
+    Write-Host "  [ERROR] No project path specified." -ForegroundColor Red
+    Write-Host "  Usage: .\template-loader.ps1 -Template flutter-firebase -ProjectPath 'C:\path\to\project'" -ForegroundColor Yellow
+    exit 1
+}
+
+$PROJECT_DIR = $ProjectPath
 
 Write-Host ""
 Write-Host "  ╔══════════════════════════════════════════════════╗" -ForegroundColor Magenta
@@ -30,16 +56,12 @@ Write-Host "  [OK] Template found" -ForegroundColor Green
 
 # Step 2: Read template
 Write-Host "  [2/3] Reading template..." -ForegroundColor Cyan
-$templateContent = Get-Content "$TEMPLATE_DIR\template.md" -Raw
 Write-Host "  [OK] Template loaded" -ForegroundColor Green
 
 # Step 3: Apply template
 Write-Host "  [3/3] Applying template..." -ForegroundColor Cyan
 
-# Create docs structure based on template
 $docsDir = "$PROJECT_DIR\docs"
-
-# Create docs subdirectories based on template type
 switch ($Template) {
     "flutter-firebase" {
         New-Item -ItemType Directory -Path "$docsDir\frontend" -Force | Out-Null
@@ -51,25 +73,21 @@ switch ($Template) {
         New-Item -ItemType Directory -Path "$docsDir\api" -Force | Out-Null
         New-Item -ItemType Directory -Path "$docsDir\database" -Force | Out-Null
         New-Item -ItemType Directory -Path "$docsDir\deployment" -Force | Out-Null
-        Write-Host "  [OK] Created: docs/api, docs/database, docs/deployment" -ForegroundColor Green
     }
     "nextjs-fullstack" {
         New-Item -ItemType Directory -Path "$docsDir\frontend" -Force | Out-Null
         New-Item -ItemType Directory -Path "$docsDir\backend" -Force | Out-Null
         New-Item -ItemType Directory -Path "$docsDir\database" -Force | Out-Null
-        Write-Host "  [OK] Created: docs/frontend, docs/backend, docs/database" -ForegroundColor Green
     }
     "python-fastapi" {
         New-Item -ItemType Directory -Path "$docsDir\api" -Force | Out-Null
         New-Item -ItemType Directory -Path "$docsDir\database" -Force | Out-Null
         New-Item -ItemType Directory -Path "$docsDir\deployment" -Force | Out-Null
-        Write-Host "  [OK] Created: docs/api, docs/database, docs/deployment" -ForegroundColor Green
     }
 }
 
-# Copy template guide to project
 Copy-Item "$TEMPLATE_DIR\template.md" "$docsDir\TEMPLATE-GUIDE.md" -Force
-Write-Host "  [OK] Copied template guide to docs/TEMPLATE-GUIDE.md" -ForegroundColor Green
+Write-Host "  [OK] Applied template to $PROJECT_DIR" -ForegroundColor Green
 
 Write-Host ""
 Write-Host "  ╔══════════════════════════════════════════════════╗" -ForegroundColor Green
@@ -79,6 +97,5 @@ Write-Host ""
 Write-Host "  Project:  $PROJECT_DIR" -ForegroundColor White
 Write-Host "  Template: $Template" -ForegroundColor White
 Write-Host "  Docs:     $docsDir" -ForegroundColor White
-Write-Host ""
 Write-Host "  Next: isi docs/ sesuai prd.md + ai-notes.md" -ForegroundColor Cyan
 Write-Host ""
