@@ -1,21 +1,30 @@
 # Scripts — Referensi
 
-## Daftar Scripts
+## Daftar Scripts (31 file)
 
 | Script | Platform | Fungsi |
 |--------|----------|--------|
-| `setup.ps1` | Windows | Full setup (clone + install + config) |
-| `setup.sh` | macOS/Linux | Full setup |
-| `install.ps1` | Windows | Quick re-apply config |
-| `install.sh` | macOS/Linux | Quick re-apply |
-| `clone.ps1` | Windows | Clone ECC + 9Router |
-| `clone.sh` | macOS/Linux | Clone repos |
-| `sync.ps1` | Windows | Sync changelog |
-| `sync.sh` | macOS/Linux | Sync changelog |
-| `start.ps1` | Windows | Daily workflow |
-| `start.sh` | macOS/Linux | Daily workflow |
-| `analyze-project.ps1` | Windows | Deteksi stack |
-| `analyze-project.sh` | macOS/Linux | Deteksi stack |
+| `setup.ps1` / `.sh` | Both | Full setup (clone + install + config) |
+| `install.ps1` / `.sh` | Both | Quick re-apply config |
+| `clone.ps1` / `.sh` | Both | Clone ECC + 9Router |
+| `sync.ps1` / `.sh` | Both | Sync changelog |
+| `start.ps1` / `.sh` | Both | Daily workflow (session-aware) |
+| `auto-start.ps1` | Win | Chain semua workflow 1 command |
+| `full-start.ps1` | Win | Start → code-analyze → ready |
+| `admin-update.ps1` | Win | Update ECC/9Router + doctor |
+| `analyze-project.ps1` / `.sh` | Both | Deteksi stack + load skills |
+| `code-analyze.ps1` / `.sh` | Both | Scan source → ai-notes.md |
+| `project-analyze.ps1` / `.sh` | Both | Analisa PRD → ai-notes.md |
+| `project-skills.ps1` | Win | Lihat skills yang cocok |
+| `research.ps1` / `.sh` | Both | Web search + AI ringkasan |
+| `generate-prd.ps1` | Win | Ide → PRD otomatis |
+| `wizard.ps1` | Win | Panduan interaktif pemula |
+| `quality-gate.ps1` | Win | Verify fixes, track iterations |
+| `token-tracker.ps1` | Win | Token usage + session stats |
+| `memory.ps1` | Win | Simpan/baca memori session |
+| `session-manager.ps1` | Win | Session management |
+| `template-loader.ps1` / `.sh` | Both | Load project template |
+| `create.ps1` | Win | Generate boilerplate |
 
 ## setup.ps1 / setup.sh
 
@@ -48,25 +57,9 @@ Quick re-apply config.
 - `-Profile gratis|go` — Pilih profile
 - `-SyncFirst` — Sync changelog dulu
 
-## clone.ps1 / clone.sh
-
-Clone ECC + 9Router repos.
-
-```powershell
-.\scripts\clone.ps1
-```
-
-## sync.ps1 / sync.sh
-
-Sync changelog dari repos.
-
-```powershell
-.\scripts\sync.ps1
-```
-
 ## start.ps1 / start.sh
 
-Daily workflow.
+Daily workflow. Session-aware + auto-heal + auto-update.
 
 ```powershell
 .\scripts\start.ps1 -Profile gratis
@@ -74,28 +67,74 @@ Daily workflow.
 ```
 
 **Yang dilakukan:**
-1. Check repos (clone/pull)
-2. Sync changelog
-3. Analyze updates → auto rebuild jika perlu
-4. Test 9Router → auto-start jika mati
-5. Test models → kirim "hi"
+1. Self-healing check (9Router, ECC, plugin, session)
+2. Auto-update (pull ECC/9Router, rebuild plugin)
+3. Check repos
+4. Sync changelog
+5. Test models
 6. Apply profile
-7. Ready summary
+7. Save session
+
+## auto-start.ps1
+
+Chain semua workflow dalam 1 command.
+
+```powershell
+.\scripts\auto-start.ps1 -Profile gratis -Mode existing -ProjectPath "C:\project"
+```
+
+**Yang dilakukan:**
+1. Start workflow
+2. Code-analyze (atau project-analyze)
+3. Analyze-project
+4. Save memory
+
+## admin-update.ps1
+
+Update ECC + 9Router + doctor check.
+
+```powershell
+.\scripts\admin-update.ps1
+```
+
+**Yang dilakukan:**
+1. Pull ECC
+2. Pull 9Router
+3. Rebuild plugin (jika perlu)
+4. Doctor check
+5. Save admin log
 
 ## analyze-project.ps1 / analyze-project.sh
 
 Deteksi stack project.
 
 ```powershell
-.\scripts\analyze-project.ps1
+.\scripts\analyze-project.ps1 -ProjectPath "C:\project"
 ```
 
-**Yang dilakukan:**
-1. Locate project root (1 level up)
-2. Scan for indicators
-3. Match stack (dart-flutter, golang, dll)
-4. Load skills
-5. Generate config
+## code-analyze.ps1 / code-analyze.sh
+
+Scan source code → ai-notes.md.
+
+```powershell
+.\scripts\code-analyze.ps1 -ProjectPath "C:\project"
+```
+
+## research.ps1 / research.sh
+
+Web search + AI ringkasan.
+
+```powershell
+.\scripts\research.ps1 -Query "Flutter best practices"
+```
+
+## wizard.ps1
+
+Panduan interaktif untuk pemula. Tanya-jawab, auto setup.
+
+```powershell
+.\scripts\wizard.ps1
+```
 
 ## Lihat Juga
 

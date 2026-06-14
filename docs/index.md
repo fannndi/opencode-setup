@@ -108,8 +108,8 @@ OpenCode Setup adalah **asisten coding AI** yang bisa kamu clone ke dalam projec
 
 ```
 /project-analyze → ai-notes.md (rekomendasi skills/commands)
-/make-docs → docs/ (berdasarkan prd.md + ai-notes.md)
-/implement → code (berdasarkan docs/ + prd.md + ai-notes.md)
+/code-analyze → ai-notes.md (analisa source code)
+/analyze-project → deteksi stack + load skills
 ```
 
 ---

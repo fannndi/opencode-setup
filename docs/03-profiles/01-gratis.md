@@ -4,16 +4,17 @@
 
 | Model | Provider | Biaya |
 |-------|----------|-------|
+| `mmf/mimo-auto` | MiMo Code Free | $0 |
 | `oc/mimo-v2.5-free` | OpenCode Free | $0 |
 | `oc/deepseek-v4-flash-free` | OpenCode Free | $0 |
-| `kr/claude-sonnet-4.5` | Kiro AI | $0 (OAuth) |
-| `kr/glm-5` | Kiro AI | $0 (OAuth) |
+| `oc/big-pickle` | OpenCode Free | $0 |
+| `oc/north-mini-code-free` | OpenCode Free | $0 |
 
 ## Combo Chain
 
 ```
-Primary:     oc/mimo-v2.5-free → oc/deepseek-v4-flash-free → kr/claude-sonnet-4.5
-Small:       oc/deepseek-v4-flash-free → kr/glm-5 → oc/north-mini-code-free
+Primary:     mmf/mimo-auto → oc/deepseek-v4-flash-free → oc/mimo-v2.5-free
+Emergency:   oc/nemotron-3-ultra-free → oc/big-pickle → oc/north-mini-code-free
 ```
 
 ## Kelebihan
@@ -22,7 +23,7 @@ Small:       oc/deepseek-v4-flash-free → kr/glm-5 → oc/north-mini-code-free
 - ✅ Unlimited usage
 - ✅ Auto-fallback jika model gagal
 - ✅ RTK Token Saver (hemat 20-40%)
-- ✅ Caveman Mode (hemat 65% output)
+- ✅ Caveman Mode (hemat 65% output). Lihat [caveman-mode.md](../../caveman-mode.md)
 
 ## Kekurangan
 

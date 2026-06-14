@@ -182,11 +182,22 @@ restart opencode
 | `/build-fix` | Fix build errors | `/build-fix` |
 | `/verify` | Verification loop | `/verify` |
 | `/quality-gate` | Verify fixes, track iterations | `/quality-gate` |
-| `/research` | Web search + AI ringkasan | `/research Flutter 2026` |
 | `/token-stats` | Token usage + session stats | `/token-stats` |
 | `/memory` | Simpan/baca memori session | `/memory read` |
 | `/reset-session` | Reset session state | `/reset-session` |
 | `/admin` | Update ECC/9Router, doctor check | `/admin` |
+| `/e2e` | End-to-end Playwright testing | `/e2e` |
+| `/refactor-clean` | Hapus dead code | `/refactor-clean` |
+| `/orchestrate` | Multi-agent orchestration | `/orchestrate` |
+| `/learn` | Extract patterns dari session | `/learn` |
+| `/checkpoint` | Save progress | `/checkpoint` |
+| `/eval` | Evaluate terhadap criteria | `/eval` |
+| `/update-docs` | Update dokumentasi | `/update-docs` |
+| `/test-coverage` | Analisa test coverage | `/test-coverage` |
+| `/setup-pm` | Config package manager | `/setup-pm` |
+| `/skill-create` | Generate skill baru | `/skill-create` |
+| `/instinct-status` | Lihat instincts | `/instinct-status` |
+| `/projects` | List projects | `/projects` |
 
 ---
 
@@ -250,7 +261,7 @@ restart
 
 ```
 opencode-setup/
-├── scripts/                 # Automation scripts (24 file)
+├── scripts/                 # Automation scripts (30 file)
 ├── commands/                # OpenCode command templates
 ├── profiles/                # Config profiles (gratis / go)
 ├── templates/               # Project templates (4)
@@ -260,6 +271,8 @@ opencode-setup/
 ├── ecc/                     # ECC repo (auto-cloned)
 ├── 9router/                 # 9Router repo (auto-cloned)
 ├── CHANGELOG.md
+├── caveman-mode.md
+├── api-key.txt
 ├── README.md
 └── install.bat              # One-click installer
 ```
