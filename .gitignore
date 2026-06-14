@@ -11,6 +11,9 @@ api-key.txt
 # Session state (private)
 .opencode-session.json
 
+# Iteration tracking
+.iteration.json
+
 # Config backups
 *.bak.*
 

@@ -45,14 +45,16 @@ function Read-SessionKey {
 
 function Write-SessionKey {
     param([string]$Key, [string]$Value)
-    $session = @{}
+    $hash = @{}
     if (Test-Path $SESSION_FILE) {
-        try { $session = Get-Content $SESSION_FILE -Raw | ConvertFrom-Json | ConvertTo-Json -Depth 10 } catch {}
+        try {
+            $existing = Get-Content $SESSION_FILE -Raw | ConvertFrom-Json
+            $existing.PSObject.Properties | ForEach-Object { $hash[$_.Name] = $_.Value }
+        } catch {}
     }
-    $existing = @{}
-    try { $existing = Get-Content $SESSION_FILE -Raw | ConvertFrom-Json | ForEach-Object { $_ } } catch {}
-    $existing.$Key = $Value
-    $existing | ConvertTo-Json -Depth 10 | Set-Content -Path $SESSION_FILE -Encoding UTF8
+    if (-not $hash.ContainsKey("version")) { $hash.version = "1.0" }
+    $hash[$Key] = $Value
+    $hash | ConvertTo-Json -Depth 10 | Set-Content -Path $SESSION_FILE -Encoding UTF8
 }
 
 $PROJECT_DIR = Get-ProjectPath
@@ -73,7 +75,8 @@ $ignoreDirs = @(
     ".next", "coverage", "__pycache__", ".venv", "venv", "vendor",
     ".opencode", "assets", ".github", "pub-cache", ".packages",
     ".pub-preload-cache", ".idea", ".vscode", ".vs", "bin", "obj",
-    ".flutter-plugins", ".flutter", "android", "ios", "macos", "windows", "linux", "web"
+    ".flutter-plugins", ".flutter", "android", "ios", "macos", "windows", "linux", "web",
+    "ecc", "9router"
 )
 
 # ============================================================

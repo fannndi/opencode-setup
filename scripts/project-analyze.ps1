@@ -41,12 +41,16 @@ function Read-SessionKey {
 
 function Write-SessionKey {
     param([string]$Key, [string]$Value)
-    $existing = @{}
+    $hash = @{}
     if (Test-Path $SESSION_FILE) {
-        try { $existing = Get-Content $SESSION_FILE -Raw | ConvertFrom-Json } catch {}
+        try {
+            $existing = Get-Content $SESSION_FILE -Raw | ConvertFrom-Json
+            $existing.PSObject.Properties | ForEach-Object { $hash[$_.Name] = $_.Value }
+        } catch {}
     }
-    $existing.$Key = $Value
-    $existing | ConvertTo-Json -Depth 5 | Set-Content -Path $SESSION_FILE -Encoding UTF8
+    if (-not $hash.ContainsKey("version")) { $hash.version = "1.0" }
+    $hash[$Key] = $Value
+    $hash | ConvertTo-Json -Depth 10 | Set-Content -Path $SESSION_FILE -Encoding UTF8
 }
 
 $PROJECT_DIR = Get-ProjectPath
