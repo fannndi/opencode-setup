@@ -72,6 +72,7 @@ restart opencode
 | `/build-fix` | Fix build errors | `/build-fix` |
 | `/verify` | Verification loop | `/verify` |
 | `/reset-session` | Reset session state | `/reset-session` |
+| `/research` | Web search + AI ringkasan | `/research Flutter 2026` |
 | `/quality-gate` | Verify fixes, track iterations | `/quality-gate` |
 | `/token-stats` | Token usage + session stats | `/token-stats` |
 | `/admin` | Update ECC/9Router, doctor check | `/admin` |

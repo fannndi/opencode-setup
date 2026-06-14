@@ -288,7 +288,8 @@
     "project-skills": { "description": "Tampilkan skills yang cocok untuk project", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/project-skills.md}\n\n$ARGUMENTS" },
     "admin": { "description": "Update ECC + 9Router, rebuild plugin, doctor check", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/admin.md}\n\n$ARGUMENTS" },
     "quality-gate": { "description": "Verify code quality, track iterations", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/quality-gate.md}\n\n$ARGUMENTS" },
-    "token-stats": { "description": "Tampilkan token usage dan session stats", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/token-stats.md}\n\n$ARGUMENTS" }
+    "token-stats": { "description": "Tampilkan token usage dan session stats", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/token-stats.md}\n\n$ARGUMENTS" },
+    "research": { "description": "Web search + AI ringkasan", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/research.md}\n\n$ARGUMENTS" }
   },
 
   "permission": {
