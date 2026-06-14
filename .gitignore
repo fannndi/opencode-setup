@@ -8,11 +8,13 @@ ecc/
 # API keys (sensitive)
 api-key.txt
 
-# Session state (private)
+# Session state (private, user-specific)
 .opencode-session.json
-
-# Iteration tracking
 .iteration.json
+ai-notes.md
+
+# Project memory (user-specific)
+project-memory/
 
 # Config backups
 *.bak.*

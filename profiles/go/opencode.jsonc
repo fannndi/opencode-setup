@@ -292,7 +292,9 @@
     "research": { "description": "Web search + AI ringkasan", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/research.md}\n\n$ARGUMENTS" },
     "auto-start": { "description": "Chain semua workflow dalam 1 command", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/auto-start.md}\n\n$ARGUMENTS" },
     "create": { "description": "Generate boilerplate widget/api/test/model", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/create.md}\n\n$ARGUMENTS" },
-    "memory": { "description": "Simpan/baca memori session", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/memory.md}\n\n$ARGUMENTS" }
+    "memory": { "description": "Simpan/baca memori session", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/memory.md}\n\n$ARGUMENTS" },
+    "wizard": { "description": "Panduan interaktif bikin project (tanpa coding)", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/wizard.md}\n\n$ARGUMENTS" },
+    "generate-prd": { "description": "Generate PRD dari ide via AI", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/generate-prd.md}\n\n$ARGUMENTS" }
   },
 
   "permission": {

@@ -17,7 +17,37 @@ opencode-setup/              ← Master repo
 
 ---
 
-## Setup dari 0
+## Untuk Pemula (Tanpa Coding)
+
+Download → Double-click → Jawab pertanyaan → Dapet aplikasi.
+
+```cmd
+# 1. Download repo (zip) atau clone
+# 2. Double-click install.bat
+#    → Install Node.js + Git + OpenCode otomatis
+#    → Clone ECC + 9Router
+#    → Setup config
+#
+# 3. Buka terminal di folder opencode-setup
+# 4. opencode
+# 5. /start-free
+# 6. /wizard
+#    → Pilih "Project Baru"
+#    → Ceritakan ide aplikasi Anda
+#    → AI generate PRD + deteksi stack
+#    → Siap coding!
+```
+
+### Biaya: $0
+
+| Komponen | Biaya | Kegunaan |
+|----------|-------|----------|
+| OpenCode Free | ✅ $0 | AI coding assistant |
+| 9Router | ✅ $0 | AI gateway + combo |
+| ECC | ✅ $0 (Open Source) | 270+ skills |
+| MiMo Auto | ✅ $0 | Model AI gratis |
+
+---
 
 | Tool | Cek | Install |
 |------|-----|---------|
@@ -76,6 +106,8 @@ restart opencode
 | `/auto-start` | Chain semua workflow 1 command | `/auto-start` |
 | `/create` | Generate widget/api/test/model | `/create widget login` |
 | `/memory` | Simpan/baca memori session | `/memory read` |
+| `/wizard` | Panduan interaktif (tanpa coding) | `/wizard` |
+| `/generate-prd` | Generate PRD dari ide | `/generate-prd "aplikasi kasir"` |
 | `/quality-gate` | Verify fixes, track iterations | `/quality-gate` |
 | `/token-stats` | Token usage + session stats | `/token-stats` |
 | `/admin` | Update ECC/9Router, doctor check | `/admin` |
