@@ -1,833 +1,776 @@
-# Unexplored Features — ECC + 9Router
+# Feature Inventory — ECC + 9Router
 
 **Last Updated:** 2026-06-14
-**Total Features:** 20
-**Status:** 3 Done, 17 Todo
-
----
-
-## Status Legend
-
-| Symbol | Meaning |
-|--------|---------|
-| ✅ | Done — sudah di-setup dan berfungsi |
-| 🔲 | Todo — belum dieksplor |
-| ⏳ | Partial — sebagian sudah |
-| ❌ | Broken — tidak berfungsi |
-
-## Priority Legend
-
-| Level | Meaning |
-|-------|---------|
-| 🔥 | HIGH — quick win, langsung berguna |
-| 💡 | MEDIUM — butuh setup lebih tapi worth it |
-| 🚀 | POWER — advanced, butuh pemahaman lebih dalam |
-
----
-
-## HIGH IMPACT (Quick Wins)
-
-### 1. Combos (Auto-Fallback)
-
-| Field | Value |
-|-------|-------|
-| **Sumber** | 9Router |
-| **Status** | ✅ Done |
-| **Priority** | 🔥 HIGH |
-| **Dependencies** | 9Router running |
-
-**Apa itu:**
-Model chain — kalau model pertama fail (429 rate limit, 503 down), 9Router otomatis coba model berikutnya.
-
-**Combos yang sudah dibuat:**
-| Nama | Chain | Use Case |
-|------|-------|----------|
-| `gratis` | `oc/mimo-v2.5-free` → `oc/deepseek-v4-flash-free` → `kr/claude-sonnet-4.5` | Free utama |
-| `go` | `ocg/kimi-k2.6` → `ocg/qwen3.6-plus` → `ocg/glm-5.1` | Go models (limited) |
-| `gratis-small` | `oc/deepseek-v4-flash-free` → `kr/glm-5` → `oc/north-mini-code-free` | Light tasks |
-
-**Cara Setup (Reproduce):**
-```bash
-# 1. Login ke 9Router API
-$session = Invoke-RestMethod -Uri "http://localhost:20128/api/auth/login" `
-  -Method POST -Body '{"password":"123456"}' `
-  -ContentType "application/json" -SessionVariable session
-
-# 2. Buat combo
-Invoke-RestMethod -Uri "http://localhost:20128/api/combos" `
-  -Method POST `
-  -Body '{"name":"gratis","models":["oc/mimo-v2.5-free","oc/deepseek-v4-flash-free","kr/claude-sonnet-4.5"]}' `
-  -ContentType "application/json" -WebSession $session
-
-# 3. Gunakan di config
-# "model": "9router/gratis"
-```
-
-**Changelog:**
-- 2026-06-14: Initial setup — 3 combos created (gratis, go, gratis-small)
-
----
-
-### 2. Context7 MCP
-
-| Field | Value |
-|-------|-------|
-| **Sumber** | ECC |
-| **Status** | 🔲 Todo |
-| **Priority** | 🔥 HIGH |
-| **Dependencies** | MCP server config |
-
-**Apa itu:**
-Live docs lookup — selalu ambil dokumentasi terbaru dari library/framework, bukan dari training data yang sudah stale.
-
-**Manfaat:**
-- Jawaban selalu up-to-date
-- Tidak salah spread API yang sudah berubah
-- Support React, Next.js, Prisma, dll
-
-**Cara Setup (Reproduce):**
-```bash
-# 1. Buka mcp-configs/mcp-servers.json
-# 2. Cari "context7"
-# 3. Tambahkan ke OpenCode config:
-
-# Di opencode.jsonc, tambah:
-"mcp": {
-  "context7": {
-    "command": "npx",
-    "args": ["-y", "@upstash/context7-mcp@latest"]
-  }
-}
-
-# 4. Atau set environment variable:
-# CONTEXT7_API_KEY=your-key (if needed)
-```
-
-**Changelog:**
-- 2026-06-14: Not yet configured
-
----
-
-### 3. Sequential-Thinking MCP
-
-| Field | Value |
-|-------|-------|
-| **Sumber** | ECC |
-| **Status** | 🔲 Todo |
-| **Priority** | 🔥 HIGH |
-| **Dependencies** | MCP server config |
-
-**Apa itu:**
-Forced chain-of-thought reasoning — memaksa AI berpikir step-by-step sebelum jawab, mengurangi hallucination.
-
-**Manfaat:**
-- Lebih akurat untuk masalah kompleks
-- Mengurangi AI hallucination
-- Reasoning lebih terstruktur
-
-**Cara Setup (Reproduce):**
-```bash
-# 1. Buka mcp-configs/mcp-servers.json
-# 2. Cari "sequential-thinking"
-# 3. Tambahkan ke OpenCode config:
-
-"mcp": {
-  "sequential-thinking": {
-    "command": "npx",
-    "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
-  }
-}
-```
-
-**Changelog:**
-- 2026-06-14: Not yet configured
-
----
-
-### 4. contexts/dev.md
-
-| Field | Value |
-|-------|-------|
-| **Sumber** | ECC |
-| **Status** | 🔲 Todo |
-| **Priority** | 🔥 HIGH |
-| **Dependencies** | ECC installed |
-
-**Apa itu:**
-Behavioral override — load context file di session start untuk ubah cara AI berpikir. dev.md = "write code first, explain after".
-
-**Contexts tersedia:**
-| Context | Behavior |
-|---------|----------|
-| `contexts/dev.md` | "Write code first, explain after", run tests, atomic commits |
-| `contexts/research.md` | "Read widely, ask questions, document findings, don't code until clear" |
-| `contexts/review.md` | Severity prioritized checklist, suggest fixes not just problems |
-
-**Cara Setup (Reproduce):**
-```bash
-# 1. Copy context file ke project
-Copy-Item "C:/Users/FANNNDI/Documents/opencode-setup/ecc/contexts/dev.md" ".claude/context.md"
-
-# 2. Atau tambah ke instructions di config:
-"instructions": [
-  "C:/Users/FANNNDI/Documents/opencode-setup/ecc/contexts/dev.md"
-]
-
-# 3. Atau load manual saat session start:
-# /context load dev
-```
-
-**Changelog:**
-- 2026-06-14: Not yet configured
-
----
-
-### 5. Token Optimizer MCP
-
-| Field | Value |
-|-------|-------|
-| **Sumber** | ECC |
-| **Status** | 🔲 Todo |
-| **Priority** | 🔥 HIGH |
-| **Dependencies** | MCP server config |
-
-**Apa itu:**
-Auto-compress context — mengurangi 95%+ token usage dengan deduplikasi dan kompresi.
-
-**Manfaat:**
-- Session panjang tidak kehabisan context
-- Hemat cost (kalau pake paid models)
-- Response lebih cepat
-
-**Cara Setup (Reproduce):**
-```bash
-# 1. Buka mcp-configs/mcp-servers.json
-# 2. Cari "token-optimizer"
-# 3. Tambahkan ke OpenCode config:
-
-"mcp": {
-  "token-optimizer": {
-    "command": "npx",
-    "args": ["-y", "@anthropic/token-optimizer-mcp"]
-  }
-}
-```
-
-**Changelog:**
-- 2026-06-14: Not yet configured
-
----
-
-### 6. scripts/doctor.js
-
-| Field | Value |
-|-------|-------|
-| **Sumber** | ECC |
-| **Status** | 🔲 Todo |
-| **Priority** | 🔥 HIGH |
-| **Dependencies** | ECC installed, Node.js |
-
-**Apa itu:**
-Diagnostic tool — cek apakah ECC install kamu sehat, ada yang missing atau corrupted.
-
-**Manfaat:**
-- Deteksi masalah sebelum jadi besar
-- Pastikan semua components terload
-- Fix otomatis beberapa masalah
-
-**Cara Setup (Reproduce):**
-```bash
-# Dari ECC root directory:
-cd C:\Users\FANNNDI\Documents\opencode-setup\ecc
-
-# Jalankan doctor
-node scripts/doctor.js
-
-# Output akan tunjukkan:
-# - Missing files
-# - Broken symlinks
-# - Config drift
-# - Version mismatches
-```
-
-**Changelog:**
-- 2026-06-14: Not yet run
-
----
-
-### 7. RTK Token Saver
-
-| Field | Value |
-|-------|-------|
-| **Sumber** | 9Router |
-| **Status** | ✅ Done |
-| **Priority** | 🔥 HIGH |
-| **Dependencies** | 9Router running |
-
-**Apa itu:**
-Auto-compress tool_result payloads (git diff, grep, ls output) untuk hemat 20-40% tokens.
-
-**Manfaat:**
-- Hemat tokens secara otomatis
-- Tidak perlu konfigurasi
-- Sudah ON by default
-
-**Cara Setup (Reproduce):**
-```bash
-# Sudah aktif by default. Untuk toggle:
-Invoke-RestMethod -Uri "http://localhost:20128/api/settings" `
-  -Method PATCH `
-  -Body '{"rtkEnabled":true}' `
-  -ContentType "application/json" -WebSession $session
-
-# Cek status:
-Invoke-RestMethod -Uri "http://localhost:20128/api/settings" -WebSession $session | Select-Object rtkEnabled
-```
-
-**Changelog:**
-- 2026-06-14: Verified ON by default
-
----
-
-## MEDIUM IMPACT
-
-### 8. Hooks (strict mode)
-
-| Field | Value |
-|-------|-------|
-| **Sumber** | ECC |
-| **Status** | 🔲 Todo |
-| **Priority** | 💡 MEDIUM |
-| **Dependencies** | ECC installed |
-
-**Apa itu:**
-20+ hooks yang otomatis jalan saat PreToolUse, PostToolUse, SessionStart, Stop. Strict mode = semua guardrails aktif.
-
-**Hooks tersedia:**
-| Hook | Event | Fungsi |
-|------|-------|--------|
-| `config-protection` | PreToolUse | Blok agent dari melemahkan linter/formatter |
-| `gateguard-fact-force` | PreToolUse | Minta agent investigasi dulu sebelum edit |
-| `design-quality-check` | PostToolUse | Warn kalau UI jadi generic template |
-| `accumulator` | PostToolUse | Batch edits untuk format+typecheck |
-| `context-monitor` | PostToolUse | Warn kalau context habis |
-| `format-typecheck` | Stop | Auto format + typecheck di akhir response |
-| `check-console-log` | Stop | Audit console.log di modified files |
-| `cost-tracker` | Stop | Track token/cost per session |
-
-**Cara Setup (Reproduce):**
-```bash
-# Set hook profile ke strict:
-[Environment]::SetEnvironmentVariable("ECC_HOOK_PROFILE", "strict", "User")
-
-# Atau standard:
-[Environment]::SetEnvironmentVariable("ECC_HOOK_PROFILE", "standard", "User")
-
-# Disable specific hooks:
-[Environment]::SetEnvironmentVariable("ECC_DISABLED_HOOKS", "gateguard-fact-force", "User")
-
-# Reload config:
-# Restart OpenCode
-```
-
-**Changelog:**
-- 2026-06-14: Not yet configured
-
----
-
-### 9. Governance Capture
-
-| Field | Value |
-|-------|-------|
-| **Sumber** | ECC |
-| **Status** | 🔲 Todo |
-| **Priority** | 💡 MEDIUM |
-| **Dependencies** | ECC hooks |
-
-**Apa itu:**
-Log semua security events — secrets, policy violations, approval requests ke governance log.
-
-**Manfaat:**
-- Audit trail untuk security
-- Compliance logging
-- Deteksi anomali
-
-**Cara Setup (Reproduce):**
-```bash
-# Enable governance capture:
-[Environment]::SetEnvironmentVariable("ECC_GOVERNANCE_CAPTURE", "1", "User")
-
-# Logs tersimpan di:
-# ~/.claude/governance/
-
-# Restart OpenCode
-```
-
-**Changelog:**
-- 2026-06-14: Not yet configured
-
----
-
-### 10. Custom Provider Nodes
-
-| Field | Value |
-|-------|-------|
-| **Sumber** | 9Router |
-| **Status** | 🔲 Todo |
-| **Priority** | 💡 MEDIUM |
-| **Dependencies** | 9Router running |
-
-**Apa itu:**
-Tambah any OpenAI-compatible atau Anthropic-compatible API sebagai provider — termasuk local Ollama, vLLM, dll.
-
-**Manfaat:**
-- Gunakan local models
-- Privacy-first (data tidak keluar)
-- Custom endpoints
-
-**Cara Setup (Reproduce):**
-```bash
-# Tambah custom provider via API:
-Invoke-RestMethod -Uri "http://localhost:20128/api/provider-nodes" `
-  -Method POST `
-  -Body '{
-    "name": "local-ollama",
-    "prefix": "ollama",
-    "baseUrl": "http://localhost:11434/v1",
-    "type": "openai-compatible",
-    "apiType": "chat"
-  }' `
-  -ContentType "application/json" -WebSession $session
-
-# Verify:
-Invoke-RestMethod -Uri "http://localhost:20128/api/provider-nodes" -WebSession $session
-
-# Gunakan di config:
-# "model": "ollama/llama3"
-```
-
-**Changelog:**
-- 2026-06-14: Not yet configured
-
----
-
-### 11. Model Info Query
-
-| Field | Value |
-|-------|-------|
-| **Sumber** | 9Router |
-| **Status** | 🔲 Todo |
-| **Priority** | 💡 MEDIUM |
-| **Dependencies** | 9Router running |
-
-**Apa itu:**
-Query detail model — contextWindow, parameters, capabilities, supported features.
-
-**Manfaat:**
-- Tahu batasan model sebelum pilih
-- Optimalkan usage
-- Debug model compatibility
-
-**Cara Setup (Reproduce):**
-```bash
-# Query model info:
-Invoke-RestMethod -Uri "http://localhost:20128/v1/models/info?id=openai/gpt-4o"
-
-# List semua models dengan capability:
-Invoke-RestMethod -Uri "http://localhost:20128/v1/models" | Select-Object -ExpandProperty data | ForEach-Object {
-  [PSCustomObject]@{ id=$_.id; owned_by=$_.owned_by; kind=$_.kind }
-} | Format-Table
-```
-
-**Changelog:**
-- 2026-06-14: Not yet explored
-
----
-
-### 12. Tunnel
-
-| Field | Value |
-|-------|-------|
-| **Sumber** | 9Router |
-| **Status** | 🔲 Todo |
-| **Priority** | 💡 MEDIUM |
-| **Dependencies** | 9Router running, Cloudflare/Tailscale account |
-
-**Apa itu:**
-Expose 9Router ke internet — akses dari mana saja via public URL.
-
-**Manfaat:**
-- Akses dari mobile/lain device
-- Share ke team
-- Remote development
-
-**Cara Setup (Reproduce):**
-```bash
-# Enable tunnel via API:
-Invoke-RestMethod -Uri "http://localhost:20128/api/tunnel/enable" `
-  -Method POST -WebSession $session
-
-# Cek status:
-Invoke-RestMethod -Uri "http://localhost:20128/api/tunnel/status" -WebSession $session
-
-# Disable:
-Invoke-RestMethod -Uri "http://localhost:20128/api/tunnel/disable" `
-  -Method POST -WebSession $session
-```
-
-**Changelog:**
-- 2026-06-14: Not yet configured
-
----
-
-### 13. MITM Aliases
-
-| Field | Value |
-|-------|-------|
-| **Sumber** | 9Router |
-| **Status** | 🔲 Todo |
-| **Priority** | 💡 MEDIUM |
-| **Dependencies** | 9Router running, admin access |
-
-**Apa itu:**
-Redirect requests dari Cursor/Copilot/Kiro ke model pilihan kamu — tanpa mereka tahu.
-
-**Manfaat:**
-- Gunakan free models di paid tools
-- Centralize all AI traffic
-- Cost control
-
-**Cara Setup (Reproduce):**
-```bash
-# Edit aliases file:
-# ~/.9router/mitm/aliases.json
-
-# Contoh:
-# {
-#   "cursor": {
-#     "gpt-4": "oc/mimo-v2.5-free",
-#     "claude-3.5-sonnet": "kr/claude-sonnet-4.5"
-#   }
-# }
-
-# Enable MITM (butuh admin/root):
-# Jalankan 9Router dengan --mitm flag
-```
-
-**Changelog:**
-- 2026-06-14: Not yet configured
-
----
-
-### 14. Rules (18 bahasa)
-
-| Field | Value |
-|-------|-------|
-| **Sumber** | ECC |
-| **Status** | 🔲 Todo |
-| **Priority** | 💡 MEDIUM |
-| **Dependencies** | ECC installed |
-
-**Apa itu:**
-Language-specific rules — coding conventions, best practices, security patterns untuk 18+ bahasa/ framework.
-
-**Bahasa tersedia:**
-| Language | Rules |
-|----------|-------|
-| TypeScript | coding-style, hooks, security, testing, patterns |
-| Python | coding-style, hooks, security, testing, patterns |
-| Go | coding-style, hooks, security, testing, patterns |
-| Rust | coding-style, hooks, security, testing, patterns |
-| Dart/Flutter | coding-style, hooks, security, testing, patterns |
-| Java/Spring | coding-style, hooks, security, testing, patterns |
-| Kotlin | coding-style, hooks, security, testing, patterns |
-| C#/.NET | coding-style, hooks, security, testing, patterns |
-| PHP/Laravel | coding-style, hooks, security, testing, patterns |
-| Ruby | coding-style, hooks, security, testing, patterns |
-| Swift | coding-style, hooks, security, testing, patterns |
-| C/C++ | coding-style, hooks, security, testing, patterns |
-| Perl | coding-style, hooks, security, testing, patterns |
-| Angular | coding-style, hooks, security, testing, patterns |
-| React | coding-style, hooks, security, testing, patterns |
-
-**Cara Setup (Reproduce):**
-```bash
-# Tambah language rules ke instructions:
-"instructions": [
-  "C:/Users/FANNNDI/Documents/opencode-setup/ecc/rules/dart/coding-style.md",
-  "C:/Users/FANNNDI/Documents/opencode-setup/ecc/rules/dart/testing.md"
-]
-
-# Atau load semua rules sekaligus:
-# (belum tersedia otomatis)
-```
-
-**Changelog:**
-- 2026-06-14: Not yet configured
-
----
-
-### 15. Control Pane
-
-| Field | Value |
-|-------|-------|
-| **Sumber** | ECC |
-| **Status** | 🔲 Todo |
-| **Priority** | 💡 MEDIUM |
-| **Dependencies** | ECC scripts, Node.js |
-
-**Apa itu:**
-Web dashboard untuk monitor ECC sessions, state, work items — real-time visibility.
-
-**Manfaat:**
-- Monitor semua sessions
-- Track progress
-- Debug issues
-
-**Cara Setup (Reproduce):**
-```bash
-# Dari ECC root:
-cd C:\Users\FANNNDI\Documents\opencode-setup\ecc
-
-# Jalankan control pane:
-node scripts/control-pane.js
-
-# Buka browser:
-# http://localhost:3000
-```
-
-**Changelog:**
-- 2026-06-14: Not yet configured
-
----
-
-## POWER FEATURES
-
-### 16. DevFleet MCP
-
-| Field | Value |
-|-------|-------|
-| **Sumber** | ECC |
-| **Status** | 🔲 Todo |
-| **Priority** | 🚀 POWER |
-| **Dependencies** | MCP server config, tmux |
-
-**Apa itu:**
-Multi-agent orchestration — jalankan beberapa Claude Code agents secara paralel di isolated worktrees.
-
-**Manfaat:**
-- Parallel development
-- Feature isolation
-- Faster completion
-
-**Cara Setup (Reproduce):**
-```bash
-# 1. Pastikan tmux installed:
-# Windows: scoop install tmux
-# macOS: brew install tmux
-
-# 2. Tambah MCP config:
-"mcp": {
-  "devfleet": {
-    "command": "npx",
-    "args": ["-y", "@anthropic/devfleet-mcp"]
-  }
-}
-
-# 3. Gunakan:
-# /fleet start "feature-name"
-# /fleet status
-# /fleet stop
-```
-
-**Changelog:**
-- 2026-06-14: Not yet configured
-
----
-
-### 17. EvalView MCP
-
-| Field | Value |
-|-------|-------|
-| **Sumber** | ECC |
-| **Status** | 🔲 Todo |
-| **Priority** | 🚀 POWER |
-| **Dependencies** | MCP server config |
-
-**Apa itu:**
-AI regression testing — snapshot tool calls, detect regressions, generate visual reports.
-
-**Manfaat:**
-- Deteksi AI behavior changes
-- Quality assurance
-- Rollback capability
-
-**Cara Setup (Reproduce):**
-```bash
-# Tambah MCP config:
-"mcp": {
-  "evalview": {
-    "command": "npx",
-    "args": ["-y", "@anthropic/evalview-mcp"]
-  }
-}
-
-# Jalankan eval:
-# /eval start "test-scenario"
-# /eval report
-```
-
-**Changelog:**
-- 2026-06-14: Not yet configured
-
----
-
-### 18. ECC2 Rust Dashboard
-
-| Field | Value |
-|-------|-------|
-| **Sumber** | ECC |
-| **Status** | 🔲 Todo |
-| **Priority** | 🚀 POWER |
-| **Dependencies** | Rust, Cargo |
-
-**Apa itu:**
-Terminal UI dashboard — session management, SQLite-backed, observability + risk scoring.
-
-**Manfaat:**
-- Real-time monitoring
-- Session lifecycle management
-- Risk assessment
-
-**Cara Setup (Reproduce):**
-```bash
-# Build ECC2:
-cd C:\Users\FANNNDI\Documents\opencode-setup\ecc\ecc2
-
-# Install Rust (if not installed):
-# https://rustup.rs
-
-# Build:
-cargo build --release
-
-# Jalankan:
-cargo run
-
-# Atau binary:
-./target/release/ecc2
-```
-
-**Changelog:**
-- 2026-06-14: Not yet built
-
----
-
-### 19. Multi-Account Round-Robin
-
-| Field | Value |
-|-------|-------|
-| **Sumber** | 9Router |
-| **Status** | 🔲 Todo |
-| **Priority** | 🚀 POWER |
-| **Dependencies** | 9Router, multiple accounts |
-
-**Apa itu:**
-Load balancing antar akun — kalau punya beberapa akun OAuth, 9Router automatically distribute requests.
-
-**Manfaat:**
-- Higher rate limits
-- Better availability
-- Cost distribution
-
-**Cara Setup (Reproduce):**
-```bash
-# 1. Tambah multiple connections per provider:
-Invoke-RestMethod -Uri "http://localhost:20128/api/providers" `
-  -Method POST `
-  -Body '{
-    "alias": "gh",
-    "provider": "github-copilot",
-    "accounts": [
-      {"token": "token-1", "priority": 1},
-      {"token": "token-2", "priority": 2}
-    ]
-  }' `
-  -ContentType "application/json" -WebSession $session
-
-# 2. Set strategy:
-Invoke-RestMethod -Uri "http://localhost:20128/api/settings" `
-  -Method PATCH `
-  -Body '{"providerStrategies":{"gh":"round-robin"}}' `
-  -ContentType "application/json" -WebSession $session
-```
-
-**Changelog:**
-- 2026-06-14: Not yet configured
-
----
-
-### 20. Auto-Start on Boot
-
-| Field | Value |
-|-------|-------|
-| **Sumber** | 9Router |
-| **Status** | 🔲 Todo |
-| **Priority** | 🚀 POWER |
-| **Dependencies** | 9Router |
-
-**Apa itu:**
-9Router start otomatis saat OS boot — tidak perlu manual start setiap kali.
-
-**Manfaat:**
-- Always available
-- No manual intervention
-- Seamless workflow
-
-**Cara Setup (Reproduce):**
-```bash
-# Windows (via Task Scheduler):
-# 1. Open Task Scheduler
-# 2. Create Basic Task
-# 3. Name: "9Router"
-# 4. Trigger: "When the computer starts"
-# 5. Action: "Start a program"
-# 6. Program: "C:\Users\FANNNDI\AppData\Roaming\npm\9router.cmd"
-# 7. Arguments: "--tray"
-
-# Atau via PowerShell:
-$action = New-ScheduledTaskAction -Execute "9router.cmd" -Argument "--tray"
-$trigger = New-ScheduledTaskTrigger -AtStartup
-Register-ScheduledTask -TaskName "9Router" -Action $action -Trigger $trigger -Description "9Router AI Gateway"
-
-# macOS/Linux:
-# Tambah ke crontab:
-# @reboot 9router --tray
-```
-
-**Changelog:**
-- 2026-06-14: Not yet configured
+**Total Components:** 600+
 
 ---
 
 ## Summary
 
-| Status | Count |
-|--------|-------|
-| ✅ Done | 3 |
-| 🔲 Todo | 17 |
-| ⏳ Partial | 0 |
-| **Total** | **20** |
+| Category | Count | Description |
+|----------|-------|-------------|
+| Skills | 270 | Domain knowledge and workflow modules |
+| Agents | 64 | Specialized AI assistants |
+| Commands | 84 | Slash commands for workflows |
+| Hooks | 20+ | Automated behaviors |
+| Rules | 20 packs | Language/framework conventions |
+| MCP Servers | 29 | External tool integrations |
+| Install Profiles | 7 | Pre-configured setups |
+| Project Stacks | 20 | Auto-detected project types |
+| Contexts | 3 | Behavioral overrides |
+| Localizations | 9 | Supported languages |
 
-## Next Actions
+---
 
-1. **Quick wins first:** Context7 MCP, Sequential-Thinking MCP, contexts/dev.md
-2. **Then medium:** Hooks strict mode, Governance Capture
-3. **Then power:** DevFleet, ECC2 Dashboard
+## 1. Skills (270)
 
-## How to Contribute
+### Language Skills (29)
 
-Fork this repo, pick a feature, set it up, then update this file:
-1. Change status from 🔲 to ✅
-2. Add changelog entry with date
-3. Add reproduction steps if different from above
-4. Submit PR
+| Skill | Language | Purpose |
+|-------|----------|---------|
+| `python-patterns` | Python | Pythonic idioms, PEP 8, type hints |
+| `python-testing` | Python | pytest, TDD, fixtures, mocking |
+| `pytorch-patterns` | Python | PyTorch training pipelines, models |
+| `golang-patterns` | Go | Idiomatic Go patterns |
+| `golang-testing` | Go | Table-driven tests, benchmarks |
+| `rust-patterns` | Rust | Ownership, traits, concurrency |
+| `rust-testing` | Rust | Unit/integration tests, property-based |
+| `kotlin-patterns` | Kotlin | Coroutines, null safety, DSL |
+| `kotlin-testing` | Kotlin | Kotest, MockK, coroutine testing |
+| `kotlin-coroutines-flows` | Kotlin | Flow operators, StateFlow |
+| `kotlin-exposed-patterns` | Kotlin | Exposed ORM, DSL queries |
+| `kotlin-ktor-patterns` | Kotlin | Ktor server, routing, plugins |
+| `java-coding-standards` | Java | Spring Boot, Quarkus standards |
+| `jpa-patterns` | Java | JPA/Hibernate, entity design |
+| `cpp-coding-standards` | C++ | C++ Core Guidelines |
+| `cpp-testing` | C++ | GoogleTest, CTest |
+| `perl-patterns` | Perl | Modern Perl 5.36+ idioms |
+| `perl-security` | Perl | Taint mode, input validation |
+| `perl-testing` | Perl | Test2::V0, coverage |
+| `dotnet-patterns` | C#/.NET | DI, async/await, patterns |
+| `csharp-testing` | C#/.NET | xUnit, FluentAssertions |
+| `fsharp-testing` | F# | FsUnit, FsCheck |
+| `swift-actor-persistence` | Swift | Thread-safe persistence |
+| `swift-concurrency-6-2` | Swift | @concurrent, MainActor |
+| `swift-protocol-di-testing` | Swift | Protocol-based DI |
+| `swiftui-patterns` | Swift | @Observable, navigation |
+| `dart-flutter-patterns` | Dart | BLoC, Riverpod, GoRouter |
+| `tinystruct-patterns` | Java | tinystruct framework |
+| `prisma-patterns` | TypeScript | Prisma ORM patterns |
+
+### Framework Skills (42)
+
+| Skill | Framework | Purpose |
+|-------|-----------|---------|
+| `react-patterns` | React | Hooks, server/client, Suspense |
+| `react-performance` | React | 70+ performance rules |
+| `react-testing` | React | RTL, Vitest, MSW |
+| `frontend-patterns` | React/Next.js | State management, UI |
+| `frontend-a11y` | React | WCAG, ARIA, keyboard nav |
+| `frontend-design-direction` | Web | Design direction |
+| `frontend-slides` | HTML | Presentations |
+| `motion-foundations` | React | Tokens, springs, SSR |
+| `motion-advanced` | React | Drag, gestures, SVG |
+| `motion-patterns` | React | Modal, toast, stagger |
+| `motion-ui` | React | UI motion system |
+| `nextjs-turbopack` | Next.js | Turbopack, FS caching |
+| `nuxt4-patterns` | Nuxt | Hydration, SSR |
+| `backend-patterns` | Node.js | API, DB, caching |
+| `django-patterns` | Django | DRF, ORM, signals |
+| `django-celery` | Django | Async tasks, beat |
+| `django-security` | Django | Auth, CSRF, XSS |
+| `django-tdd` | Django | pytest-django, factory_boy |
+| `django-verification` | Django | Migrations, security |
+| `laravel-patterns` | Laravel | Eloquent, queues, events |
+| `laravel-plugin-discovery` | Laravel | LaraPlugins.io |
+| `laravel-security` | Laravel | Auth, Eloquent safety |
+| `laravel-tdd` | Laravel | PHPUnit, Pest |
+| `laravel-verification` | Laravel | Static analysis |
+| `springboot-patterns` | Spring Boot | Layered architecture |
+| `springboot-security` | Spring Boot | JWT, RBAC |
+| `springboot-tdd` | Spring Boot | JUnit 5, Mockito |
+| `springboot-verification` | Spring Boot | Build, security |
+| `quarkus-patterns` | Quarkus | CDI, Panache |
+| `quarkus-security` | Quarkus | JWT/OIDC |
+| `quarkus-tdd` | Quarkus | REST Assured |
+| `quarkus-verification` | Quarkus | Native compilation |
+| `nestjs-patterns` | NestJS | Modules, guards |
+| `fastapi-patterns` | FastAPI | Pydantic, async |
+| `vite-patterns` | Vite | Config, HMR, SSR |
+| `mcp-server-patterns` | MCP | Tools, resources |
+| `compose-multiplatform-patterns` | Compose | KMP state, nav |
+| `android-clean-architecture` | Android | UseCases, repos |
+| `liquid-glass-design` | iOS 26 | Glass material |
+| `angular-developer` | Angular | Signals, DI, routing |
+| `flutter-dart-code-review` | Flutter | Widget review |
+| `ui-to-vue` | Vue | Screenshot to components |
+
+### Workflow Skills (41)
+
+| Skill | Purpose |
+|-------|---------|
+| `tdd-workflow` | Test-driven development |
+| `verification-loop` | Build, type, lint, test |
+| `e2e-testing` | Playwright patterns |
+| `eval-harness` | AI regression testing |
+| `santa-method` | Adversarial verification |
+| `strategic-compact` | Context compaction |
+| `continuous-learning-v2` | Instinct extraction |
+| `search-first` | Research before coding |
+| `code-tour` | Codebase walkthroughs |
+| `codebase-onboarding` | Project onboarding |
+| `coding-standards` | Cross-project conventions |
+| `error-handling` | Typed errors, boundaries |
+| `hexagonal-architecture` | Ports & Adapters |
+| `architecture-decision-records` | ADR management |
+| `blueprint` | Multi-session plans |
+| `plan-orchestrate` | Step decomposition |
+| `intent-driven-development` | Acceptance criteria |
+| `inherit-legacy-style` | Legacy style preservation |
+| `rules-distill` | Extract rules from skills |
+| `dynamic-workflow-mode` | Adaptive harnesses |
+| `parallel-execution-optimizer` | Concurrent execution |
+| `safety-guard` | Destructive op prevention |
+| `recursive-decision-ledger` | Decision tracking |
+| `team-builder` | Agent team composition |
+| `benchmark` | Performance baselines |
+| `benchmark-optimization-loop` | Recursive optimization |
+| `data-throughput-accelerator` | ETL acceleration |
+| `iterative-retrieval` | Progressive refinement |
+| `content-hash-cache-pattern` | SHA-256 caching |
+| `context-budget` | Token optimization |
+| `token-budget-advisor` | Response depth control |
+| `agentic-engineering` | Agent development |
+| `ai-first-engineering` | AI team practices |
+| `orch-add-feature` | Feature orchestration |
+| `orch-build-mvp` | MVP orchestration |
+| `orch-change-feature` | Behavior change |
+| `orch-fix-defect` | Bug fix orchestration |
+| `orch-pipeline` | Pipeline engine |
+| `orch-refine-code` | Refactor orchestration |
+| `regex-vs-llm-structured-text` | Parsing decisions |
+
+### Domain Skills (77)
+
+#### Security & Compliance (12)
+| Skill | Domain |
+|-------|--------|
+| `security-review` | Security checklist |
+| `security-scan` | Config scanning |
+| `security-bounty-hunter` | Bug bounty |
+| `hipaa-compliance` | HIPAA |
+| `healthcare-phi-compliance` | PHI/PII |
+| `defi-amm-security` | Solidity AMM |
+| `llm-trading-agent-security` | Trading agents |
+| `evm-token-decimals` | EVM tokens |
+| `nodejs-keccak256` | Ethereum hashing |
+| `prediction-market-risk-review` | Market risk |
+| `ai-regression-testing` | AI testing |
+| `production-audit` | Prod readiness |
+
+#### DevOps & Infrastructure (7)
+| Skill | Purpose |
+|-------|---------|
+| `docker-patterns` | Docker/Compose |
+| `kubernetes-patterns` | K8s workloads |
+| `deployment-patterns` | CI/CD, rollback |
+| `database-migrations` | Schema changes |
+| `postgres-patterns` | PostgreSQL |
+| `mysql-patterns` | MySQL/MariaDB |
+| `redis-patterns` | Redis caching |
+
+#### Content & Marketing (8)
+| Skill | Purpose |
+|-------|---------|
+| `article-writing` | Long-form content |
+| `brand-voice` | Voice consistency |
+| `content-engine` | Multi-platform content |
+| `crosspost` | Cross-posting |
+| `social-publisher` | 13 platforms |
+| `marketing-campaign` | Campaign planning |
+| `seo` | SEO optimization |
+| `research-ops` | Research workflows |
+
+#### Business & Finance (8)
+| Skill | Purpose |
+|-------|---------|
+| `market-research` | Market analysis |
+| `investor-materials` | Pitch decks |
+| `investor-outreach` | VC outreach |
+| `finance-billing-ops` | Revenue/pricing |
+| `customer-billing-ops` | Subscriptions |
+| `lead-intelligence` | Lead scoring |
+| `connections-optimizer` | Network pruning |
+| `social-graph-ranker` | Graph analysis |
+
+#### Healthcare & Science (9)
+| Skill | Purpose |
+|-------|---------|
+| `healthcare-cdss-patterns` | Clinical decisions |
+| `healthcare-emr-patterns` | EMR/EHR |
+| `healthcare-eval-harness` | Patient safety |
+| `scientific-db-pubmed-database` | PubMed |
+| `scientific-db-uspto-database` | USPTO patents |
+| `scientific-pkg-gget` | Bioinformatics |
+| `scientific-thinking-literature-review` | Literature review |
+| `scientific-thinking-scholar-evaluation` | Paper evaluation |
+| `accessibility` | WCAG 2.2 |
+
+#### Supply Chain (7)
+| Skill | Purpose |
+|-------|---------|
+| `logistics-exception-management` | Freight exceptions |
+| `carrier-relationship-management` | Carrier mgmt |
+| `returns-reverse-logistics` | Returns processing |
+| `customs-trade-compliance` | Customs docs |
+| `inventory-demand-planning` | Demand forecasting |
+| `production-scheduling` | Manufacturing |
+| `quality-nonconformance` | Quality control |
+
+#### Networking & Homelab (10)
+| Skill | Purpose |
+|-------|---------|
+| `cisco-ios-patterns` | Cisco IOS |
+| `netmiko-ssh-automation` | SSH automation |
+| `network-bgp-diagnostics` | BGP troubleshooting |
+| `network-config-validation` | Config validation |
+| `network-interface-health` | Interface diagnostics |
+| `homelab-network-readiness` | Network readiness |
+| `homelab-network-setup` | Network planning |
+| `homelab-pihole-dns` | Pi-hole DNS |
+| `homelab-vlan-segmentation` | VLAN segmentation |
+| `homelab-wireguard-vpn` | WireGuard VPN |
+
+#### Prediction Markets (6)
+| Skill | Purpose |
+|-------|---------|
+| `prediction-market-oracle-research` | Oracle signals |
+| `ito-basket-compare` | Basket comparison |
+| `ito-data-atlas-agent` | Data atlas |
+| `ito-market-intelligence` | Market intel |
+| `ito-trade-planner` | Trade planning |
+| `make-interfaces-feel-better` | UI polish |
+
+#### Other Domain (8)
+| Skill | Purpose |
+|-------|---------|
+| `git-workflow` | Git conventions |
+| `github-ops` | GitHub automation |
+| `knowledge-ops` | Knowledge mgmt |
+| `email-ops` | Email workflows |
+| `messages-ops` | Messaging |
+| `project-flow-ops` | GitHub/Linear |
+| `unified-notifications-ops` | Notifications |
+| `google-workspace-ops` | Google Workspace |
+
+### Tool Skills (31)
+
+#### AI Gateway (10)
+| Skill | Purpose |
+|-------|---------|
+| `9router` | 9Router setup |
+| `9router-chat` | Chat/code gen |
+| `9router-embeddings` | Vector embeddings |
+| `9router-image` | Image generation |
+| `9router-stt` | Speech-to-text |
+| `9router-tts` | Text-to-speech |
+| `9router-web-fetch` | URL to markdown |
+| `9router-web-search` | Web search |
+| `exa-search` | Neural search |
+| `fal-ai-media` | fal.ai generation |
+
+#### Development Tools (8)
+| Skill | Purpose |
+|-------|---------|
+| `documentation-lookup` | Context7 docs |
+| `bun-runtime` | Bun runtime |
+| `flox-environments` | Nix environments |
+| `jira-integration` | Jira workflows |
+| `nutrient-document-processing` | Doc processing |
+| `mcp-server-patterns` | MCP servers |
+| `ui-demo` | Demo videos |
+| `windows-desktop-e2e` | Windows E2E |
+
+#### Media & Video (4)
+| Skill | Purpose |
+|-------|---------|
+| `manim-video` | Animated explainers |
+| `remotion-video-creation` | React video |
+| `video-editing` | Video editing |
+| `videodb` | Video database |
+
+#### Other Tools (9)
+| Skill | Purpose |
+|-------|---------|
+| `browser-qa` | Browser testing |
+| `canary-watch` | Deploy monitoring |
+| `click-path-audit` | Click auditing |
+| `codehealth-mcp` | CodeScene |
+| `config-gc` | Config cleanup |
+| `design-system` | Design systems |
+| `ecc-guide` | ECC features |
+| `ios-icon-gen` | iOS icons |
+| `uncloud` | Uncloud cluster |
+
+### Meta/Template Skills (50)
+
+| Skill | Purpose |
+|-------|---------|
+| `agent-architecture-audit` | Agent diagnostics |
+| `agent-eval` | Agent comparison |
+| `agent-harness-construction` | Harness design |
+| `agent-introspection-debugging` | Self-debugging |
+| `agent-payment-x402` | Agent payments |
+| `agent-sort` | ECC install plan |
+| `agentic-os` | Multi-agent OS |
+| `autonomous-agent-harness` | Autonomous agents |
+| `autonomous-loops` | Loop patterns |
+| `ck` | Project memory |
+| `claude-devfleet` | Fleet orchestration |
+| `compose-multiplatform-patterns` | KMP patterns |
+| `configure-ecc` | ECC installer |
+| `cost-aware-llm-pipeline` | Cost optimization |
+| `cost-tracking` | Token tracking |
+| `council` | Multi-voice decisions |
+| `customs-trade-compliance` | Trade compliance |
+| `data-scraper-agent` | Data collection |
+| `database-migrations` | Schema migrations |
+| `dashboard-builder` | Monitoring dashboards |
+| `defi-amm-security` | DeFi security |
+| `deep-research` | Deep research |
+| `documentation-lookup` | Live docs |
+| `ecc-tools-cost-audit` | ECC cost audit |
+| `energy-procurement` | Energy procurement |
+| `enterprise-agent-ops` | Enterprise ops |
+| `evm-token-decimals` | EVM decimals |
+| `flox-environments` | Flox environments |
+| `gan-style-harness` | GAN harness |
+| `gateguard` | Fact-forcing gate |
+| `hookify-rules` | Hook creation |
+| `intent-driven-development` | Acceptance criteria |
+| `inventory-demand-planning` | Demand planning |
+| `llm-trading-agent-security` | Trading security |
+| `logistics-exception-management` | Logistics |
+| `nanoclaw-repl` | NanoClaw REPL |
+| `nodejs-keccak256` | Keccak256 |
+| `openclaw-persona-forge` | Persona creation |
+| `opens-source-pipeline` | OSS pipeline |
+| `orch-*` | Orchestration (6 skills) |
+| `parallel-execution-optimizer` | Parallel execution |
+| `plan-orchestrate` | Plan orchestration |
+| `prediction-market-risk-review` | Risk review |
+| `production-scheduling` | Production |
+| `prompt-optimizer` | Prompt optimization |
+| `quality-nonconformance` | Quality control |
+| `recursive-decision-ledger` | Decision tracking |
+| `regex-vs-llm-structured-text` | Parsing decisions |
+| `returns-reverse-logistics` | Returns |
+| `rules-distill` | Rules extraction |
+| `safety-guard` | Safety patterns |
+| `skill-comply` | Skill compliance |
+| `skill-scout` | Skill discovery |
+| `skill-stocktake` | Skill inventory |
+| `token-budget-advisor` | Token budget |
+| `visa-doc-translate` | Visa translation |
+| `workspace-surface-audit` | Workspace audit |
+
+---
+
+## 2. Agents (64)
+
+### Core Agents (12)
+| Agent | Purpose |
+|-------|---------|
+| `planner` | Implementation planning |
+| `architect` | System design |
+| `code-reviewer` | Code quality |
+| `security-reviewer` | Vulnerability detection |
+| `tdd-guide` | Test-driven development |
+| `build-error-resolver` | Build errors |
+| `e2e-runner` | E2E testing |
+| `refactor-cleaner` | Dead code cleanup |
+| `doc-updater` | Documentation |
+| `harness-optimizer` | Config tuning |
+| `loop-operator` | Autonomous loops |
+| `docs-lookup` | Documentation |
+
+### Language/Build Reviewers (32)
+| Agent | Language |
+|-------|----------|
+| `cpp-reviewer` | C/C++ |
+| `cpp-build-resolver` | C/C++ |
+| `csharp-reviewer` | C# |
+| `dart-build-resolver` | Dart |
+| `django-reviewer` | Django |
+| `django-build-resolver` | Django |
+| `fastapi-reviewer` | FastAPI |
+| `flutter-reviewer` | Flutter |
+| `fsharp-reviewer` | F# |
+| `go-reviewer` | Go |
+| `go-build-resolver` | Go |
+| `java-reviewer` | Java |
+| `java-build-resolver` | Java |
+| `kotlin-reviewer` | Kotlin |
+| `kotlin-build-resolver` | Kotlin |
+| `php-reviewer` | PHP |
+| `python-reviewer` | Python |
+| `pytorch-build-resolver` | PyTorch |
+| `react-reviewer` | React |
+| `react-build-resolver` | React |
+| `rust-reviewer` | Rust |
+| `rust-build-resolver` | Rust |
+| `swift-reviewer` | Swift |
+| `swift-build-resolver` | Swift |
+| `typescript-reviewer` | TypeScript |
+| `database-reviewer` | PostgreSQL |
+| `mle-reviewer` | ML pipelines |
+
+### Domain/Workflow Agents (20)
+| Agent | Domain |
+|-------|--------|
+| `chief-of-staff` | Multi-agent coord |
+| `code-explorer` | Codebase nav |
+| `code-simplifier` | Code simplification |
+| `comment-analyzer` | Comment quality |
+| `conversation-analyzer` | Session analysis |
+| `performance-optimizer` | Performance |
+| `pr-test-analyzer` | PR test coverage |
+| `silent-failure-hunter` | Silent failures |
+| `type-design-analyzer` | Type design |
+| `gan-evaluator` | GAN evaluation |
+| `gan-generator` | GAN generation |
+| `gan-planner` | GAN planning |
+| `harmonyos-app-resolver` | HarmonyOS |
+| `healthcare-reviewer` | Healthcare |
+| `homelab-architect` | Home lab |
+| `marketing-agent` | Marketing |
+| `network-architect` | Network |
+| `network-config-reviewer` | Network config |
+| `network-troubleshooter` | Network debug |
+| `seo-specialist` | SEO |
+| `a11y-architect` | Accessibility |
+
+---
+
+## 3. Commands (84)
+
+### Core Commands (20)
+| Command | Purpose |
+|---------|---------|
+| `plan` | Implementation plan |
+| `tdd` | TDD workflow |
+| `code-review` | Code review |
+| `security` | Security review |
+| `build-fix` | Fix build errors |
+| `e2e` | E2E tests |
+| `refactor-clean` | Remove dead code |
+| `orchestrate` | Multi-agent |
+| `learn` | Extract patterns |
+| `checkpoint` | Save progress |
+| `verify` | Verification loop |
+| `eval` | Evaluation |
+| `update-docs` | Update docs |
+| `update-codemaps` | Update codemaps |
+| `test-coverage` | Coverage analysis |
+| `setup-pm` | Package manager |
+| `analyze-project` | Project detection |
+| `start-free` | Daily workflow (free) |
+| `start-go` | Daily workflow (go) |
+| `skill-create` | Generate skills |
+
+### Language-Specific Commands (24)
+| Command | Language |
+|---------|----------|
+| `go-review` | Go |
+| `go-test` | Go |
+| `go-build` | Go |
+| `cpp-review` | C++ |
+| `cpp-test` | C++ |
+| `cpp-build` | C++ |
+| `kotlin-review` | Kotlin |
+| `kotlin-test` | Kotlin |
+| `kotlin-build` | Kotlin |
+| `python-review` | Python |
+| `react-review` | React |
+| `react-test` | React |
+| `react-build` | React |
+| `rust-review` | Rust |
+| `rust-test` | Rust |
+| `rust-build` | Rust |
+| `flutter-review` | Flutter |
+| `flutter-test` | Flutter |
+| `flutter-build` | Flutter |
+| `fastapi-review` | FastAPI |
+| `gradle-build` | Gradle |
+| `gan-build` | GAN |
+| `gan-design` | GAN |
+
+### Orchestration Commands (12)
+| Command | Purpose |
+|---------|---------|
+| `orch-add-feature` | New feature |
+| `orch-build-mvp` | Build MVP |
+| `orch-change-feature` | Change behavior |
+| `orch-fix-defect` | Fix bug |
+| `orch-refine-code` | Refactor |
+| `multi-backend` | Multi-backend |
+| `multi-execute` | Multi-execute |
+| `multi-frontend` | Multi-frontend |
+| `multi-plan` | Multi-plan |
+| `multi-workflow` | Multi-workflow |
+| `santa-loop` | Santa method |
+| `plan-orchestrate` | Plan orchestration |
+
+### PRP Commands (5)
+| Command | Purpose |
+|---------|---------|
+| `prp-commit` | PRP commit |
+| `prp-implement` | PRP implement |
+| `prp-plan` | PRP plan |
+| `prp-pr` | PRP PR |
+| `prp-prd` | PRP PRD |
+
+### Hook Commands (4)
+| Command | Purpose |
+|---------|---------|
+| `hookify` | Create hook |
+| `hookify-configure` | Configure hook |
+| `hookify-help` | Hook help |
+| `hookify-list` | List hooks |
+
+### Instinct Commands (3)
+| Command | Purpose |
+|---------|---------|
+| `instinct-export` | Export instincts |
+| `instinct-import` | Import instincts |
+| `instinct-status` | View instincts |
+
+### Other Commands (16)
+| Command | Purpose |
+|---------|---------|
+| `aside` | Quick note |
+| `auto-update` | Update ECC |
+| `cost-report` | Cost report |
+| `ecc-guide` | ECC guide |
+| `evolve` | Evolve code |
+| `feature-dev` | Feature dev |
+| `harness-audit` | Harness audit |
+| `jira` | Jira integration |
+| `loop-start` | Start loop |
+| `loop-status` | Loop status |
+| `model-route` | Model routing |
+| `pm2` | PM2 process |
+| `pr` | Create PR |
+| `projects` | List projects |
+| `promote` | Promote code |
+| `prune` | Prune unused |
+
+---
+
+## 4. Hooks (20+)
+
+### PreToolUse (8)
+| Hook | Purpose |
+|------|---------|
+| `pre:bash:dispatcher` | Bash preflight |
+| `pre:write:doc-file-warning` | Doc file warning |
+| `pre:edit-write:suggest-compact` | Compact suggestion |
+| `pre:observe:continuous-learning` | Learning capture |
+| `pre:governance-capture` | Governance events |
+| `pre:config-protection` | Config protection |
+| `pre:mcp-health-check` | MCP health |
+| `pre:edit-write:gateguard-fact-force` | GateGuard |
+
+### PostToolUse (11)
+| Hook | Purpose |
+|------|---------|
+| `post:bash:dispatcher` | Bash postflight |
+| `post:quality-gate` | Quality checks |
+| `post:edit:design-quality-check` | Design quality |
+| `post:edit:accumulator` | Edit batching |
+| `post:edit:console-warn` | Console warning |
+| `post:governance-capture` | Governance |
+| `post:session-activity-tracker` | Activity tracking |
+| `post:observe:continuous-learning` | Learning |
+| `post:ecc-metrics-bridge` | Metrics |
+| `post:ecc-context-monitor` | Context monitor |
+| `post:mcp-health-check` | MCP failure tracking |
+
+### Stop (6)
+| Hook | Purpose |
+|------|---------|
+| `stop:format-typecheck` | Format + typecheck |
+| `stop:check-console-log` | Console.log check |
+| `stop:session-end` | Session persist |
+| `stop:evaluate-session` | Session eval |
+| `stop:cost-tracker` | Cost tracking |
+| `stop:desktop-notify` | Desktop notify |
+
+### Lifecycle (3)
+| Hook | Purpose |
+|------|---------|
+| `session:start` | Load context |
+| `pre:compact` | Save state |
+| `session:end:marker` | End marker |
+
+---
+
+## 5. Rules (20 Packs)
+
+| Pack | Language/Framework |
+|------|-------------------|
+| `common` | Universal conventions |
+| `typescript` | TypeScript/JavaScript |
+| `angular` | Angular |
+| `python` | Python |
+| `golang` | Go |
+| `rust` | Rust |
+| `java` | Java |
+| `kotlin` | Kotlin |
+| `swift` | Swift |
+| `csharp` | C# |
+| `fsharp` | F# |
+| `cpp` | C/C++ |
+| `php` | PHP |
+| `ruby` | Ruby |
+| `perl` | Perl |
+| `dart` | Dart/Flutter |
+| `react` | React |
+| `web` | Web/Frontend |
+| `arkts` | HarmonyOS/ArkTS |
+
+---
+
+## 6. MCP Servers (29)
+
+| Server | Purpose |
+|--------|---------|
+| `nexus` | Cost/privacy proxy |
+| `jira` | Jira tracking |
+| `github` | GitHub PRs/issues |
+| `firecrawl` | Web scraping |
+| `supabase` | Database ops |
+| `memory` | Persistent memory |
+| `omega-memory` | Semantic memory |
+| `longhand` | Session history |
+| `sequential-thinking` | Chain-of-thought |
+| `vercel` | Vercel deploy |
+| `railway` | Railway deploy |
+| `cloudflare-docs` | Cloudflare docs |
+| `cloudflare-workers-builds` | Workers builds |
+| `cloudflare-workers-bindings` | Workers bindings |
+| `cloudflare-observability` | Observability |
+| `clickhouse` | Analytics |
+| `exa-web-search` | Web search |
+| `parallel-search` | LLM search |
+| `context7` | Live docs |
+| `codescene` | Code health |
+| `magic` | UI components |
+| `filesystem` | File ops |
+| `playwright` | Browser automation |
+| `fal-ai` | Media generation |
+| `browserbase` | Cloud browser |
+| `browser-use` | AI browser |
+| `devfleet` | Multi-agent |
+| `token-optimizer` | Token reduction |
+| `laraplugins` | Laravel plugins |
+| `confluence` | Confluence |
+| `evalview` | AI regression |
+| `squish` | Local memory |
+
+---
+
+## 7. Install Profiles (7)
+
+| Profile | Modules | Description |
+|---------|---------|-------------|
+| `minimal` | 5 | Low-context, no hooks |
+| `opencode` | 3 | Default OpenCode |
+| `core` | 6 | Minimal baseline |
+| `developer` | 9 | Default engineering |
+| `security` | 7 | Security-heavy |
+| `research` | 9 | Research/content |
+| `full` | 22 | Complete ECC |
+
+---
+
+## 8. Project Stacks (20)
+
+| Stack | Indicators | Skills |
+|-------|-----------|--------|
+| `typescript` | tsconfig.json | coding-standards, tdd-workflow, verification-loop |
+| `javascript` | package.json | coding-standards, tdd-workflow, verification-loop |
+| `react` | package.json (react) | frontend-patterns, react-* |
+| `nextjs` | next.config.* | frontend-patterns, backend-patterns |
+| `golang` | go.mod | golang-patterns, golang-testing |
+| `python` | pyproject.toml | python-patterns, python-testing |
+| `rust` | Cargo.toml | rust-patterns, rust-testing |
+| `java` | pom.xml | java-coding-standards |
+| `springboot` | pom.xml (spring-boot) | springboot-* |
+| `kotlin` | build.gradle.kts | kotlin-patterns, kotlin-testing |
+| `swift` | Package.swift | swiftui-patterns, swift-concurrency-6-2 |
+| `dart-flutter` | pubspec.yaml | dart-flutter-patterns |
+| `php-laravel` | composer.json | laravel-patterns, laravel-tdd |
+| `ruby` | Gemfile | tdd-workflow, verification-loop |
+| `csharp-dotnet` | *.csproj | dotnet-patterns, csharp-testing |
+| `cpp` | CMakeLists.txt | cpp-coding-standards, cpp-testing |
+| `perl` | cpanfile | perl-patterns, perl-testing |
+| `django` | manage.py | django-patterns, django-tdd |
+| `android` | AndroidManifest.xml | android-clean-architecture, kotlin-patterns |
+| `docker` | Dockerfile | docker-patterns, deployment-patterns |
+
+---
+
+## 9. Contexts (3)
+
+| Context | Mode | Purpose |
+|---------|------|---------|
+| `dev.md` | Active | Write code first |
+| `research.md` | Exploration | Read widely |
+| `review.md` | Review | Severity checklist |
+
+---
+
+## 10. Localizations (9)
+
+| Language | Directory |
+|----------|-----------|
+| Japanese | `docs/ja-JP/` |
+| Simplified Chinese | `docs/zh-CN/` |
+| Traditional Chinese | `docs/zh-TW/` |
+| Korean | `docs/ko-KR/` |
+| Brazilian Portuguese | `docs/pt-BR/` |
+| Russian | `docs/ru/` |
+| Turkish | `docs/tr/` |
+| Vietnamese | `docs/vi-VN/` |
+| German | `docs/de-DE/` |
+
+---
+
+## How to Use This
+
+### For analyze-project
+
+The `analyze-project` command uses this inventory to:
+1. Detect project stack
+2. Load appropriate skills
+3. Apply relevant rules
+4. Configure agents
+
+### For Manual Setup
+
+```powershell
+# Pick skills from this list
+# Add to opencode.jsonc instructions:
+"instructions": [
+  "C:/path/to/ecc/skills/dart-flutter-patterns/SKILL.md",
+  "C:/path/to/ecc/skills/tdd-workflow/SKILL.md"
+]
+```
+
+### For Custom Stacks
+
+If your stack isn't listed:
+1. Find relevant skills in Skill/skill-list.md
+2. Add to `analyze-project.ps1` indicators
+3. Create custom stack entry
