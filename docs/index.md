@@ -70,6 +70,16 @@ OpenCode Setup adalah **asisten coding AI** yang bisa kamu clone ke dalam projec
 |---------|-----|
 | [Hooks](07-advanced/01-hooks.md) | Sistem hook otomatis |
 | [MCP](07-advanced/02-mcp.md) | Server MCP |
+| [Session Persistence](07-advanced/03-session-persistence.md) | Simpan status workflow |
+
+### Templates
+
+| Dokumen | Isi |
+|---------|-----|
+| [Flutter + Firebase](../../templates/flutter-firebase/template.md) | Mobile app template |
+| [Go API](../../templates/go-api/template.md) | REST API template |
+| [Next.js Fullstack](../../templates/nextjs-fullstack/template.md) | Fullstack web template |
+| [Python FastAPI](../../templates/python-fastapi/template.md) | API service template |
 
 ### Troubleshooting
 

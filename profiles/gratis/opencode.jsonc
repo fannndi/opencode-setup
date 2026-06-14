@@ -278,7 +278,9 @@
     "start-free": { "description": "Daily workflow - free models", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/start-free.md}\n\n$ARGUMENTS" },
     "start-go": { "description": "Daily workflow - go models", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/start-go.md}\n\n$ARGUMENTS" },
     "analyze-project": { "description": "Analyze project stack", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/analyze-project.md}\n\n$ARGUMENTS" },
-    "project-analyze": { "description": "Analisa PRD dan buat ai-notes.md", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/project-analyze.md}\n\n$ARGUMENTS" }
+    "project-analyze": { "description": "Analisa PRD dan buat ai-notes.md", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/project-analyze.md}\n\n$ARGUMENTS" },
+    "template": { "description": "Load project template", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/template.md}\n\n$ARGUMENTS" },
+    "reset-session": { "description": "Reset session state", "template": "Reset session: jalankan .\\scripts\\session-manager.ps1 -Action reset" }
   },
 
   "permission": {

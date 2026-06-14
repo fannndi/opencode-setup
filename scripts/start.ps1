@@ -13,6 +13,7 @@ $ProgressPreference = "SilentlyContinue"
 
 $SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ROOT_DIR = Split-Path -Parent $SETUP_DIR
+$SESSION_FILE = "$ROOT_DIR\.opencode-session.json"
 $ECC_DIR = "$ROOT_DIR\ecc"
 $ROUTER_DIR = "$ROOT_DIR\9router"
 $SYNC_STATE = "$ROOT_DIR\.sync-state.json"
@@ -63,6 +64,69 @@ Write-Host "  ║         OpenCode Daily Workflow                  ║" -Foregro
 Write-Host "  ║         Profile: $profileLabel$( ' ' * (25 - $profileLabel.Length))║" -ForegroundColor Magenta
 Write-Host "  ╚══════════════════════════════════════════════════╝" -ForegroundColor Magenta
 Write-Host ""
+
+# ============================================================
+# Load Session State
+# ============================================================
+
+$session = $null
+if (Test-Path $SESSION_FILE) {
+    try {
+        $session = Get-Content $SESSION_FILE -Raw | ConvertFrom-Json
+        Write-Host "  [SESSION] Loaded previous session ($($session.last_action))" -ForegroundColor Gray
+    } catch {
+        Write-Host "  [SESSION] Corrupt, starting fresh" -ForegroundColor Yellow
+    }
+}
+
+# ============================================================
+# Auto-Update Check
+# ============================================================
+
+Write-Host ""
+Write-Host "  [UPDATE] Checking for updates..." -ForegroundColor Gray
+
+$eccBefore = git -C "$ROOT_DIR\ecc" log -1 --format="%H" 2>$null
+$routerBefore = git -C "$ROOT_DIR\9router" log -1 --format="%H" 2>$null
+
+$hasEccUpdates = $false
+$hasRouterUpdates = $false
+
+# Pull ECC
+if (Test-Path "$ROOT_DIR\ecc\.git") {
+    git -C "$ROOT_DIR\ecc" pull --quiet 2>$null
+    $eccAfter = git -C "$ROOT_DIR\ecc" log -1 --format="%H" 2>$null
+    if ($eccBefore -ne $eccAfter) { $hasEccUpdates = $true }
+}
+
+# Pull 9Router
+if (Test-Path "$ROOT_DIR\9router\.git") {
+    git -C "$ROOT_DIR\9router" pull --quiet 2>$null
+    $routerAfter = git -C "$ROOT_DIR\9router" log -1 --format="%H" 2>$null
+    if ($routerBefore -ne $routerAfter) { $hasRouterUpdates = $true }
+}
+
+if ($hasEccUpdates -or $hasRouterUpdates) {
+    Write-Host "  [UPDATE] ECC updates detected! Rebuilding plugin..." -ForegroundColor Yellow
+    Push-Location "$ROOT_DIR\ecc"
+    if (-not (Test-Path "node_modules")) { npm install --silent 2>$null }
+    if (-not (Test-Path ".opencode\node_modules")) { Push-Location ".opencode"; npm install --silent 2>$null; Pop-Location }
+    npm run build:opencode 2>$null
+    Pop-Location
+    Write-Host "  [UPDATE] Plugin rebuilt" -ForegroundColor Green
+    
+    # Update sync state
+    $timestamp = Get-Date -Format "yyyy-MM-ddTHH:mm:sszzz"
+    $eccVersion = if (Test-Path "$ROOT_DIR\ecc\VERSION") { Get-Content "$ROOT_DIR\ecc\VERSION" -ErrorAction SilentlyContinue } else { "unknown" }
+    $syncState = @{
+        ecc = @{ last_sha = $eccAfter; last_sync = $timestamp; repo = "fannndi/ECC"; version = $eccVersion }
+        "9router" = @{ last_sha = $routerAfter; last_sync = $timestamp; repo = "fannndi/9router" }
+    } | ConvertTo-Json -Depth 5
+    Set-Content -Path "$ROOT_DIR\.sync-state.json" -Value $syncState -Encoding UTF8
+    Write-Host "  [UPDATE] Sync state updated" -ForegroundColor Green
+} else {
+    Write-Host "  [UPDATE] No updates" -ForegroundColor Green
+}
 
 $totalSteps = 7
 
@@ -337,6 +401,30 @@ Write-OK "ECC_HOOK_PROFILE=standard"
 # ============================================================
 
 Write-Step "7/$totalSteps" "Status summary"
+
+# ============================================================
+# Save Session
+# ============================================================
+
+$timestamp = Get-Date -Format "yyyy-MM-ddTHH:mm:sszzz"
+$sessionData = [PSCustomObject]@{
+    version = "1.0"
+    last_profile = $Profile
+    stack = if ($session) { $session.stack } else { "" }
+    skills_loaded = if ($session) { $session.skills_loaded } else { @() }
+    rules_applied = if ($session) { $session.rules_applied } else { @() }
+    workflow_state = [PSCustomObject]@{
+        prd_analyzed = if ($session) { $session.workflow_state.prd_analyzed } else { $false }
+        ai_notes_generated = if ($session) { $session.workflow_state.ai_notes_generated } else { $false }
+        analyze_project_done = if ($session) { $session.workflow_state.analyze_project_done } else { $false }
+    }
+    last_action = "/start-$Profile"
+    created_at = if ($session) { $session.created_at } else { $timestamp }
+    updated_at = $timestamp
+}
+$sessionData | ConvertTo-Json -Depth 10 | Set-Content -Path $SESSION_FILE -Encoding UTF8
+Write-Host ""
+Write-Host "  [SESSION] Saved to .opencode-session.json" -ForegroundColor Gray
 
 Write-Host ""
 Write-Host "  ╔══════════════════════════════════════════════════╗" -ForegroundColor Green

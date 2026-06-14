@@ -71,6 +71,7 @@ info() { echo -e "  ${GRAY}[INFO] $1${NC}"; }
 
 PROFILE_LABEL="100% Free"
 [[ "$PROFILE" == "go" ]] && PROFILE_LABEL="Go (Limited)"
+SESSION_FILE="$ROOT_DIR/.opencode-session.json"
 
 echo -e "${MAGENTA:-\033[0;35m}"
 echo "  ╔══════════════════════════════════════════════════╗"
@@ -78,6 +79,64 @@ echo "  ║         OpenCode Daily Workflow                  ║"
 echo "  ║         Profile: $PROFILE_LABEL$(printf '%*s' $((25 - ${#PROFILE_LABEL})) '')║"
 echo "  ╚══════════════════════════════════════════════════╝"
 echo -e "${NC}"
+
+# ============================================================
+# Load Session State
+# ============================================================
+
+SESSION=""
+if [[ -f "$SESSION_FILE" ]]; then
+    SESSION=$(cat "$SESSION_FILE" 2>/dev/null || echo "")
+    LAST_ACTION=$(echo "$SESSION" | python3 -c "import sys,json; print(json.load(sys.stdin).get('last_action',''))" 2>/dev/null || echo "")
+    [[ -n "$LAST_ACTION" ]] && echo -e "  ${GRAY}[SESSION] Loaded previous session ($LAST_ACTION)${NC}"
+fi
+
+# ============================================================
+# Auto-Update Check
+# ============================================================
+
+echo -e "  ${GRAY}[UPDATE] Checking for updates...${NC}"
+
+ECC_BEFORE=$(git -C "$ECC_DIR" log -1 --format="%H" 2>/dev/null || echo "")
+ROUTER_BEFORE=$(git -C "$ROUTER_DIR" log -1 --format="%H" 2>/dev/null || echo "")
+
+HAS_ECC_UPDATES=false
+HAS_ROUTER_UPDATES=false
+
+if [[ -d "$ECC_DIR/.git" ]]; then
+    git -C "$ECC_DIR" pull --quiet 2>/dev/null || true
+    ECC_AFTER=$(git -C "$ECC_DIR" log -1 --format="%H" 2>/dev/null || echo "")
+    [[ "$ECC_BEFORE" != "$ECC_AFTER" ]] && HAS_ECC_UPDATES=true
+fi
+
+if [[ -d "$ROUTER_DIR/.git" ]]; then
+    git -C "$ROUTER_DIR" pull --quiet 2>/dev/null || true
+    ROUTER_AFTER=$(git -C "$ROUTER_DIR" log -1 --format="%H" 2>/dev/null || echo "")
+    [[ "$ROUTER_BEFORE" != "$ROUTER_AFTER" ]] && HAS_ROUTER_UPDATES=true
+fi
+
+if [[ "$HAS_ECC_UPDATES" == "true" || "$HAS_ROUTER_UPDATES" == "true" ]]; then
+    echo -e "  ${YELLOW}[UPDATE] Updates detected! Rebuilding plugin...${NC}"
+    cd "$ECC_DIR"
+    [[ ! -d "node_modules" ]] && npm install --silent 2>/dev/null || true
+    if [[ ! -d ".opencode/node_modules" ]]; then cd .opencode && npm install --silent 2>/dev/null && cd .. || true; fi
+    npm run build:opencode 2>/dev/null || true
+    cd "$ROOT_DIR"
+    ok "Plugin rebuilt"
+    
+    # Update sync state
+    TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%S+00:00" 2>/dev/null || date +"%Y-%m-%dT%H:%M:%S")
+    ECC_VERSION=$(cat "$ECC_DIR/VERSION" 2>/dev/null || echo "unknown")
+    cat > "$SYNC_STATE" << JSONEOF
+{
+  "ecc": { "last_sha": "$ECC_AFTER", "last_sync": "$TIMESTAMP", "repo": "fannndi/ECC", "version": "$ECC_VERSION" },
+  "9router": { "last_sha": "$ROUTER_AFTER", "last_sync": "$TIMESTAMP", "repo": "fannndi/9router" }
+}
+JSONEOF
+    ok "Sync state updated"
+else
+    ok "No updates"
+fi
 
 # ============================================================
 # [1/7] Check repos
@@ -329,6 +388,47 @@ ok "ECC_HOOK_PROFILE=standard"
 # ============================================================
 
 step "7/7" "Status summary"
+
+# ============================================================
+# Save Session
+# ============================================================
+
+TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%S+00:00" 2>/dev/null || date +"%Y-%m-%dT%H:%M:%S")
+STACK=""
+SKILLS="[]"
+RULES="[]"
+PRD_ANALYZED="false"
+AI_NOTES="false"
+ANALYZE_DONE="false"
+CREATED="$TIMESTAMP"
+
+if [[ -n "$SESSION" ]]; then
+    STACK=$(echo "$SESSION" | python3 -c "import sys,json; print(json.load(sys.stdin).get('stack',''))" 2>/dev/null || echo "")
+    PRD_ANALYZED=$(echo "$SESSION" | python3 -c "import sys,json; print(json.load(sys.stdin).get('workflow_state',{}).get('prd_analyzed',False))" 2>/dev/null || echo "false")
+    AI_NOTES=$(echo "$SESSION" | python3 -c "import sys,json; print(json.load(sys.stdin).get('workflow_state',{}).get('ai_notes_generated',False))" 2>/dev/null || echo "false")
+    ANALYZE_DONE=$(echo "$SESSION" | python3 -c "import sys,json; print(json.load(sys.stdin).get('workflow_state',{}).get('analyze_project_done',False))" 2>/dev/null || echo "false")
+    CREATED=$(echo "$SESSION" | python3 -c "import sys,json; print(json.load(sys.stdin).get('created_at','$TIMESTAMP'))" 2>/dev/null || echo "$TIMESTAMP")
+fi
+
+cat > "$SESSION_FILE" << JSONEOF
+{
+  "version": "1.0",
+  "last_profile": "$PROFILE",
+  "stack": "$STACK",
+  "skills_loaded": [],
+  "rules_applied": [],
+  "workflow_state": {
+    "prd_analyzed": $PRD_ANALYZED,
+    "ai_notes_generated": $AI_NOTES,
+    "analyze_project_done": $ANALYZE_DONE
+  },
+  "last_action": "/start-$PROFILE",
+  "created_at": "$CREATED",
+  "updated_at": "$TIMESTAMP"
+}
+JSONEOF
+
+echo -e "  ${GRAY}[SESSION] Saved to .opencode-session.json${NC}"
 
 echo ""
 echo -e "  ${GREEN}╔══════════════════════════════════════════════════╗${NC}"
