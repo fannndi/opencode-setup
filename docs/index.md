@@ -116,23 +116,25 @@ OpenCode Setup adalah **asisten coding AI** yang bisa kamu clone ke dalam projec
 ## Struktur Project
 
 ```
-opencode-setup/
-├── docs/                    # Dokumentasi (anda di sini)
-│   ├── index.md
-│   ├── 01-getting-started/
-│   ├── 02-architecture/
-│   ├── 03-profiles/
-│   ├── 04-usage/
-│   ├── 05-skills/
-│   ├── 06-catalogs/
-│   ├── 07-advanced/
-│   └── 08-troubleshooting/
-├── scripts/                 # Script automation
-├── commands/                # Command templates
-├── profiles/                # Config profiles
-├── Feature/                 # Feature inventory
-├── Skill/                   # Skill catalog
-├── ecc/                     # ECC repo (auto-cloned)
-├── 9router/                 # 9Router repo (auto-cloned)
-└── README.md                # Overview
+my-project/
+├── prd.md                 # Product Requirements Document
+├── frontend/              # Source code frontend
+├── backend/               # Source code backend
+├── lib/                   # Source code library/shared
+├── ai-notes.md            # Rekomendasi dari AI
+├── docs/                  # Rencana implementasi
+│   ├── frontend/          # Rencana frontend
+│   ├── backend/           # Rencana backend
+│   └── database/          # Rencana database
+└── opencode-setup/        # Clone ini di sini
+    ├── docs/              # Dokumentasi (anda di sini)
+    ├── scripts/           # Script automation
+    ├── commands/          # Command templates
+    ├── profiles/          # Config profiles
+    ├── templates/         # Project templates
+    ├── Feature/           # Feature inventory
+    ├── Skill/             # Skill catalog
+    ├── ecc/               # ECC repo (auto-cloned)
+    ├── 9router/           # 9Router repo (auto-cloned)
+    └── README.md          # Overview
 ```

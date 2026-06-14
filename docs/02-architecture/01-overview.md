@@ -4,11 +4,18 @@
 
 ```
 my-project/
-├── src/                    # Source code kamu
-├── pubspec.yaml            # (contoh: Flutter project)
-└── opencode-setup/         # Clone ini di sini
-    ├── ecc/                # 270+ skills, 64 agents
-    ├── 9router/            # AI gateway
+├── prd.md                 # Product Requirements Document
+├── frontend/              # Source code frontend
+├── backend/               # Source code backend
+├── lib/                   # Source code library/shared
+├── ai-notes.md            # Rekomendasi dari AI
+├── docs/                  # Rencana implementasi
+│   ├── frontend/          # Rencana frontend
+│   ├── backend/           # Rencana backend
+│   └── database/          # Rencana database
+└── opencode-setup/        # Clone ini di sini
+    ├── ecc/               # 270+ skills, 64 agents
+    ├── 9router/           # AI gateway
     ├── scripts/            # Automation scripts
     ├── profiles/           # Config profiles
     ├── commands/           # Command templates

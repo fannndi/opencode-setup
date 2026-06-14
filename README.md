@@ -5,7 +5,9 @@ Asisten coding AI yang bisa kamu clone ke dalam project manapun.
 ```
 my-project/
 ├── prd.md                 # Product Requirements Document
-├── src/                   # Source code kamu
+├── frontend/              # Source code frontend
+├── backend/               # Source code backend
+├── lib/                   # Source code library/shared
 ├── ai-notes.md            # Rekomendasi dari AI
 ├── docs/                  # Rencana implementasi
 └── opencode-setup/        # Clone ini di sini
