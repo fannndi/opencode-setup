@@ -127,3 +127,159 @@ Dibuat agar siapapun bisa bikin aplikasi tanpa perlu coding dan tanpa biaya.
 ---
 
 **Selamat datang di masa depan — di mana Anda tinggal bilang, AI yang kerjakan.**
+
+---
+
+---
+
+# Untuk Developer
+
+---
+
+## Quick Start
+
+```powershell
+git clone https://github.com/fannndi/opencode-setup.git
+cd opencode-setup
+.\scripts\setup.ps1
+```
+
+Edit `api-key.txt`, paste API key, lalu:
+
+```powershell
+.\scripts\setup.ps1
+opencode
+/start-free
+/set-project C:\path\ke\project
+/code-analyze
+/analyze-project
+restart opencode
+```
+
+---
+
+## Semua Commands
+
+| Command | Fungsi | Contoh |
+|---------|--------|--------|
+| `/start-free` | Start workflow gratis | `/start-free` |
+| `/start-go` | Start workflow go | `/start-go` |
+| `/set-project C:\path` | Set project aktif | `/set-project C:\Users\me\project` |
+| `/current-project` | Lihat project aktif | `/current-project` |
+| `/wizard` | Panduan interaktif untuk pemula | `/wizard` |
+| `/generate-prd` | Generate PRD dari ide | `/generate-prd "aplikasi kasir"` |
+| `/project-analyze` | Analisa PRD → ai-notes.md | `/project-analyze` |
+| `/code-analyze` | Scan source code → ai-notes.md | `/code-analyze` |
+| `/analyze-project` | Deteksi stack + load skills | `/analyze-project` |
+| `/project-skills` | Lihat skills yang cocok | `/project-skills` |
+| `/auto-start` | Chain semua workflow dalam 1 command | `/auto-start` |
+| `/template` | Load project template | `/template flutter-firebase` |
+| `/create` | Generate boilerplate | `/create widget login` |
+| `/plan` | Buat rencana implementasi | `/plan buat fitur login` |
+| `/tdd` | Test-driven development | `/tdd buat function hitung` |
+| `/code-review` | Review kode | `/code-review lib/` |
+| `/security` | Security audit | `/security lib/` |
+| `/build-fix` | Fix build errors | `/build-fix` |
+| `/verify` | Verification loop | `/verify` |
+| `/quality-gate` | Verify fixes, track iterations | `/quality-gate` |
+| `/research` | Web search + AI ringkasan | `/research Flutter 2026` |
+| `/token-stats` | Token usage + session stats | `/token-stats` |
+| `/memory` | Simpan/baca memori session | `/memory read` |
+| `/reset-session` | Reset session state | `/reset-session` |
+| `/admin` | Update ECC/9Router, doctor check | `/admin` |
+
+---
+
+## Workflow Examples
+
+### Flutter — Existing Code
+
+```powershell
+cd opencode-setup
+opencode
+/start-free
+/set-project C:\Users\User\flutter-app
+/code-analyze
+/analyze-project
+restart
+
+/code-review lib/screens/
+/security lib/
+/tdd buat halaman login
+/verify
+```
+
+### Flutter — Project Baru (dengan PRD)
+
+```powershell
+opencode
+/start-free
+/set-project C:\Users\User\flutter-app-baru
+/project-analyze
+/analyze-project
+restart
+
+/plan "buat halaman login"
+/tdd buat state management
+/code-review lib/
+/security
+```
+
+### Ganti Project
+
+```powershell
+/set-project C:\Users\User\project-lain
+/code-analyze
+/analyze-project
+```
+
+---
+
+## Biaya $0
+
+| Komponen | Biaya | Kegunaan |
+|----------|-------|----------|
+| OpenCode Free | ✅ $0 | AI coding assistant |
+| 9Router | ✅ $0 | AI gateway + combos |
+| ECC (270 skills) | ✅ $0 | Knowledge base |
+| MiMo Auto | ✅ $0 | Free AI model |
+
+---
+
+## Struktur
+
+```
+opencode-setup/
+├── scripts/                 # Automation scripts (24 file)
+├── commands/                # OpenCode command templates
+├── profiles/                # Config profiles (gratis / go)
+├── templates/               # Project templates (4)
+├── Feature/                 # 600+ komponen inventory
+├── Skill/                   # 270 skills catalog
+├── docs/                    # Dokumentasi
+├── ecc/                     # ECC repo (auto-cloned)
+├── 9router/                 # 9Router repo (auto-cloned)
+├── CHANGELOG.md
+├── README.md
+└── install.bat              # One-click installer
+```
+
+---
+
+## Admin Workflow (Untuk Pengembangan Project Ini)
+
+```powershell
+.\scripts\admin-update.ps1     # Update ECC + 9Router + doctor check
+.\scripts\start.ps1            # Test model
+opencode                       # Verify commands jalan
+git add -A && git commit       # Save perubahan
+git push                       # Push ke repo
+```
+
+### Changelogs
+
+| File | Isi |
+|------|-----|
+| [changelog-ecc.md](changelog-ecc.md) | Perubahan ECC (skills, agents, commands) |
+| [changelog-9router.md](changelog-9router.md) | Perubahan 9Router (models, features) |
+| [log-admin.md](log-admin.md) | History update admin |
