@@ -1,18 +1,49 @@
 # Analyze Project — Deteksi Stack
 
-## Apa Itu?
-
-`/analyze-project` mendeteksi tipe project kamu dan load skills yang sesuai.
-
-## Alur
+## Alur Lengkap
 
 ```
-1. Locate project root (1 level up dari opencode-setup)
+1. clone project repo (prd.md only)
+2. cd project
+3. clone opencode-setup
+4. opencode
+5. /plan → analisa PRD
+6. /project-analyze → buat ai-notes.md
+7. /analyze-project → deteksi stack + load skills
+8. restart opencode
+9. mulai coding
+```
+
+## /project-analyze
+
+Analisa PRD dan buat rekomendasi skills/commands.
+
+```powershell
+.\scripts\project-analyze.ps1
+```
+
+**Yang dilakukan:**
+1. Baca prd.md
+2. Deteksi stack dari keywords
+3. Match skills dari Skill/skill-list.md
+4. Generate ai-notes.md
+
+**Output:** `ai-notes.md` di project root
+
+## /analyze-project
+
+Deteksi stack project dan load skills.
+
+```powershell
+.\scripts\analyze-project.ps1
+```
+
+**Yang dilakukan:**
+1. Locate project root (1 level up)
 2. Scan for indicator files
 3. Match stack
 4. Load core + project-specific skills
 5. Generate config
-```
 
 ## Indicator Files
 

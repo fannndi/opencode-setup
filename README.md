@@ -14,20 +14,25 @@ my-project/
 ## Quick Start
 
 ```powershell
-# 1. Clone ke dalam project
-git clone https://github.com/fannndi/opencode-setup.git
+# 1. Clone project repo (prd.md only)
+git clone https://github.com/user/my-project.git
+cd my-project
 
-# 2. Masuk ke folder
-cd opencode-setup
+# 2. Clone opencode-setup
+git clone https://github.com/fannndi/opencode-setup.git
 
 # 3. Jalankan OpenCode
 opencode
 
-# 4. Deteksi stack project
-/analyze-project
+# 4. Analisa PRD
+/plan                    # AI analisa PRD
+/project-analyze         # Buat ai-notes.md
 
-# 5. Restart OpenCode, lalu mulai coding
-opencode
+# 5. Deteksi stack + restart
+/analyze-project         # Deteksi stack, load skills
+# Restart OpenCode
+
+# 6. Mulai coding
 ```
 
 ## Yang Kamu Dapat
@@ -51,6 +56,7 @@ opencode
 
 | Command | Fungsi |
 |---------|--------|
+| `/project-analyze` | Analisa PRD → ai-notes.md |
 | `/analyze-project` | Deteksi stack project |
 | `/start-free` | Daily workflow (gratis) |
 | `/start-go` | Daily workflow (go) |
