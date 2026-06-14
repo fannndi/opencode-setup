@@ -1,319 +1,129 @@
-# OpenCode Setup — AI Coding Assistant
+# Bu Rina Mau Bikin Aplikasi
 
-Asisten coding AI — clone sekali, kontrol semua project.
+Bu Rina punya toko kelontong. Setiap hari dia catat stok barang di buku, hitung manual pake kalkulator, dan sering kehabisan barang karena lupa order.
 
-```
-opencode-setup/              ← Master repo
-    ├── ecc/                 # 270+ skills, 64 agents
-    ├── 9router/             # AI gateway + combos
-    ├── scripts/             # Automation scripts
-    ├── commands/            # Command templates
-    ├── profiles/            # Config profiles
-    ├── templates/           # Project templates
-    ├── Feature/             # Feature inventory
-    ├── Skill/               # Skill catalog
-    └── docs/                # Dokumentasi
-```
+Dia ingin punya **aplikasi kasir** — tapi tidak bisa coding. Dan tidak punya duit jutaan rupiah buat sewa programmer.
+
+**Sekarang ada solusinya.**
 
 ---
 
-## Untuk Pemula (Tanpa Coding)
+## Yang Ini Bisa Bikin Aplikasi — Gratis
 
-Download → Double-click → Jawab pertanyaan → Dapet aplikasi.
+Bayangkan ada **asisten pribadi** yang bisa bikin aplikasi. Anda tinggal ceritakan ide, dia yang kerjakan. Tidak perlu belajar coding. Tidak perlu bayar.
 
-```cmd
-# 1. Download repo (zip) atau clone
-# 2. Double-click install.bat
-#    → Install Node.js + Git + OpenCode otomatis
-#    → Clone ECC + 9Router
-#    → Setup config
-#
-# 3. Buka terminal di folder opencode-setup
-# 4. opencode
-# 5. /start-free
-# 6. /wizard
-#    → Pilih "Project Baru"
-#    → Ceritakan ide aplikasi Anda
-#    → AI generate PRD + deteksi stack
-#    → Siap coding!
-```
+Asisten ini kerja pakai 3 teknologi yang berjalan otomatis di belakang layar:
 
-### Biaya: $0
-
-| Komponen | Biaya | Kegunaan |
-|----------|-------|----------|
-| OpenCode Free | ✅ $0 | AI coding assistant |
-| 9Router | ✅ $0 | AI gateway + combo |
-| ECC | ✅ $0 (Open Source) | 270+ skills |
-| MiMo Auto | ✅ $0 | Model AI gratis |
+- **Otak AI** — paham 270+ bahasa dan cara bikin aplikasi
+- **Jaringan gratis** — menghubungkan ke AI tanpa biaya
+- **Sistem pintar** — memastikan semuanya jalan terus
 
 ---
 
-| Tool | Cek | Install |
-|------|-----|---------|
-| Node.js | `node --version` | [nodejs.org](https://nodejs.org) |
-| Git | `git --version` | [git-scm.com](https://git-scm.com) |
-| OpenCode | `opencode --version` | `npm install -g opencode` |
+## Cara Pakai (3 Langkah)
 
-```powershell
-git clone https://github.com/fannndi/opencode-setup.git
-cd opencode-setup
-.\scripts\setup.ps1
+### Langkah 1: Download + Jalankan
+
+Download folder ini, lalu **double-click file bernama `install.bat`**.
+
+```
+install.bat       ← klik 2x, tunggu bentar
+   │
+   ├── Cek laptop (apa perlu install sesuatu?)
+   ├── Download otak AI (270+ skills)
+   ├── Siapkan jaringan gratis
+   └── Buka dashboard
 ```
 
-Edit `api-key.txt`, paste API key, lalu:
+Komputer akan kerja sendiri. Anda tinggal tunggu 1-2 menit.
 
-```powershell
-.\scripts\setup.ps1
+### Langkah 2: Ceritakan Ide
+
+Buka terminal (command prompt), ketik:
+
 ```
-
----
-
-## Quick Start
-
-```powershell
 opencode
-/start-free                    ← WAJIB dulu (9Router, model, config)
-/set-project C:\path\ke\project
-/code-analyze                  ← scan code → ai-notes.md
-/analyze-project               ← load skills sesuai stack
-restart opencode
-```
-
----
-
-## Commands
-
-| Command | Fungsi | Contoh |
-|---------|--------|--------|
-| `/start-free` | Start workflow gratis | `/start-free` |
-| `/start-go` | Start workflow go | `/start-go` |
-| `/set-project C:\path` | Set project aktif | `/set-project C:\Users\me\project` |
-| `/current-project` | Lihat project aktif | `/current-project` |
-| `/project-analyze` | Analisa PRD → ai-notes.md | `/project-analyze` |
-| `/code-analyze` | Scan source code → ai-notes.md | `/code-analyze` |
-| `/analyze-project` | Deteksi stack + load skills | `/analyze-project` |
-| `/project-skills` | Lihat skills yang cocok | `/project-skills` |
-| `/template` | Load project template | `/template flutter-firebase` |
-| `/plan` | Buat rencana implementasi | `/plan buat fitur login` |
-| `/tdd` | Test-driven development | `/tdd buat function hitung` |
-| `/code-review` | Review kode | `/code-review lib/` |
-| `/security` | Security audit | `/security lib/` |
-| `/build-fix` | Fix build errors | `/build-fix` |
-| `/verify` | Verification loop | `/verify` |
-| `/reset-session` | Reset session state | `/reset-session` |
-| `/research` | Web search + AI ringkasan | `/research Flutter 2026` |
-| `/auto-start` | Chain semua workflow 1 command | `/auto-start` |
-| `/create` | Generate widget/api/test/model | `/create widget login` |
-| `/memory` | Simpan/baca memori session | `/memory read` |
-| `/wizard` | Panduan interaktif (tanpa coding) | `/wizard` |
-| `/generate-prd` | Generate PRD dari ide | `/generate-prd "aplikasi kasir"` |
-| `/quality-gate` | Verify fixes, track iterations | `/quality-gate` |
-| `/token-stats` | Token usage + session stats | `/token-stats` |
-| `/admin` | Update ECC/9Router, doctor check | `/admin` |
-
----
-
-## Workflow Examples
-
-### Flutter Project — Source Code Existing
-
-```powershell
-cd C:\Users\FANNNDI\Documents\opencode-setup
-opencode
-
 /start-free
-/set-project C:\Users\User\flutter-app
-/code-analyze
-/analyze-project
-restart opencode
-
-# Improve & review:
-/code-review lib/screens/
-/security lib/
-/tdd buat halaman login
-/verify
+/wizard
 ```
 
-### Flutter Project — Start New (dengan PRD)
+Lalu jawab pertanyaan dari AI:
 
-```powershell
+| AI Bertanya | Anda Jawab |
+|-------------|-----------|
+| Project baru atau yang sudah ada? | Baru |
+| Nama project? | Aplikasi Kasir |
+| Ceritakan aplikasi yang diinginkan? | _"Aplikasi untuk catat stok barang, laporan penjualan harian, dan cetak struk"_ |
+
+Seperti ngobrol dengan teman yang pengen bantu.
+
+### Langkah 3: Dapatkan Aplikasi
+
+AI akan:
+
+1. **Buat rencana** — fitur apa saja yang akan dibuat
+2. **Pilih teknologi** — aplikasi mobile atau website
+3. **Tulis kode** — kerjakan satu per satu
+4. **Tunjukkan hasil** — Anda bisa review dan minta revisi
+
+---
+
+## Yang Perlu Disiapkan
+
+| Kebutuhan | Detail |
+|-----------|--------|
+| Laptop/Komputer | Windows 10 atau lebih baru |
+| Koneksi Internet | Untuk download pertama kali |
+| Ide Aplikasi | Ceritakan ke AI nanti |
+| Waktu | 10 menit pertama, sisanya biar AI kerja |
+| **Biaya** | **$0 — GRATIS TOTAL** |
+
+---
+
+## Contoh: Bu Rina Bikin Aplikasi Kasir
+
+Bu Rina ikuti 3 langkah di atas. Dia ceritakan ke AI:
+
+> _"Saya ingin aplikasi kasir untuk toko kelontong. Bisa catat stok barang, laporan penjualan harian, dan cetak struk belanja."_
+
+**Hasilnya, AI langsung buat:**
+
+| Yang Dibuat | Isinya |
+|-------------|--------|
+| ✅ Rencana Aplikasi | Fitur: catat stok, laporan harian, cetak struk |
+| ✅ Pilihan Teknologi | Aplikasi mobile (Android + iPhone) |
+| ✅ Skills yang Dibutuhkan | Semua sudah siap, tinggal eksekusi |
+| ✅ Kode Program | Ditulis otomatis oleh AI |
+
+Bu Rina tinggal bilang: _"Tambahin fitur notifikasi kalau stok mau habis"_ — AI langsung kerjakan.
+
+---
+
+## Ingin Tahu Lebih Dalam?
+
+Kalau Anda penasaran bagaimana cara kerjanya, atau ingin menggunakan fitur yang lebih canggih, baca dokumentasi lengkap di folder `docs/`.
+
+Atau cukup buka terminal dan ketik command berikut untuk lihat semua yang bisa dilakukan:
+
+```
 opencode
-
 /start-free
-/set-project C:\Users\User\flutter-app-baru
-/project-analyze            ← AI baca prd.md
-/analyze-project
-restart opencode
-
-# Development:
-/plan "buat halaman login"
-/tdd buat state management
-/code-review lib/
-/security
 ```
 
-### Go API — Source Code Existing
-
-```powershell
-opencode
-
-/start-free
-/set-project C:\Users\User\go-api
-/code-analyze               ← detect golang + gin
-/analyze-project            ← load golang-patterns
-restart opencode
-
-/code-review internal/handler/
-/security internal/auth/
-/tdd buat endpoint /api/users
-/verify
-```
-
-### Ganti Project
-
-```powershell
-/set-project C:\Users\User\project-lain
-/code-analyze
-/analyze-project
-```
-
-### Lihat Skills yang Cocok
-
-```
-/project-skills
-
-Output:
-  Stack: dart-flutter
-  Core:   tdd-workflow, security-review, coding-standards, verification-loop
-  Project: dart-flutter-patterns
-  Total: 5 skills untuk dart-flutter
-```
+Ketika sudah masuk mode OpenCode, ketik `/` untuk melihat daftar perintah yang tersedia.
 
 ---
 
-## Alur Singkat
+## Credits
 
-```
-Clone sekali:  setup.ps1 → opencode → /start-free
+Proyek ini adalah gabungan 3 teknologi open-source yang semuanya gratis:
 
-Source code:   /set-project → /code-analyze → /analyze-project → restart → coding
-New project:   /set-project → /project-analyze → /analyze-project → restart → coding
-Ganti project: /set-project [path baru] → /code-analyze → /analyze-project
-```
+- **OpenCode** — AI coding assistant
+- **9Router** — Jaringan AI gratis
+- **ECC** — Pengetahuan 270+ bahasa pemrograman
 
----
-
-## Profile
-
-| Profile | Model | Biaya |
-|---------|-------|-------|
-| **gratis** | mimo-v2.5-free, deepseek-v4-flash-free, nemotron-3-ultra-free | $0 |
-| **go** | kimi-k2.6, qwen3.6-plus, glm-5.1 | Limited quota |
-
-### Combo Aktif
-
-| Nama | Chain |
-|------|-------|
-| **gratis** | `mmf/mimo-auto → oc/deepseek-v4-flash-free → oc/mimo-v2.5-free` |
-| **emergency** | `oc/nemotron-3-ultra-free → oc/big-pickle → oc/north-mini-code-free` |
-
-### Token Savings
-
-| Feature | Hemat |
-|---------|-------|
-| RTK Token Saver | -20-40% input tokens |
-| Caveman Mode | -65% output tokens |
-| Auto-fallback | Zero downtime |
-| **Total** | **~70-80%** |
+Dibuat agar siapapun bisa bikin aplikasi tanpa perlu coding dan tanpa biaya.
 
 ---
 
-## Yang Kamu Dapat
-
-| Komponen | Jumlah | Fungsi |
-|----------|--------|--------|
-| Skills | 270 | Domain knowledge per bahasa/framework |
-| Agents | 64 | AI assistant spesialis |
-| Commands | 84 | Perintah slash |
-| Rules | 20 pack | Konvensi coding per bahasa |
-| Combos | 2 | Auto-fallback + emergency |
-| Templates | 4 | Project template |
-| Session | Persist | Status workflow tersimpan |
-
----
-
-## Struktur
-
-```
-opencode-setup/
-├── scripts/
-│   ├── setup.ps1              # Full setup
-│   ├── start.ps1              # Daily workflow (session-aware)
-│   ├── full-start.ps1         # 1 command auto-deploy
-│   ├── code-analyze.ps1       # Scan source → ai-notes.md
-│   ├── project-analyze.ps1    # Analisa PRD → ai-notes.md
-│   ├── analyze-project.ps1    # Deteksi stack + load skills
-│   ├── project-skills.ps1     # Lihat skills yang cocok
-│   ├── session-manager.ps1    # Session management
-│   └── template-loader.ps1    # Template loader
-├── commands/                  # Command templates (16 files)
-├── profiles/                  # Config profiles
-│   ├── gratis/                # Free models
-│   └── go/                    # Go models
-├── templates/                 # Project templates (4)
-├── docs/                      # Dokumentasi (21 files)
-├── Feature/                   # 600+ component inventory
-├── Skill/                     # 270 skill catalog
-├── ecc/                       # ECC repo (auto-cloned)
-├── 9router/                   # 9Router repo (auto-cloned)
-├── CHANGELOG.md
-└── README.md
-```
-
----
-
-## Dokumentasi
-
-| Dokumen | Isi |
-|---------|-----|
-| [docs/index.md](docs/index.md) | Peta dokumentasi |
-| [Quick Start](docs/01-getting-started/01-quick-start.md) | Setup 1 menit |
-| [Instalasi](docs/01-getting-started/02-installation.md) | Instalasi lengkap |
-| [Commands](docs/04-usage/01-commands.md) | Referensi commands |
-| [Scripts](docs/04-usage/02-scripts.md) | Referensi scripts |
-| [Analyze Project](docs/04-usage/04-analyze-project.md) | Deteksi stack |
-| [Troubleshooting](docs/08-troubleshooting/01-common-issues.md) | FAQ |
-
----
-
-## Workflow Development
-
-Untuk mengembangkan project opencode-setup ini sendiri.
-
-### Update ECC + 9Router
-
-```powershell
-.\scripts\admin-update.ps1
-```
-
-Atau via OpenCode:
-```
-/admin-update
-```
-
-### Changelogs
-
-| File | Isi |
-|------|-----|
-| [changelog-ecc.md](changelog-ecc.md) | Perubahan ECC (skills, agents, commands) |
-| [changelog-9router.md](changelog-9router.md) | Perubahan 9Router (models, features) |
-| [log-admin.md](log-admin.md) | History update admin |
-
-### Development Flow
-
-1. `.\scripts\admin-update.ps1` — update ECC + 9Router + doctor
-2. `.\scripts\start.ps1 -Profile gratis` — test model
-3. `opencode` — verify commands jalan
-4. `git add -A && git commit -m "feat: ..."` — save perubahan
-5. `git push` — push ke repo
+**Selamat datang di masa depan — di mana Anda tinggal bilang, AI yang kerjakan.**
