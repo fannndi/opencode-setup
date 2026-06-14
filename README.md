@@ -158,46 +158,62 @@ restart opencode
 
 ---
 
-## Semua Commands
+## Commands
 
-| Command | Fungsi | Contoh |
-|---------|--------|--------|
-| `/start-free` | Start workflow gratis | `/start-free` |
-| `/start-go` | Start workflow go | `/start-go` |
-| `/set-project C:\path` | Set project aktif | `/set-project C:\Users\me\project` |
-| `/current-project` | Lihat project aktif | `/current-project` |
-| `/wizard` | Panduan interaktif untuk pemula | `/wizard` |
-| `/generate-prd` | Generate PRD dari ide | `/generate-prd "aplikasi kasir"` |
-| `/project-analyze` | Analisa PRD → ai-notes.md | `/project-analyze` |
-| `/code-analyze` | Scan source code → ai-notes.md | `/code-analyze` |
-| `/analyze-project` | Deteksi stack + load skills | `/analyze-project` |
-| `/project-skills` | Lihat skills yang cocok | `/project-skills` |
-| `/auto-start` | Chain semua workflow dalam 1 command | `/auto-start` |
-| `/template` | Load project template | `/template flutter-firebase` |
-| `/create` | Generate boilerplate | `/create widget login` |
-| `/plan` | Buat rencana implementasi | `/plan buat fitur login` |
-| `/tdd` | Test-driven development | `/tdd buat function hitung` |
-| `/code-review` | Review kode | `/code-review lib/` |
-| `/security` | Security audit | `/security lib/` |
-| `/build-fix` | Fix build errors | `/build-fix` |
-| `/verify` | Verification loop | `/verify` |
-| `/quality-gate` | Verify fixes, track iterations | `/quality-gate` |
-| `/token-stats` | Token usage + session stats | `/token-stats` |
-| `/memory` | Simpan/baca memori session | `/memory read` |
-| `/reset-session` | Reset session state | `/reset-session` |
-| `/admin` | Update ECC/9Router, doctor check | `/admin` |
-| `/e2e` | End-to-end Playwright testing | `/e2e` |
-| `/refactor-clean` | Hapus dead code | `/refactor-clean` |
-| `/orchestrate` | Multi-agent orchestration | `/orchestrate` |
-| `/learn` | Extract patterns dari session | `/learn` |
-| `/checkpoint` | Save progress | `/checkpoint` |
-| `/eval` | Evaluate terhadap criteria | `/eval` |
-| `/update-docs` | Update dokumentasi | `/update-docs` |
-| `/test-coverage` | Analisa test coverage | `/test-coverage` |
-| `/setup-pm` | Config package manager | `/setup-pm` |
-| `/skill-create` | Generate skill baru | `/skill-create` |
-| `/instinct-status` | Lihat instincts | `/instinct-status` |
-| `/projects` | List projects | `/projects` |
+### 🚀 Combo Shortcuts — 1x jalan, semua beres
+
+| Command | Fungsi | Langkah |
+|---------|--------|---------|
+| `/start-project` | Setup project baru | start → code-analyze → analyze-project |
+| `/quick-review` | Review + security + verify | code-review → security → verify → quality-gate |
+| `/full-scan` | Scan menyeluruh | code-analyze → analyze-project → project-skills |
+| `/morning-routine` | Rutinitas pagi | start-free → auto-start → admin-update |
+
+### ⚡ Development
+
+| Command | Fungsi |
+|---------|--------|
+| `/start-free` | Start workflow gratis |
+| `/set-project path` | Set project aktif |
+| `/current-project` | Lihat project aktif |
+| `/code-analyze` | Scan source → ai-notes.md |
+| `/project-analyze` | Analisa PRD → ai-notes.md |
+| `/analyze-project` | Deteksi stack + load skills |
+| `/auto-start` | Chain semua workflow |
+| `/template nama` | Load project template |
+| `/create widget nama` | Generate boilerplate |
+| `/generate-prd "ide"` | Generate PRD dari ide |
+
+### 🔍 Riset & Tools
+
+| Command | Fungsi |
+|---------|--------|
+| `/research "topik"` | Web search + AI ringkasan |
+| `/project-skills` | Lihat AI skills yang cocok |
+| `/quality-gate` | Cek layak commit |
+| `/token-stats` | Token usage + session stats |
+| `/memory` | Simpan/baca memori session |
+| `/wizard` | Panduan interaktif pemula |
+
+### 🛠️ Admin & Power
+
+| Command | Fungsi |
+|---------|--------|
+| `/admin` | Update ECC/9Router, doctor check |
+| `/plan` | Buat rencana implementasi |
+| `/tdd` | Test-driven development |
+| `/code-review` | Review kode |
+| `/security` | Security audit |
+| `/build-fix` | Fix build errors |
+| `/verify` | Verification loop |
+| `/reset-session` | Reset session |
+| `/orchestrate` | Multi-agent orchestration |
+| `/e2e` | End-to-end testing |
+| `/refactor-clean` | Hapus dead code |
+| `/learn` | Extract patterns |
+| `/checkpoint` | Save progress |
+| `/update-docs` | Update dokumentasi |
+| `/test-coverage` | Analisa test coverage |
 
 ---
 
