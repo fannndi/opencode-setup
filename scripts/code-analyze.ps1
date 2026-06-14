@@ -67,13 +67,97 @@ Write-Host "  ║         Code Analyze — Source → ai-notes.md      ║" -For
 Write-Host "  ╚══════════════════════════════════════════════════╝" -ForegroundColor Magenta
 Write-Host ""
 
-$totalSteps = 6
+$totalSteps = 7
 
 # ============================================================
-# [1/6] Scan project structure
+# [1/7] Read project documentation
 # ============================================================
 
-Write-Step "1/$totalSteps" "Scanning project structure..."
+Write-Step "1/$totalSteps" "Reading project documentation..."
+
+$projectName = Split-Path -Leaf $PROJECT_DIR
+$docContent = @{}
+$docFiles = @()
+
+# Scan .md files in project root
+$mdFiles = Get-ChildItem -Path $PROJECT_DIR -Filter "*.md" -Depth 0 -ErrorAction SilentlyContinue |
+    Where-Object { $_.Name -notin $ignoreDirs }
+
+$readmeFiles = Get-ChildItem -Path $PROJECT_DIR -Filter "README*" -ErrorAction SilentlyContinue
+$changelogFiles = Get-ChildItem -Path $PROJECT_DIR -Filter "CHANGELOG*" -ErrorAction SilentlyContinue
+
+$targetDocs = @()
+if ($readmeFiles) { $targetDocs += $readmeFiles }
+if ($changelogFiles) { $targetDocs += $changelogFiles }
+$targetDocs += $mdFiles | Where-Object { $_.Name -like "*.md" -and $_.Name -notlike "README*" -and $_.Name -notlike "CHANGELOG*" }
+
+# Also check for LICENSE, CONTRIBUTING, SECURITY
+foreach ($file in $allReadableDocs) {
+    $found = Get-ChildItem -Path $PROJECT_DIR -Filter $extra -ErrorAction SilentlyContinue
+    if ($found) { $targetDocs += $found }
+}
+
+$allReadableDocs = $targetDocs | Sort-Object Name -Unique
+
+$foundKeywords = @{}
+$keywordMap = @{
+    "rest api" = "rest-api"; "graphql" = "graphql"; "grpc" = "grpc"
+    "microservice" = "microservice"; "monolith" = "monolith"
+    "postgres" = "postgres"; "mysql" = "mysql"; "mongodb" = "mongodb"
+    "redis" = "redis"; "firebase" = "firebase"; "supabase" = "supabase"
+    "docker" = "docker"; "kubernetes" = "kubernetes"; "aws" = "aws"
+    "react" = "react"; "vue" = "vue"; "angular" = "angular"
+    "flutter" = "flutter"; "dart" = "dart"; "swift" = "swift"
+    "go" = "golang"; "golang" = "golang"; "rust" = "rust"
+    "python" = "python"; "java" = "java"; "kotlin" = "kotlin"
+    "ci/cd" = "ci-cd"; "github actions" = "github-actions"
+    "unit test" = "testing"; "integration test" = "testing"
+    "tdd" = "tdd"; "jwt" = "jwt"; "oauth" = "oauth"
+    "next.js" = "nextjs"; "nextjs" = "nextjs"
+    "django" = "django"; "fastapi" = "fastapi"; "laravel" = "laravel"
+    "express" = "express"; "nestjs" = "nestjs"
+    "prisma" = "prisma"; "typeorm" = "typeorm"
+    "sqlite" = "sqlite"; "sql server" = "mssql"
+    "rabbitmq" = "rabbitmq"; "kafka" = "kafka"
+    "serverless" = "serverless"; "lambda" = "aws-lambda"
+}
+
+$allText = ""
+foreach ($doc in $allReadableDocs) {
+    try {
+        $content = Get-Content $doc.FullName -Raw -ErrorAction SilentlyContinue
+        if ($content) {
+            $short = $content.Substring(0, [Math]::Min(1000, $content.Length))
+            $allText += " " + $short
+            $docFiles += $doc.Name
+            Write-Info "Read: $($doc.Name) ($($content.Length) chars)"
+        }
+    } catch {}
+}
+
+# Extract keywords from docs
+$docLower = $allText.ToLower()
+foreach ($kw in $keywordMap.Keys) {
+    if ($docLower -match [regex]::Escape($kw)) {
+        $foundKeywords[$keywordMap[$kw]] = $true
+    }
+}
+
+if ($docFiles.Count -gt 0) {
+    Write-OK "Read $($docFiles.Count) documentation files"
+    if ($foundKeywords.Count -gt 0) {
+        $keywordsList = ($foundKeywords.Keys | ForEach-Object { "$_" }) -join ", "
+        Write-OK "Found context: $keywordsList"
+    }
+} else {
+    Write-Skip "No documentation files found"
+}
+
+# ============================================================
+# [2/7] Scan project structure
+# ============================================================
+
+Write-Step "2/$totalSteps" "Scanning project structure..."
 
 $projectDirs = Get-ChildItem -Path $PROJECT_DIR -Directory -ErrorAction SilentlyContinue |
     Where-Object { $_.Name -notin $ignoreDirs } |
@@ -100,10 +184,10 @@ $totalLines = ($dirSummary | Measure-Object -Property Lines -Sum).Sum
 Write-OK "Found $totalFiles files, $totalLines lines across $($projectDirs.Count) directories"
 
 # ============================================================
-# [2/6] Read dependencies
+# [3/7] Read dependencies
 # ============================================================
 
-Write-Step "2/$totalSteps" "Reading dependencies..."
+Write-Step "3/$totalSteps" "Reading dependencies..."
 
 $deps = @{}
 $depFiles = @()
@@ -133,7 +217,7 @@ if ($depFiles.Count -gt 0) {
 # [3/6] Deep code scan (imports & patterns)
 # ============================================================
 
-Write-Step "3/$totalSteps" "Deep code scan (imports & patterns)..."
+Write-Step "4/$totalSteps" "Deep code scan (imports & patterns)..."
 
 $foundFeatures = @{}
 $foundImports = @{}
@@ -266,7 +350,6 @@ $frameworkSkills = @{
     "JWT" = @("security-review")
     "Supabase" = @("postgres-patterns")
     "Firebase" = @("security-review")
-    "Prisma" = @("prisma-patterns", "database-migrations")
     "SQLAlchemy" = @("postgres-patterns", "database-migrations")
 }
 
