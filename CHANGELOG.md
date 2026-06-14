@@ -4,6 +4,26 @@ Semua perubahan penting di project ini.
 
 ---
 
+## [2.2.0] — 2026-06-15
+
+### Fixed
+- **security-scan rename** — base command renamed from `security` → `security-scan` to fix duplicate key conflict. Combo `security` now calls `/security-scan` as sub-command.
+- **AI clarity** — All 10 combo commands now have `type: combo` frontmatter for AI disambiguation.
+- **Error Recovery** — All 10 combos now have `## 🔴 Error Recovery` section with concrete fix steps.
+- **Restart protocol** — "restart opencode" now includes concrete steps (Ctrl+C → `opencode`).
+- **Cyclic combo fix** — `security` combo no longer calls itself. Calls `/security-scan` instead.
+- **References updated** — `commands/code-analyze.md` and `commands/quick-review.md` updated to use `/security-scan`.
+- **README** — Workflow examples updated, quick-review steps corrected.
+
+### Changed
+- **10 Combos** — Complete with skill mappings from Feature/list.md + Skill/skill-list.md:
+  🌅 Morning Routine | 🚀 Start Project | 📋 PRD Combo | ⚡ Quick Review
+  🔍 Full Audit | 🛠️ Maintenance | 🎨 Generate | 🐛 Bug Fix | 🔒 Security | 🚢 Deploy
+- **Command type system** — All combos marked `type: combo`, primitives have no type (default).
+- **security-scan** registered in all 3 configs (global, gratis, go).
+
+---
+
 ## [2.1.0] — 2026-06-14
 
 ### Added
@@ -53,16 +73,4 @@ Semua perubahan penting di project ini.
 - `scripts/` — 10 automation scripts (ps1 + sh)
 - `profiles/gratis/` + `profiles/go/` — config profiles
 - `commands/` — 5 command templates
-
-### 2026-06-15 — Self-Improvement Run
-- Morning Routine: start + admin + doctor ✅
-- Full Scan: code-analyze + project-skills (4 core skills matched)✅
-- Quality Gate: PASSED ✅
-- Status: docs updated, session saved
-
-
-### 2026-06-15 — Self-Improvement Combo Run
-- 🌅 Morning Routine: start + admin (Doctor: PASS) + quality-gate + token-stats ✅
-- 🔍 Full Audit: code-analyze (102 files, 13.895 lines) + 4 skills matched ✅
-- Status: All systems GO, session saved
 

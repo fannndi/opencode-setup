@@ -186,7 +186,7 @@ Review kode + cek keamanan + verifikasi sebelum commit.
 
 | Combo | Langkah | Skills |
 |-------|---------|--------|
-| `/quick-review` | code-review → security → verify → research | coding-standards, security-review, verification-loop |
+| `/quick-review` | code-review → security-scan → verify → research | coding-standards, security-review, verification-loop |
 
 ### 🔍 Full Audit
 Audit menyeluruh — scan + deteksi + skills + simpan memori.
@@ -246,7 +246,7 @@ opencode
 restart
 
 /code-review lib/screens/
-/security lib/
+/security-scan lib/
 /tdd buat halaman login
 /verify
 ```
@@ -264,7 +264,7 @@ restart
 /plan "buat halaman login"
 /tdd buat state management
 /code-review lib/
-/security
+/security-scan
 ```
 
 ### Ganti Project
