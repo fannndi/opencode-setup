@@ -1,13 +1,13 @@
 {
-  "ecc": {
-    "version": "2.0.0",
-    "last_sync": "2026-06-15T02:58:29+07:00",
-    "last_sha": "7b39012aa413b01af967a5c37a27e12d49b041bc",
-    "repo": "fannndi/ECC"
-  },
   "9router": {
-    "last_sync": "2026-06-15T02:58:29+07:00",
     "last_sha": "23da7b1fe3bb8edd2bdbdb63fbbb15a476b02c56",
-    "repo": "fannndi/9router"
+    "repo": "fannndi/9router",
+    "last_sync": "2026-06-15T03:09:02+07:00"
+  },
+  "ecc": {
+    "last_sha": "7b39012aa413b01af967a5c37a27e12d49b041bc",
+    "repo": "fannndi/ECC",
+    "version": "2.0.0",
+    "last_sync": "2026-06-15T03:09:02+07:00"
   }
 }
