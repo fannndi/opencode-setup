@@ -432,7 +432,7 @@ $config = @{
         paths = @("$($ROOT_DIR.Replace('\', '/'))/ecc/skills")
     }
     permission = @{
-        mcp_* = "ask"
+        "mcp_*" = "ask"
     }
 }
 

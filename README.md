@@ -73,6 +73,9 @@ restart opencode
 | `/verify` | Verification loop | `/verify` |
 | `/reset-session` | Reset session state | `/reset-session` |
 | `/research` | Web search + AI ringkasan | `/research Flutter 2026` |
+| `/auto-start` | Chain semua workflow 1 command | `/auto-start` |
+| `/create` | Generate widget/api/test/model | `/create widget login` |
+| `/memory` | Simpan/baca memori session | `/memory read` |
 | `/quality-gate` | Verify fixes, track iterations | `/quality-gate` |
 | `/token-stats` | Token usage + session stats | `/token-stats` |
 | `/admin` | Update ECC/9Router, doctor check | `/admin` |

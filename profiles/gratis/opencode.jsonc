@@ -287,7 +287,10 @@
     "admin": { "description": "Update ECC + 9Router, rebuild plugin, doctor check", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/admin.md}\n\n$ARGUMENTS" },
     "quality-gate": { "description": "Verify code quality, track iterations", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/quality-gate.md}\n\n$ARGUMENTS" },
     "token-stats": { "description": "Tampilkan token usage dan session stats", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/token-stats.md}\n\n$ARGUMENTS" },
-    "research": { "description": "Web search + AI ringkasan", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/research.md}\n\n$ARGUMENTS" }
+    "research": { "description": "Web search + AI ringkasan", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/research.md}\n\n$ARGUMENTS" },
+    "auto-start": { "description": "Chain semua workflow dalam 1 command", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/auto-start.md}\n\n$ARGUMENTS" },
+    "create": { "description": "Generate boilerplate widget/api/test/model", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/create.md}\n\n$ARGUMENTS" },
+    "memory": { "description": "Simpan/baca memori session", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/memory.md}\n\n$ARGUMENTS" }
   },
 
   "permission": {

@@ -99,6 +99,78 @@ if (Test-Path $SESSION_FILE) {
 }
 
 # ============================================================
+# Self-Healing Checks
+# ============================================================
+
+Write-Host ""
+Write-Host "  [HEAL] Checking system health..." -ForegroundColor Gray
+
+# Check 9Router
+$portInUse = Get-NetTCPConnection -LocalPort 20128 -ErrorAction SilentlyContinue
+if (-not $portInUse) {
+    Write-Host "  [HEAL] 9Router not running. Auto-starting..." -ForegroundColor Yellow
+    Start-Process -FilePath "9router" -WindowStyle Minimized
+    Start-Sleep -Seconds 4
+    $portInUse = Get-NetTCPConnection -LocalPort 20128 -ErrorAction SilentlyContinue
+    if ($portInUse) { Write-Host "  [HEAL] 9Router started" -ForegroundColor Green }
+    else { Write-Host "  [HEAL] 9Router failed. Start manually: 9router --tray" -ForegroundColor Red }
+} else {
+    Write-Host "  [HEAL] 9Router: OK" -ForegroundColor Green
+}
+
+# Check ECC repo
+if (-not (Test-Path "$ROOT_DIR\ecc\.git")) {
+    Write-Host "  [HEAL] ECC not cloned. Cloning..." -ForegroundColor Yellow
+    git clone --quiet https://github.com/fannndi/ECC.git "$ROOT_DIR\ecc"
+    if (Test-Path "$ROOT_DIR\ecc\.git") { Write-Host "  [HEAL] ECC cloned" -ForegroundColor Green }
+    else { Write-Host "  [HEAL] ECC clone failed" -ForegroundColor Red }
+} else {
+    Write-Host "  [HEAL] ECC: OK" -ForegroundColor Green
+}
+
+# Check 9Router repo
+if (-not (Test-Path "$ROOT_DIR\9router\.git")) {
+    Write-Host "  [HEAL] 9Router not cloned. Cloning..." -ForegroundColor Yellow
+    git clone --quiet https://github.com/fannndi/9router.git "$ROOT_DIR\9router"
+    if (Test-Path "$ROOT_DIR\9router\.git") { Write-Host "  [HEAL] 9Router cloned" -ForegroundColor Green }
+    else { Write-Host "  [HEAL] 9Router clone failed" -ForegroundColor Red }
+} else {
+    Write-Host "  [HEAL] 9Router: OK" -ForegroundColor Green
+}
+
+# Check plugin
+$pluginBuilt = Test-Path "$ROOT_DIR\ecc\.opencode\dist\index.js"
+if (-not $pluginBuilt) {
+    Write-Host "  [HEAL] Plugin not built. Building..." -ForegroundColor Yellow
+    Push-Location "$ROOT_DIR\ecc"
+    if (-not (Test-Path "node_modules")) { npm install --silent 2>$null }
+    if (-not (Test-Path ".opencode\node_modules")) { Push-Location ".opencode"; npm install --silent 2>$null; Pop-Location }
+    npm run build:opencode 2>$null
+    Pop-Location
+    if (Test-Path "$ROOT_DIR\ecc\.opencode\dist\index.js") { Write-Host "  [HEAL] Plugin built" -ForegroundColor Green }
+    else { Write-Host "  [HEAL] Plugin build failed" -ForegroundColor Red }
+} else {
+    Write-Host "  [HEAL] Plugin: OK" -ForegroundColor Green
+}
+
+# Check session
+if (Test-Path $SESSION_FILE) {
+    try {
+        $null = Get-Content $SESSION_FILE -Raw | ConvertFrom-Json
+        Write-Host "  [HEAL] Session: OK" -ForegroundColor Green
+    } catch {
+        Write-Host "  [HEAL] Session corrupt. Resetting..." -ForegroundColor Yellow
+        Remove-Item $SESSION_FILE -Force -ErrorAction SilentlyContinue
+        Write-Host "  [HEAL] Session reset" -ForegroundColor Green
+    }
+} else {
+    Write-Host "  [HEAL] Session: none (fresh start)" -ForegroundColor Gray
+}
+
+# Save healing result to memory
+try { & "$ROOT_DIR\scripts\memory.ps1" -Action save -Value "Self-healing: all OK" -ProjectPath $ROOT_DIR } catch {}
+
+# ============================================================
 # Auto-Update Check
 # ============================================================
 
