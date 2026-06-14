@@ -1,5 +1,6 @@
 ---
 description: [COMBO] Bug Fix — build-fix + quality-gate + memory
+type: combo
 agent: build
 ---
 
@@ -33,6 +34,11 @@ Sebelum mulai, baca:
 - Iterations: [jumlah]
 - Status: fixed ✅
 ```
+
+## 🔴 Error Recovery
+- Jika `/build-fix` gagal: cek error message, kadang butuh install dependency dulu
+- Jika `/quality-gate` gagal: masih ada issue yang belum di-fix
+- Setelah fix: jalankan `/quick-review` untuk verifikasi menyeluruh
 
 ## Task
 

@@ -1,5 +1,6 @@
 ---
 description: [COMBO] PRD — generate → project-analyze → analyze-project
+type: combo
 agent: build
 ---
 
@@ -33,6 +34,11 @@ Sebelum mulai, baca:
 - Stack: [detected]
 - Status: siap
 ```
+
+## 🔴 Error Recovery
+- Jika `/generate-prd` gagal: pastikan query tidak kosong, coba dengan deskripsi lebih detail
+- Jika `/project-analyze` gagal: pastikan file `prd.md` sudah ada di project root
+- Jika `/analyze-project` gagal: cek apakah project path sudah benar dengan `/set-project`
 
 ## Task
 

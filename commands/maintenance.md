@@ -1,5 +1,6 @@
 ---
 description: [COMBO] Maintenance — admin + quality-gate + reset-session
+type: combo
 agent: build
 ---
 
@@ -34,6 +35,11 @@ Sebelum mulai, baca:
 - Doctor: PASS/FAIL
 - Session: reset/tidak
 ```
+
+## 🔴 Error Recovery
+- Jika `/admin` gagal: jalankan `.\scripts\admin-update.ps1` langsung dari terminal
+- Jika `/quality-gate` gagal: cek output untuk melihat issue spesifik
+- Jika session corrupt: `/reset-session` lalu mulai ulang
 
 ## Task
 

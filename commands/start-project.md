@@ -1,5 +1,6 @@
 ---
 description: [COMBO] Setup project baru — start-free + code-analyze + analyze-project
+type: combo
 agent: build
 ---
 
@@ -26,7 +27,7 @@ Sebelum mulai, baca:
 2. `/set-project path` — set project aktif
 3. `/code-analyze` — scan source → ai-notes.md (atau `/project-analyze` jika ada PRD)
 4. `/analyze-project` — deteksi stack + load skills
-5. restart opencode
+5. restart opencode — tekan Ctrl+C untuk keluar, lalu ketik `opencode` lagi
 
 ## ✅ Auto-Changelog
 ```
@@ -35,6 +36,11 @@ Sebelum mulai, baca:
 - Status: siap
 - Mode: existing/baru
 ```
+
+## 🔴 Error Recovery
+- Jika `/code-analyze` gagal: pastikan project path benar dengan `/set-project`
+- Jika `/analyze-project` gagal: cek apakah ECC skills sudah terload
+- Jika semua gagal: `/reset-session` lalu mulai dari `/morning-routine`
 
 ## Task
 

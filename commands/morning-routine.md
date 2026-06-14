@@ -1,5 +1,6 @@
 ---
 description: [COMBO] Rutinitas pagi — start-free + admin + quality-gate + token-stats
+type: combo
 agent: build
 ---
 
@@ -36,6 +37,11 @@ Sebelum mulai, baca:
 - Token: [usage]
 - Status: ready
 ```
+
+## 🔴 Error Recovery
+- Jika `/start-free` gagal: cek koneksi internet, 9Router mungkin perlu di-start manual
+- Jika `/admin` gagal: jalankan `.\scripts\admin-update.ps1` langsung dari terminal
+- Jika `/quality-gate` gagal: ada issue yang perlu di-fix dulu
 
 ## Task
 

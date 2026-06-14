@@ -27,7 +27,7 @@ C:\Users\FANNNDI\Documents\opencode-setup\scripts\analyze-project.ps1
 
 3. Review output
 
-4. Setelah selesai, restart OpenCode untuk apply config baru
+4. Setelah selesai, restart OpenCode (Ctrl+C, lalu `opencode`) untuk apply config baru
 
 ## Detected Stacks
 

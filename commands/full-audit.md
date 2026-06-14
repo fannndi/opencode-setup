@@ -1,5 +1,6 @@
 ---
 description: [COMBO] Audit — code-analyze + analyze-project + project-skills + memory save
+type: combo
 agent: build
 ---
 
@@ -36,6 +37,11 @@ Sebelum mulai, baca:
 - Stack: [detected]
 - Skills: [jumlah] matched
 ```
+
+## 🔴 Error Recovery
+- Jika `/code-analyze` gagal: pastikan project path benar
+- Jika `/analyze-project` gagal: ECC skills mungkin perlu di-reload dengan `/start-free`
+- Jika `/project-skills` gagal: cek koneksi 9Router
 
 ## Task
 

@@ -1,11 +1,12 @@
 ---
-description: [COMBO] Security — security + quality-gate + research
+description: [COMBO] Security — security-scan + quality-gate + research
 agent: build
 ---
 
 # Security
 
 Audit keamanan + verifikasi + cari referensi — 1x jalan.
+Type: combo (memanggil sub-command security-scan, quality-gate)
 
 ## ⚡ Auto Docs Trigger
 Sebelum mulai, baca:
@@ -23,14 +24,19 @@ Sebelum mulai, baca:
 | deep-research | Feature | Riset mendalam |
 
 ## Instruksi
-1. `/security` — full OWASP security review
+1. `/security-scan` — full OWASP security review (sub-command)
 2. `/quality-gate` — verifikasi
 3. `/research "best practices [topik]"` — cari referensi keamanan terkini
+
+## 🔴 Error Recovery
+- Jika `/security-scan` gagal: cek 9Router running, coba `/start-free` dulu
+- Jika `/quality-gate` gagal: fix issues dulu, lalu ulangi
+- Jika semua gagal: `/reset-session` lalu mulai ulang
 
 ## ✅ Auto-Changelog
 ```
 ### YYYY-MM-DD — Security
-- Issues found: [jumlah]
+- Issues: [jumlah]
 - Severity: [critical/high/medium/low]
 - Fixed: [jumlah]
 ```

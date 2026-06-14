@@ -1,5 +1,6 @@
 ---
 description: [COMBO] Generate — template + create boilerplate
+type: combo
 agent: build
 ---
 
@@ -32,6 +33,11 @@ Sebelum mulai, baca:
 - Template: [nama]
 - Components: [daftar]
 ```
+
+## 🔴 Error Recovery
+- Jika `/template` gagal: pastikan nama template benar (flutter-firebase, go-api, nextjs-fullstack, python-fastapi)
+- Jika `/create` gagal: pastikan tipe benar (widget, api, test, model)
+- Pastikan project path sudah di-set dengan `/set-project`
 
 ## Task
 

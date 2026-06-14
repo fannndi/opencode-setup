@@ -1,5 +1,6 @@
 ---
 description: [COMBO] Deploy — verify + quality-gate + update-docs
+type: combo
 agent: build
 ---
 
@@ -35,6 +36,11 @@ Sebelum mulai, baca:
 - Quality: PASS/FAIL
 - Docs: updated
 ```
+
+## 🔴 Error Recovery
+- Jika `/verify` gagal: ada build/test error yang perlu di-fix dulu
+- Jika `/quality-gate` gagal: masih ada issue yang perlu di-resolve
+- Jika `/update-docs` gagal: pastikan ada perubahan yang perlu di-dokumentasikan
 
 ## Task
 

@@ -1,5 +1,6 @@
 ---
-description: [COMBO] Quick review — code-review + security + verify + research
+description: [COMBO] Quick review — code-review + security-scan + verify + research
+type: combo
 agent: build
 ---
 
@@ -25,9 +26,14 @@ Sebelum mulai, baca:
 
 ## Instruksi
 1. `/code-review` — review kualitas kode
-2. `/security` — cek keamanan
+2. `/security-scan` — cek keamanan (sub-command, bukan combo)
 3. `/verify` — build + test + lint
 4. `/research "best practices [topik]"` — cari referensi (opsional)
+
+## 🔴 Error Recovery
+- Jika `/code-review` gagal: pastikan project path sudah di-set dengan `/set-project`
+- Jika `/security-scan` gagal: cek koneksi 9Router
+- Jika `/verify` gagal: fix error build dulu dengan `/build-fix`
 
 ## ✅ Auto-Changelog
 ```
