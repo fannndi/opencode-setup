@@ -295,8 +295,14 @@
     "generate-prd": { "description": "Generate PRD dari ide via AI", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/generate-prd.md}\n\n$ARGUMENTS" },
     "start-project": { "description": "[COMBO] Setup project baru", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/start-project.md}\n\n$ARGUMENTS" },
     "quick-review": { "description": "[COMBO] Review + security + verify", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/quick-review.md}\n\n$ARGUMENTS" },
-    "full-scan": { "description": "[COMBO] Scan menyeluruh", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/full-scan.md}\n\n$ARGUMENTS" },
-    "morning-routine": { "description": "[COMBO] Rutinitas pagi", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/morning-routine.md}\n\n$ARGUMENTS" }
+    "full-audit": { "description": "[COMBO] Audit menyeluruh", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/full-audit.md}\n\n$ARGUMENTS" },
+    "morning-routine": { "description": "[COMBO] Rutinitas pagi", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/morning-routine.md}\n\n$ARGUMENTS" },
+    "prd-combo": { "description": "[COMBO] PRD: generate → project-analyze", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/prd-combo.md}\n\n$ARGUMENTS" },
+    "maintenance": { "description": "[COMBO] Maintenance: admin + quality-gate", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/maintenance.md}\n\n$ARGUMENTS" },
+    "generate": { "description": "[COMBO] Generate: template + create", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/generate.md}\n\n$ARGUMENTS" },
+    "bug-fix": { "description": "[COMBO] Bug fix: build-fix + quality-gate", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/bug-fix.md}\n\n$ARGUMENTS" },
+    "security": { "description": "[COMBO] Security: audit + research", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/security.md}\n\n$ARGUMENTS" },
+    "deploy": { "description": "[COMBO] Deploy: verify + quality-gate + docs", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/deploy.md}\n\n$ARGUMENTS" }
   },
 
   "permission": {

@@ -1,33 +1,41 @@
 ---
-description: [COMBO] Review cepat — code-review + security + verify + quality
+description: [COMBO] Quick review — code-review + security + verify + research
 agent: build
 ---
 
 # Quick Review — Combo
 
-Review kode + security check + verify + quality gate dalam 1 command.
+Review kode + security + verify + research dalam 1 command.
+Jalankan sebelum commit.
 
 ## ⚡ Auto Docs Trigger
-Sebelum mulai, baca referensi berikut untuk konteks:
-- `C:\Users\FANNNDI\Documents\opencode-setup\README.md` — overview command
-- `C:\Users\FANNNDI\Documents\opencode-setup\CHANGELOG.md` — update terbaru
-- `C:\Users\FANNNDI\Documents\opencode-setup\Feature\list.md` — fitur yang tersedia
-- `C:\Users\FANNNDI\Documents\opencode-setup\Skill\skill-list.md` — skill yang bisa dipakai
+Sebelum mulai, baca:
+- `Feature/list.md` — fitur yang tersedia
+- `Skill/skill-list.md` — skill yang bisa dipakai
+- `CHANGELOG.md` — update terbaru
+
+## Skills yang Diaktifkan
+| Skill | Sumber | Fungsi |
+|-------|--------|--------|
+| coding-standards | Feature | KISS, DRY, YAGNI — review kualitas |
+| security-review | Feature | OWASP checklist — audit keamanan |
+| verification-loop | Feature | Build/type/lint/test — verifikasi |
+| search-first | Feature | Research sebelum coding |
+| deep-research | Feature | Riset mendalam best practices |
 
 ## Instruksi
-1. Jalankan sesuai urutan:
-   - `/code-review` — review kualitas kode
-   - `/security` — cek keamanan
-   - `/verify` — build + test + lint
-   - `/quality-gate` — cek layak commit
-2. Jika ada issue, AI akan kasih saran fix
+1. `/code-review` — review kualitas kode
+2. `/security` — cek keamanan
+3. `/verify` — build + test + lint
+4. `/research "best practices [topik]"` — cari referensi (opsional)
 
 ## ✅ Auto-Changelog
-Setelah selesai, update CHANGELOG.md:
 ```
 ### YYYY-MM-DD — Quick Review
-- Status: [PASS/FAIL]
 - Issues: [jumlah]
+- Security: PASS/FAIL
+- Build: PASS/FAIL
+- Status: [ready/perlu fix]
 ```
 
 ## Task

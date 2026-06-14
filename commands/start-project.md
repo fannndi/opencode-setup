@@ -1,5 +1,5 @@
 ---
-description: [COMBO] Setup project lengkap — start → set → analyze → detect
+description: [COMBO] Setup project baru — start-free + code-analyze + analyze-project
 agent: build
 ---
 
@@ -8,25 +8,32 @@ agent: build
 Setup project baru dalam 1 command.
 
 ## ⚡ Auto Docs Trigger
-Sebelum mulai, baca referensi berikut untuk konteks:
-- `C:\Users\FANNNDI\Documents\opencode-setup\README.md` — overview command
-- `C:\Users\FANNNDI\Documents\opencode-setup\CHANGELOG.md` — update terbaru
-- `C:\Users\FANNNDI\Documents\opencode-setup\Feature\list.md` — fitur yang tersedia
-- `C:\Users\FANNNDI\Documents\opencode-setup\Skill\skill-list.md` — skill yang bisa dipakai
+Sebelum mulai, baca:
+- `Feature/list.md` — fitur yang tersedia
+- `Skill/skill-list.md` — skill yang bisa dipakai
+- `CHANGELOG.md` — update terbaru
+
+## Skills yang Diaktifkan
+| Skill | Sumber | Fungsi |
+|-------|--------|--------|
+| tdd-workflow | Feature | Test-driven development |
+| coding-standards | Feature | KISS, DRY, YAGNI, immutability |
+| codebase-onboarding | Feature | Memahami codebase baru |
+| 270+ ECC skills | ECC | Siap di-load sesuai stack terdeteksi |
 
 ## Instruksi
-1. Pastikan project path sudah ditentukan. Jika belum, set dulu.
-2. `/start-free`
-3. `/code-analyze` (atau `/project-analyze` jika ada PRD)
-4. `/analyze-project`
+1. `/start-free` — start 9Router + test model + apply config
+2. `/set-project path` — set project aktif
+3. `/code-analyze` — scan source → ai-notes.md (atau `/project-analyze` jika ada PRD)
+4. `/analyze-project` — deteksi stack + load skills
 5. restart opencode
 
 ## ✅ Auto-Changelog
-Setelah selesai, update CHANGELOG.md:
 ```
 ### YYYY-MM-DD — Start Project
 - Project: [nama]
-- Status: selesai
+- Status: siap
+- Mode: existing/baru
 ```
 
 ## Task

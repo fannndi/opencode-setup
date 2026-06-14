@@ -160,60 +160,75 @@ restart opencode
 
 ## Commands
 
-### 🚀 Combo Shortcuts — 1x jalan, semua beres
+### 🌅 Morning Routine
+Pertama kali dijalankan setiap hari. 1x jalan, semua beres.
 
-| Command | Fungsi | Langkah |
-|---------|--------|---------|
-| `/start-project` | Setup project baru | start → code-analyze → analyze-project |
-| `/quick-review` | Review + security + verify | code-review → security → verify → quality-gate |
-| `/full-scan` | Scan menyeluruh | code-analyze → analyze-project → project-skills |
-| `/morning-routine` | Rutinitas pagi | start-free → auto-start → admin-update |
+| Combo | Langkah | Skills |
+|-------|---------|--------|
+| `/morning-routine` | start-free → admin → quality-gate → token-stats | verification-loop, cost-aware, strategic-compact |
 
-### ⚡ Development
+### 🚀 Start Project
+Setup project baru — scan code, deteksi stack, load AI skills.
 
-| Command | Fungsi |
-|---------|--------|
-| `/start-free` | Start workflow gratis |
-| `/set-project path` | Set project aktif |
-| `/current-project` | Lihat project aktif |
-| `/code-analyze` | Scan source → ai-notes.md |
-| `/project-analyze` | Analisa PRD → ai-notes.md |
-| `/analyze-project` | Deteksi stack + load skills |
-| `/auto-start` | Chain semua workflow |
-| `/template nama` | Load project template |
-| `/create widget nama` | Generate boilerplate |
-| `/generate-prd "ide"` | Generate PRD dari ide |
+| Combo | Langkah | Skills |
+|-------|---------|--------|
+| `/start-project` | start-free → set-project → code-analyze → analyze-project | tdd-workflow, coding-standards, codebase-onboarding |
 
-### 🔍 Riset & Tools
+### 📋 PRD Combo
+Ubah ide jadi rencana aplikasi lengkap dengan PRD.
 
-| Command | Fungsi |
-|---------|--------|
-| `/research "topik"` | Web search + AI ringkasan |
-| `/project-skills` | Lihat AI skills yang cocok |
-| `/quality-gate` | Cek layak commit |
-| `/token-stats` | Token usage + session stats |
-| `/memory` | Simpan/baca memori session |
-| `/wizard` | Panduan interaktif pemula |
+| Combo | Langkah | Skills |
+|-------|---------|--------|
+| `/prd-combo` | generate-prd → project-analyze → analyze-project | blueprint, product-capability, architecture-decision-records |
 
-### 🛠️ Admin & Power
+### ⚡ Quick Review
+Review kode + cek keamanan + verifikasi sebelum commit.
 
-| Command | Fungsi |
-|---------|--------|
-| `/admin` | Update ECC/9Router, doctor check |
-| `/plan` | Buat rencana implementasi |
-| `/tdd` | Test-driven development |
-| `/code-review` | Review kode |
-| `/security` | Security audit |
-| `/build-fix` | Fix build errors |
-| `/verify` | Verification loop |
-| `/reset-session` | Reset session |
-| `/orchestrate` | Multi-agent orchestration |
-| `/e2e` | End-to-end testing |
-| `/refactor-clean` | Hapus dead code |
-| `/learn` | Extract patterns |
-| `/checkpoint` | Save progress |
-| `/update-docs` | Update dokumentasi |
-| `/test-coverage` | Analisa test coverage |
+| Combo | Langkah | Skills |
+|-------|---------|--------|
+| `/quick-review` | code-review → security → verify → research | coding-standards, security-review, verification-loop |
+
+### 🔍 Full Audit
+Audit menyeluruh — scan + deteksi + skills + simpan memori.
+
+| Combo | Langkah | Skills |
+|-------|---------|--------|
+| `/full-audit` | code-analyze → analyze-project → project-skills → memory | codebase-onboarding, continuous-learning-v2, skill-scout |
+
+### 🛠️ Maintenance
+Update system + cek kesehatan + reset session.
+
+| Combo | Langkah | Skills |
+|-------|---------|--------|
+| `/maintenance` | admin → quality-gate → reset-session | verification-loop, strategic-compact, context-budget |
+
+### 🎨 Generate
+Load template + generate boilerplate komponen.
+
+| Combo | Langkah | Skills |
+|-------|---------|--------|
+| `/generate` | template → create api → create widget → create model | coding-standards, 42 framework skills |
+
+### 🐛 Bug Fix
+Fix error build + verifikasi + simpan solusi ke memori.
+
+| Combo | Langkah | Skills |
+|-------|---------|--------|
+| `/bug-fix` | build-fix → quality-gate → memory | error-handling, continuous-learning-v2, coding-standards |
+
+### 🔒 Security
+Audit keamanan + verifikasi + cari referensi best practices.
+
+| Combo | Langkah | Skills |
+|-------|---------|--------|
+| `/security` | security → quality-gate → research | security-review, security-scan, deep-research |
+
+### 🚢 Deploy
+Verifikasi + quality gate + update dokumentasi — siap deploy.
+
+| Combo | Langkah | Skills |
+|-------|---------|--------|
+| `/deploy` | verify → quality-gate → update-docs | verification-loop, deployment-patterns, docker-patterns |
 
 ---
 
