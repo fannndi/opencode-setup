@@ -160,6 +160,51 @@ setup.ps1 → opencode → /start-free → /project-analyze → /analyze-project
 | Commands | 84 | Perintah slash |
 | Rules | 20 pack | Konvensi coding per bahasa |
 | Combos | 3 | Auto-fallback chain |
+| Templates | 4 | Project template cepat |
+| Session | Persist | Status workflow tersimpan |
+
+---
+
+## Fitur Tambahan
+
+### Session Persistence
+
+Status workflow tersimpan otomatis. Kalau restart OpenCode, tidak perlu ulang dari awal.
+
+```
+/start-free → session saved
+# restart opencode
+/start-free → session loaded → skip yang udah dilakuin
+```
+
+Session file: `.opencode-session.json` (di root project)
+
+Reset session:
+```
+/reset-session
+```
+
+### Auto-Update
+
+`/start-free` otomatis deteksi git changes di ECC/9Router:
+- Kalau ada update → auto rebuild plugin
+- Kalau tidak ada → skip, langsung jalan
+- Tidak perlu manual `/sync` lagi
+
+### Project Templates
+
+Quick start dengan template yang sudah ada:
+
+```
+/template flutter-firebase    # Mobile app
+/template go-api              # REST API
+/template nextjs-fullstack    # Fullstack web
+/template python-fastapi      # API service
+```
+
+Template akan generate:
+- `docs/` structure sesuai stack
+- `docs/TEMPLATE-GUIDE.md` — panduan lengkap
 
 ---
 
@@ -194,6 +239,10 @@ Ganti profile:
 |---------|--------|
 | `/project-analyze` | Analisa PRD → generate ai-notes.md |
 | `/analyze-project` | Deteksi stack + load skills |
+| `/template` | Load project template |
+| `/start-free` | Daily workflow (gratis) |
+| `/start-go` | Daily workflow (go) |
+| `/reset-session` | Reset session state |
 | `/plan` | Buat rencana implementasi |
 
 ### Development Commands
@@ -241,17 +290,25 @@ opencode-setup/
 ├── docs/                    # Dokumentasi
 ├── scripts/                 # Automation scripts
 │   ├── setup.ps1            # Full setup
-│   ├── start.ps1            # Daily workflow
+│   ├── start.ps1            # Daily workflow (session-aware + auto-update)
 │   ├── analyze-project.ps1  # Deteksi stack
-│   └── project-analyze.ps1  # PRD → ai-notes.md
+│   ├── project-analyze.ps1  # PRD → ai-notes.md
+│   ├── session-manager.ps1  # Session management
+│   └── template-loader.ps1  # Template loader
 ├── commands/                # Command templates
 ├── profiles/                # Config profiles
 │   ├── gratis/              # Free models
 │   └── go/                  # Go models
+├── templates/               # Project templates
+│   ├── flutter-firebase/    # Mobile app
+│   ├── go-api/              # REST API
+│   ├── nextjs-fullstack/    # Fullstack web
+│   └── python-fastapi/      # API service
 ├── Feature/                 # Feature inventory (600+ komponen)
 ├── Skill/                   # Skill catalog (270 skills)
 ├── ecc/                     # ECC repo (auto-cloned)
 ├── 9router/                 # 9Router repo (auto-cloned)
+├── CHANGELOG.md             # Changelog project
 └── README.md                # File ini
 ```
 
