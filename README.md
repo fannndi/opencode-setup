@@ -277,7 +277,27 @@ restart
 
 ---
 
+## 📚 Referensi Lengkap
+
+| Ingin Lihat | Buka File Ini | Isinya |
+|-------------|---------------|--------|
+| 📖 **Semua Skills** (270) | [`Skill/skill-list.md`](Skill/skill-list.md) | Skill per kategori + per stack |
+| 🎯 **Semua Fitur** (600+) | [`Feature/list.md`](Feature/list.md) | Skills, Agents, Commands, Hooks, Rules, MCP |
+| ⌨️ **Semua Commands** (84) | [`docs/04-usage/01-commands.md`](docs/04-usage/01-commands.md) | Referensi lengkap slash commands |
+| 🐚 **Semua Scripts** (40) | [`docs/04-usage/02-scripts.md`](docs/04-usage/02-scripts.md) | Semua automation script |
+| 🔄 **Changelog** | [`CHANGELOG.md`](CHANGELOG.md) | Riwayat perubahan project |
+| 📋 **Admin Log** | [`log-admin.md`](log-admin.md) | History update admin |
+
+---
+
 ## Biaya $0
+
+| Komponen | Biaya | Kegunaan |
+|----------|-------|----------|
+| OpenCode Free | ✅ $0 | AI coding assistant |
+| 9Router | ✅ $0 | AI gateway + combos |
+| ECC (270 skills) | ✅ $0 | Knowledge base |
+| MiMo Auto | ✅ $0 | Free AI model |
 
 | Komponen | Biaya | Kegunaan |
 |----------|-------|----------|
