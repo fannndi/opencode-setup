@@ -339,7 +339,7 @@ try {
 # Determine models to test
 $modelsToTest = @()
 if ($Profile -eq "gratis") {
-    $modelsToTest = @("oc/mimo-v2.5-free", "oc/deepseek-v4-flash-free")
+    $modelsToTest = @("mmf/mimo-auto", "oc/deepseek-v4-flash-free", "oc/mimo-v2.5-free")
 } else {
     $modelsToTest = @("ocg/kimi-k2.6", "ocg/qwen3.6-plus")
 }

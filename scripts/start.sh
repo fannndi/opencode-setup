@@ -329,7 +329,7 @@ fi
 # Determine models to test
 MODELS_TO_TEST=()
 if [[ "$PROFILE" == "gratis" ]]; then
-    MODELS_TO_TEST=("oc/mimo-v2.5-free" "oc/deepseek-v4-flash-free")
+    MODELS_TO_TEST=("mmf/mimo-auto" "oc/deepseek-v4-flash-free" "oc/mimo-v2.5-free")
 else
     MODELS_TO_TEST=("ocg/kimi-k2.6" "ocg/qwen3.6-plus")
 fi

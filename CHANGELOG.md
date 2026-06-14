@@ -18,18 +18,20 @@ Semua perubahan penting di project ini.
 - `profiles/go/restore.sh` — cross-platform restore
 - `docs/07-advanced/03-session-persistence.md` — session docs
 
+### Changed
+- **Combo gratis updated** — `mmf/mimo-auto → oc/deepseek-v4-flash-free → oc/mimo-v2.5-free`
+- Combo `go` removed (暂时 skip)
+- Profile models updated: removed `oc/nemotron-3-ultra-free`, `kr/claude-sonnet-4.5`; added `mmf/mimo-auto`
+- README rewritten with complete workflow + setup dari 0 guide
+- All commands use relative paths
+
 ### Fixed
 - 8 broken path references (`clone-repo.ps1` → `clone.ps1`, `sync-changelog.ps1` → `sync.ps1`)
 - API key security — live keys replaced with placeholders
 - Hardcoded absolute paths → dynamic `$ROOT_DIR` in scripts
 - Fragile cookie parsing in `start.sh` — replaced with `curl -b`
 - Profile restore scripts auto-fix hardcoded paths on copy
-
-### Changed
-- README rewritten with complete workflow + setup dari 0 guide
-- All commands use relative paths
-- `analyze-project.sh` uses dynamic heredoc paths
-- `project-analyze.sh` uses dynamic heredoc paths
+- Session variable overwrite bug in `start.ps1`
 
 ---
 

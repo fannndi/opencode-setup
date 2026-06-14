@@ -13,12 +13,11 @@
         "apiKey": "{env:NINEROUTER_API_KEY}"
       },
       "models": {
+        "mmf/mimo-auto": { "name": "MiMo Auto" },
         "oc/mimo-v2.5-free": { "name": "MiMo V2.5 Free" },
         "oc/deepseek-v4-flash-free": { "name": "DeepSeek V4 Flash Free" },
-        "oc/nemotron-3-ultra-free": { "name": "Nemotron 3 Ultra Free" },
-        "oc/north-mini-code-free": { "name": "North Mini Code Free" },
         "oc/big-pickle": { "name": "Big Pickle" },
-        "kr/claude-sonnet-4.5": { "name": "Kiro Claude 4.5 Free" },
+        "oc/north-mini-code-free": { "name": "North Mini Code Free" },
         "kr/glm-5": { "name": "Kiro GLM-5 Free" }
       }
     }
