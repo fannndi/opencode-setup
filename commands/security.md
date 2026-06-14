@@ -1,5 +1,6 @@
 ---
 description: [COMBO] Security — security-scan + quality-gate + research
+type: combo
 agent: build
 ---
 

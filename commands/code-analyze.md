@@ -32,7 +32,7 @@ Setelah `ai-notes.md` ter-generate, kamu bisa:
 - `/analyze-project` — load skills yang sesuai
 - `/tdd` — test-driven development
 - `/code-review` — review existing code
-- `/security` — security audit
+- `/security-scan` — security audit (OWASP)
 - `/verify` — verification loop
 
 ## Task

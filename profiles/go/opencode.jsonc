@@ -253,7 +253,7 @@
     "plan": { "description": "Create implementation plan", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/commands/plan.md}\n\n$ARGUMENTS", "agent": "planner", "subtask": true },
     "tdd": { "description": "Enforce TDD workflow", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/commands/tdd.md}\n\n$ARGUMENTS", "agent": "tdd-guide", "subtask": true },
     "code-review": { "description": "Review code quality", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/commands/code-review.md}\n\n$ARGUMENTS", "agent": "code-reviewer", "subtask": true },
-    "security": { "description": "Run security review", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/commands/security.md}\n\n$ARGUMENTS", "agent": "security-reviewer", "subtask": true },
+    "security-scan": { "description": "Run security review (OWASP)", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/commands/security.md}\n\n$ARGUMENTS", "agent": "security-reviewer", "subtask": true },
     "build-fix": { "description": "Fix build errors", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/commands/build-fix.md}\n\n$ARGUMENTS", "agent": "build-error-resolver", "subtask": true },
     "e2e": { "description": "Generate E2E tests", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/commands/e2e.md}\n\n$ARGUMENTS", "agent": "e2e-runner", "subtask": true },
     "refactor-clean": { "description": "Remove dead code", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/commands/refactor-clean.md}\n\n$ARGUMENTS", "agent": "refactor-cleaner", "subtask": true },
