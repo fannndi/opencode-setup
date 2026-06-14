@@ -76,10 +76,10 @@ OpenCode Setup adalah **asisten coding AI** yang bisa kamu clone ke dalam projec
 
 | Dokumen | Isi |
 |---------|-----|
-| [Flutter + Firebase](../../templates/flutter-firebase/template.md) | Mobile app template |
-| [Go API](../../templates/go-api/template.md) | REST API template |
-| [Next.js Fullstack](../../templates/nextjs-fullstack/template.md) | Fullstack web template |
-| [Python FastAPI](../../templates/python-fastapi/template.md) | API service template |
+| [Flutter + Firebase](../templates/flutter-firebase/template.md) | Mobile app template |
+| [Go API](../templates/go-api/template.md) | REST API template |
+| [Next.js Fullstack](../templates/nextjs-fullstack/template.md) | Fullstack web template |
+| [Python FastAPI](../templates/python-fastapi/template.md) | API service template |
 
 ### Troubleshooting
 
