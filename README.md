@@ -31,6 +31,7 @@ chmod +x scripts/setup.sh
 
 | Command | Description |
 |---------|-------------|
+| `scripts/analyze-project.ps1` | Detect project stack + load skills |
 | `scripts/start.ps1 -Profile gratis` | Daily workflow - free models |
 | `scripts/start.ps1 -Profile go` | Daily workflow - go models |
 | `scripts/setup.ps1` | Full setup (clone + config + start) |
@@ -60,6 +61,20 @@ opencode
 .\scripts\start.ps1 -Profile gratis
 .\scripts\start.ps1 -Profile go
 ```
+
+### Analyze Project (Auto-detect Stack)
+
+```powershell
+# After cloning opencode-setup inside your project:
+cd opencode-setup
+.\scripts\analyze-project.ps1
+```
+
+This will:
+- Scan project root (1 level up)
+- Detect stack (Flutter, Go, React, etc.)
+- Load core + project-specific skills
+- Generate config
 
 ### Via Bash (macOS/Linux)
 

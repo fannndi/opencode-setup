@@ -278,7 +278,8 @@
     "promote": { "description": "Promote instincts", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/commands/promote.md}\n\n$ARGUMENTS" },
     "projects": { "description": "List projects", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/commands/projects.md}\n\n$ARGUMENTS" },
     "start-free": { "description": "Daily workflow - free models", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/start-free.md}\n\n$ARGUMENTS" },
-    "start-go": { "description": "Daily workflow - go models", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/start-go.md}\n\n$ARGUMENTS" }
+    "start-go": { "description": "Daily workflow - go models", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/start-go.md}\n\n$ARGUMENTS" },
+    "analyze-project": { "description": "Analyze project stack", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/analyze-project.md}\n\n$ARGUMENTS" }
   },
 
   "permission": {
