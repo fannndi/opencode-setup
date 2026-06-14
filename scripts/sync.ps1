@@ -62,17 +62,17 @@ Write-Host ""
 # ============================================================
 
 if (-not (Test-Path "$ECC_DIR\.git")) {
-    Write-Fail "ECC not cloned. Run: .\clone-repo.ps1"
+    Write-Fail "ECC not cloned. Run: .\clone.ps1"
     exit 1
 }
 
 if (-not (Test-Path "$ROUTER_DIR\.git")) {
-    Write-Fail "9Router not cloned. Run: .\clone-repo.ps1"
+    Write-Fail "9Router not cloned. Run: .\clone.ps1"
     exit 1
 }
 
 if (-not (Test-Path $SYNC_STATE)) {
-    Write-Fail ".sync-state.json not found. Run: .\clone-repo.ps1"
+    Write-Fail ".sync-state.json not found. Run: .\clone.ps1"
     exit 1
 }
 
@@ -267,7 +267,7 @@ switch ($choice) {
     "2" {
         Write-Host ""
         Write-Host "  Skipped. SHA tidak di-update." -ForegroundColor Gray
-        Write-Host "  Jalankan lagi nanti: .\sync-changelog.ps1" -ForegroundColor Gray
+        Write-Host "  Jalankan lagi nanti: .\sync.ps1" -ForegroundColor Gray
         exit 0
     }
     "3" {

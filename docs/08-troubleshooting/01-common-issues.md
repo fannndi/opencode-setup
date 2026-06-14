@@ -145,6 +145,7 @@ Download dari: https://nodejs.org
 
 ## Masih Error?
 
-1. Cek [logs](../../log.md) untuk detail error
-2. Jalankan `.\scripts\doctor.js` untuk diagnostic
-3. Buka issue di GitHub
+1. Cek [CHANGELOG](../../CHANGELOG.md) untuk info update terbaru
+2. Jalankan `.\scripts\session-manager.ps1 -Action status` untuk cek session
+3. Jalankan `.\scripts\start.ps1 -Profile gratis` untuk reset workflow
+4. Buka issue di GitHub

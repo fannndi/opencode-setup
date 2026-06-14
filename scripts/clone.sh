@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Clone ECC + 9Router repos and record SHA
-# Usage: ./clone-repo.sh [--force]
+# Usage: ./clone.sh [--force]
 
 set -euo pipefail
 

@@ -154,7 +154,7 @@ if (-not $SkipClone) {
 Write-Step "2.5/10" "Checking for changes since last sync..."
 
 if (Test-Path "$SETUP_DIR\.sync-state.json") {
-    Write-Host "  Running sync-changelog (info only)..." -ForegroundColor Gray
+    Write-Host "  Running sync (info only)..." -ForegroundColor Gray
     & "$SETUP_DIR\sync.ps1" -Apply 2>$null
     Write-OK "Changelog checked"
 } else {

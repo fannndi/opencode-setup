@@ -8,6 +8,9 @@ ecc/
 # API keys (sensitive)
 api-key.txt
 
+# Session state (private)
+.opencode-session.json
+
 # Config backups
 *.bak.*
 

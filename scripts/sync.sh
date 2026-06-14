@@ -57,9 +57,9 @@ echo -e "${NC}"
 # Check prerequisites
 # ============================================================
 
-[[ -d "$ECC_DIR/.git" ]] || fail "ECC not cloned. Run: ./clone-repo.sh"
-[[ -d "$ROUTER_DIR/.git" ]] || fail "9Router not cloned. Run: ./clone-repo.sh"
-[[ -f "$SYNC_STATE" ]] || fail ".sync-state.json not found. Run: ./clone-repo.sh"
+[[ -d "$ECC_DIR/.git" ]] || fail "ECC not cloned. Run: ./clone.sh"
+[[ -d "$ROUTER_DIR/.git" ]] || fail "9Router not cloned. Run: ./clone.sh"
+[[ -f "$SYNC_STATE" ]] || fail ".sync-state.json not found. Run: ./clone.sh"
 
 # ============================================================
 # Read sync state
@@ -206,7 +206,7 @@ case $CHOICE in
     2)
         echo ""
         echo -e "  ${GRAY}Skipped. SHA tidak di-update.${NC}"
-        echo -e "  ${GRAY}Jalankan lagi nanti: ./sync-changelog.sh${NC}"
+        echo -e "  ${GRAY}Jalankan lagi nanti: ./sync.sh${NC}"
         exit 0
         ;;
     3)

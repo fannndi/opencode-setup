@@ -12,7 +12,7 @@ Load project template untuk quick start.
 1. Tampilkan daftar template yang tersedia:
 
 ```powershell
-Get-ChildItem "C:\Users\FANNNDI\Documents\opencode-setup\templates" -Directory | Select-Object Name
+Get-ChildItem ".\templates" -Directory | Select-Object Name
 ```
 
 2. User pilih template, lalu jalankan:

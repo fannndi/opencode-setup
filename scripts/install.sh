@@ -20,7 +20,7 @@ while [[ $# -gt 0 ]]; do
             echo "Options:"
             echo "  --profile    Model profile (required): gratis or go"
             echo "  --ecc-root   Path to ECC repo root (auto-detected if not set)"
-            echo "  --sync-first Run sync-changelog before applying config"
+            echo "  --sync-first Run sync before applying config"
             exit 0
             ;;
         *) echo "Unknown option: $1"; exit 1 ;;
@@ -69,7 +69,7 @@ if [[ "$SYNC_FIRST" == "true" ]]; then
     if [[ -f "$SYNC_SCRIPT" ]]; then
         bash "$SYNC_SCRIPT"
     else
-        echo "  [SKIP] sync-changelog.sh not found"
+        echo "  [SKIP] sync.sh not found"
     fi
 fi
 

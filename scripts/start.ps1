@@ -324,13 +324,13 @@ try {
 Write-Step "5/$totalSteps" "Testing models..."
 
 # Login
-$session = $null
+$httpSession = $null
 try {
     Invoke-RestMethod -Uri "$API_URL/api/auth/login" `
         -Method POST `
         -Body "{`"password`":`"$API_PASS`"}" `
         -ContentType "application/json" `
-        -SessionVariable session | Out-Null
+        -SessionVariable httpSession | Out-Null
     Write-OK "API login successful"
 } catch {
     Write-Fail "API login failed"
@@ -356,7 +356,7 @@ foreach ($model in $modelsToTest) {
             -Method POST `
             -Body $body `
             -ContentType "application/json" `
-            -WebSession $session `
+            -WebSession $httpSession `
             -TimeoutSec 15
 
         $reply = $response.choices[0].message.content

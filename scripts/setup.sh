@@ -121,7 +121,7 @@ bash "$SETUP_DIR/clone.sh"
 step "2.5/10" "Checking for changes since last sync..."
 
 if [[ -f "$SETUP_DIR/.sync-state.json" ]]; then
-    echo -e "  ${GRAY}Running sync-changelog (info only)...${NC}"
+    echo -e "  ${GRAY}Running sync (info only)...${NC}"
     bash "$SETUP_DIR/sync.sh" --apply 2>/dev/null
     ok "Changelog checked"
 else

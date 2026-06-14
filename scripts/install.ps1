@@ -43,7 +43,7 @@ if ($SyncFirst) {
     if (Test-Path $syncScript) {
         & $syncScript
     } else {
-        Write-Host "  [SKIP] sync-changelog.ps1 not found" -ForegroundColor Yellow
+        Write-Host "  [SKIP] sync.ps1 not found" -ForegroundColor Yellow
     }
 }
 

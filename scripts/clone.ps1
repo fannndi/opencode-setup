@@ -1,5 +1,5 @@
 # Clone ECC + 9Router repos and record SHA
-# Usage: .\clone-repo.ps1 [-Force]
+# Usage: .\clone.ps1 [-Force]
 
 param(
     [switch]$Force
