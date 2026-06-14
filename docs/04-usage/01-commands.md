@@ -7,7 +7,7 @@
 | `/plan` | planner | Buat rencana implementasi |
 | `/tdd` | tdd-guide | Jalankan TDD workflow |
 | `/code-review` | code-reviewer | Review kode |
-| `/security` | security-reviewer | Security review |
+| `/security-scan` | security-reviewer | Security review (OWASP) |
 | `/build-fix` | build-error-resolver | Fix build errors |
 | `/e2e` | e2e-runner | E2E testing |
 | `/verify` | — | Verification loop |
@@ -61,7 +61,7 @@
 ### Security Review
 
 ```
-/security src/api/users.ts
+/security-scan src/api/users.ts
 ```
 
 ### Fix Build Error

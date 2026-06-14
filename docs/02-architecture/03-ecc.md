@@ -50,7 +50,7 @@ Perintah slash yang tersedia di OpenCode.
 | `/plan` | Buat rencana implementasi |
 | `/tdd` | Jalankan TDD workflow |
 | `/code-review` | Review kode |
-| `/security` | Security review |
+| `/security-scan` | Security review |
 | `/build-fix` | Fix build errors |
 | `/verify` | Verification loop |
 | `/analyze-project` | Deteksi stack project |
