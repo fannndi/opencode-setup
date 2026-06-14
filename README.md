@@ -16,6 +16,69 @@ my-project/
 
 ---
 
+## Setup dari 0
+
+### Prasyarat
+
+| Tool | Cek | Install |
+|------|-----|---------|
+| Node.js | `node --version` | [nodejs.org](https://nodejs.org) |
+| Git | `git --version` | [git-scm.com](https://git-scm.com) |
+| OpenCode | `opencode --version` | `npm install -g opencode` |
+
+### Step 1: Clone + Setup
+
+```powershell
+git clone https://github.com/fannndi/opencode-setup.git
+cd opencode-setup
+.\scripts\setup.ps1
+```
+
+Script akan otomatis:
+- Clone ECC + 9Router repos
+- Install dependencies
+- Build plugin
+- Generate config
+- Start 9Router
+
+### Step 2: Set API Key
+
+Edit `api-key.txt`, paste API key, lalu jalankan ulang:
+
+```powershell
+.\scripts\setup.ps1
+```
+
+### Step 3: Start
+
+```powershell
+opencode
+
+# Di OpenCode, jalankan DULU sebelum mulai apapun:
+/start-free    # Untuk model gratis
+# atau
+/start-go      # Untuk model go (limited)
+```
+
+**Penting:** `/start-free` atau `/start-go` harus dijalankan pertama kali agar:
+- 9Router running
+- Model terkoneksi
+- Config terapply
+- Skills terload
+
+### Step 4: Mulai Pakai
+
+Setelah `/start-free` atau `/start-go` selesai, baru jalankan workflow lain:
+
+```
+/project-analyze    # Analisa PRD
+/analyze-project    # Deteksi stack
+/plan               # Buat rencana
+/tdd                # Mulai coding
+```
+
+---
+
 ## Workflow Lengkap
 
 ### Step 1: Clone Project
@@ -37,38 +100,27 @@ git clone https://github.com/fannndi/opencode-setup.git
 opencode
 ```
 
-### Step 4: Analisa PRD
+### Step 4: Start (WAJIB)
 
 ```
-/plan
+/start-free    # atau /start-go
 ```
 
-AI membaca `prd.md` dan menganalisa:
-- Fitur-fitur yang dibutuhkan
-- Komponen-komponen (frontend, backend, database)
-- Kompleksitas project
-- Revisi jika ada yang kurang jelas
-
-### Step 5: Generate ai-notes.md
+### Step 5: Analisa PRD
 
 ```
 /project-analyze
 ```
 
-AI membaca PRD dan `Skill/skill-list.md`, lalu generate `ai-notes.md` berisi:
-- Detected stack (bahasa, framework)
-- Recommended skills (270+ → yang relevan saja)
-- Recommended commands
-- Recommended rules
-- Implementation phases
+AI membaca `prd.md` dan generate `ai-notes.md` berisi rekomendasi skills, commands, dan architecture.
 
-### Step 6: Deteksi Stack + Load Skills
+### Step 6: Deteksi Stack
 
 ```
 /analyze-project
 ```
 
-AI mendeteksi indicator files (pubspec.yaml, go.mod, dll) dan load skills yang sesuai.
+AI mendeteksi indicator files dan load skills yang sesuai.
 
 ### Step 7: Restart OpenCode
 
@@ -90,13 +142,11 @@ opencode
 ## Alur Singkat
 
 ```
-prd.md → /plan → /project-analyze → ai-notes.md
-                                     ↓
-                              /analyze-project
-                                     ↓
-                              restart opencode
-                                     ↓
-                              mulai coding
+setup.ps1 → opencode → /start-free → /project-analyze → /analyze-project
+                                                              ↓
+                                                       restart opencode
+                                                              ↓
+                                                       mulai coding
 ```
 
 ---
@@ -131,20 +181,25 @@ Ganti profile:
 
 ## Commands
 
+### Yang Wajib Dijalankan Pertama
+
+| Command | Kapan |
+|---------|-------|
+| `/start-free` | Pertama kali buka OpenCode (gratis) |
+| `/start-go` | Pertama kali buka OpenCode (go) |
+
 ### Workflow Commands
 
 | Command | Fungsi |
 |---------|--------|
 | `/project-analyze` | Analisa PRD → generate ai-notes.md |
 | `/analyze-project` | Deteksi stack + load skills |
-| `/start-free` | Daily workflow (gratis) |
-| `/start-go` | Daily workflow (go) |
+| `/plan` | Buat rencana implementasi |
 
 ### Development Commands
 
 | Command | Agent | Fungsi |
 |---------|-------|--------|
-| `/plan` | planner | Buat rencana implementasi |
 | `/tdd` | tdd-guide | Test-driven development |
 | `/code-review` | code-reviewer | Review kode |
 | `/security` | security-reviewer | Security review |
@@ -213,8 +268,9 @@ git clone https://github.com/fannndi/opencode-setup.git
 opencode
 
 # Di OpenCode:
-/project-analyze         # → ai-notes.md (deteksi: dart-flutter)
-/analyze-project         # → load dart-flutter-patterns
+/start-free                           # WAJIB dulu
+/project-analyze                      # → ai-notes.md
+/analyze-project                      # → load dart-flutter-patterns
 # Restart
 opencode
 
@@ -232,8 +288,9 @@ git clone https://github.com/fannndi/opencode-setup.git
 opencode
 
 # Di OpenCode:
-/project-analyze         # → ai-notes.md (deteksi: golang)
-/analyze-project         # → load golang-patterns, golang-testing
+/start-free                           # WAJIB dulu
+/project-analyze                      # → ai-notes.md
+/analyze-project                      # → load golang-patterns
 # Restart
 opencode
 
