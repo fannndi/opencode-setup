@@ -31,12 +31,44 @@ chmod +x scripts/setup.sh
 
 | Command | Description |
 |---------|-------------|
+| `scripts/start.ps1 -Profile gratis` | Daily workflow - free models |
+| `scripts/start.ps1 -Profile go` | Daily workflow - go models |
 | `scripts/setup.ps1` | Full setup (clone + config + start) |
 | `scripts/install.ps1 -Profile gratis` | Quick re-apply config |
 | `scripts/clone.ps1` | Clone ECC + 9Router repos |
 | `scripts/sync.ps1` | Show changes since last sync |
 
 ## Daily Workflow
+
+### Via OpenCode (Recommended)
+
+```bash
+# Buka opencode-setup folder
+cd C:\Users\FANNNDI\Documents\opencode-setup
+
+# Mulai OpenCode
+opencode
+
+# Jalankan daily workflow
+/start-free    # 100% free models
+/start-go      # Go models (limited quota)
+```
+
+### Via PowerShell
+
+```powershell
+.\scripts\start.ps1 -Profile gratis
+.\scripts\start.ps1 -Profile go
+```
+
+### Via Bash (macOS/Linux)
+
+```bash
+./scripts/start.sh --profile gratis
+./scripts/start.sh --profile go
+```
+
+### Manual Steps
 
 ```powershell
 # First time / fresh install
