@@ -108,8 +108,6 @@ if ($skillUsage.Count -gt 0) {
     Write-Host ""
     Write-Host "  [OPTIMIZER] Recommendations saved" -ForegroundColor Gray
 }
-    Write-Host "    • Profile is optimal. No changes needed." -ForegroundColor Gray
-}
 
 Write-Host ""
 Write-Host "  [OPTIMIZER] Done." -ForegroundColor Green
