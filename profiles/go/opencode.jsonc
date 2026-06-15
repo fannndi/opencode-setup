@@ -117,21 +117,21 @@
     "e2e-runner": {
       "description": "End-to-end testing specialist.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/go",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/e2e-runner.txt}",
       "tools": { "read": true, "write": true, "edit": true, "bash": true }
     },
     "doc-updater": {
       "description": "Documentation specialist.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/go",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/doc-updater.txt}",
       "tools": { "read": true, "write": true, "edit": true, "bash": true }
     },
     "refactor-cleaner": {
       "description": "Dead code cleanup specialist.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/go",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/refactor-cleaner.txt}",
       "tools": { "read": true, "write": true, "edit": true, "bash": true }
     },
@@ -159,91 +159,91 @@
     "cpp-reviewer": {
       "description": "Expert C++ code reviewer.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/go",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/cpp-reviewer.txt}",
       "tools": { "read": true, "bash": true, "write": false, "edit": false }
     },
     "cpp-build-resolver": {
       "description": "C++ build resolution.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/go",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/cpp-build-resolver.txt}",
       "tools": { "read": true, "write": true, "edit": true, "bash": true }
     },
     "docs-lookup": {
       "description": "Documentation specialist.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/go",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/docs-lookup.txt}",
       "tools": { "read": true, "bash": true, "write": false, "edit": false }
     },
     "harness-optimizer": {
       "description": "Analyze and improve local agent harness.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/go",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/harness-optimizer.txt}",
       "tools": { "read": true, "bash": true, "edit": true }
     },
     "java-reviewer": {
       "description": "Expert Java reviewer.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/go",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/java-reviewer.txt}",
       "tools": { "read": true, "bash": true, "write": false, "edit": false }
     },
     "java-build-resolver": {
       "description": "Java build resolution.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/go",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/java-build-resolver.txt}",
       "tools": { "read": true, "write": true, "edit": true, "bash": true }
     },
     "kotlin-reviewer": {
       "description": "Kotlin reviewer.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/go",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/kotlin-reviewer.txt}",
       "tools": { "read": true, "bash": true, "write": false, "edit": false }
     },
     "kotlin-build-resolver": {
       "description": "Kotlin build resolution.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/go",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/kotlin-build-resolver.txt}",
       "tools": { "read": true, "write": true, "edit": true, "bash": true }
     },
     "loop-operator": {
       "description": "Operate autonomous agent loops.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/go",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/loop-operator.txt}",
       "tools": { "read": true, "bash": true, "edit": true }
     },
     "php-reviewer": {
       "description": "Expert PHP reviewer.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/go",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/php-reviewer.txt}",
       "tools": { "read": true, "bash": true, "write": false, "edit": false }
     },
     "python-reviewer": {
       "description": "Expert Python reviewer.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/go",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/python-reviewer.txt}",
       "tools": { "read": true, "bash": true, "write": false, "edit": false }
     },
     "rust-reviewer": {
       "description": "Expert Rust reviewer.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/go",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/rust-reviewer.txt}",
       "tools": { "read": true, "bash": true, "write": false, "edit": false }
     },
     "rust-build-resolver": {
       "description": "Rust build resolution.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/go",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/rust-build-resolver.txt}",
       "tools": { "read": true, "write": true, "edit": true, "bash": true }
     }

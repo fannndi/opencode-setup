@@ -14,7 +14,8 @@ API_PASS="123456"
 
 echo ""
 echo "=== Restore Gratis Profile ==="
-echo "Models: oc/mimo-v2.5-free -> oc/deepseek-v4-flash-free -> kr/claude-sonnet-4.5"
+echo "Models: mmf/mimo-auto -> oc/deepseek-v4-flash-free -> oc/mimo-v2.5-free"
+echo "Emergency: oc/big-pickle -> oc/north-mini-code-free"
 echo ""
 
 # Backup current config

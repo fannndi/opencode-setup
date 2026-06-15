@@ -21,7 +21,7 @@ Set project path, clone dari GitHub, dan buat session.
 1. User masukin path project
 2. System tanya GitHub URL (wajib)
 3. Git clone ke path itu (kalau belum ada)
-4. Buat `.opencode/projects/<slug>/session.json` + `memory/`
+4. Buat `Project/Session/<slug>/session.json` + `memory/`
 5. Register di `registry.json`
 6. Set sebagai active project
 
