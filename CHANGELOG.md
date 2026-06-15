@@ -4,6 +4,24 @@ Semua perubahan penting di project ini.
 
 ---
 
+## [2.5.0] — 2026-06-15
+
+### Fixed (from DEV-PLAN execution)
+- **Go profile model routing** — 16 agents now use `9router/go` instead of `9router/gratis-small`
+- **Absolute paths** — 15 command `.md` files now use relative `.\scripts\` paths instead of hardcoded `C:\Users\...`
+- **Restore script** — `profiles/gratis/restore.sh` model references synced with current config
+- **set-project.md** — Path updated from `.opencode/projects/` to `Project/Session/`
+
+### Added
+- **project-resolve.sh** — Shell equivalent of project-resolve.ps1 for Linux/macOS compatibility
+- **register-hooks.ps1** — Wires 4 agent hooks (self-heal, eval-gate, proactive-research, instinct-extract) into profile config
+- **DEV-PLAN.md** — Self-improvement development plan with checklist (14 tasks, 8 completed)
+
+### Changed
+- **.gitignore** — Removed `.opencode/` and `.iteration.json` deprecated listings (files still actively used)
+
+---
+
 ## [2.4.0] — 2026-06-15
 
 ### Added — AI Agent System

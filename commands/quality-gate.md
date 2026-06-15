@@ -10,7 +10,7 @@ Verify apakah issues dari code-review sudah di-fix. Track iteration count.
 ## Instructions
 
 ```powershell
-C:\Users\FANNNDI\Documents\opencode-setup\scripts\quality-gate.ps1
+.\scripts\quality-gate.ps1
 ```
 
 ## Yang Dicek
@@ -30,3 +30,4 @@ C:\Users\FANNNDI\Documents\opencode-setup\scripts\quality-gate.ps1
 ## Task
 
 $ARGUMENTS
+

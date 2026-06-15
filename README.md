@@ -357,6 +357,7 @@ session-manager.ps1 -Action switch -ProjectPath "C:\Users\User\project-lain"
 | 🐚 **Semua Scripts** (40) | [`docs/04-usage/02-scripts.md`](docs/04-usage/02-scripts.md) | Semua automation script |
 | 🔄 **Changelog** | [`CHANGELOG.md`](CHANGELOG.md) | Riwayat perubahan project |
 | 📋 **Admin Log** | [`log-admin.md`](log-admin.md) | History update admin |
+| 📋 **Dev Plan** | [`DEV-PLAN.md`](DEV-PLAN.md) | Self-improvement roadmap |
 
 ---
 
@@ -400,6 +401,7 @@ opencode-setup/
 ├── docs/                      # Dokumentasi
 ├── ecc/                       # ECC repo (auto-cloned)
 ├── 9router/                   # 9Router repo (auto-cloned)
+├── DEV-PLAN.md                 # Self-improvement roadmap
 ├── CHANGELOG.md
 ├── caveman-mode.md
 ├── api-key.txt

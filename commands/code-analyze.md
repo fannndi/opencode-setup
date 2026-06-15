@@ -11,12 +11,12 @@ Scan existing source code, deteksi stack, architecture, patterns, dan generate a
 
 1. Set project path dulu atau kasih parameter:
 ```powershell
-C:\Users\FANNNDI\Documents\opencode-setup\scripts\code-analyze.ps1 -ProjectPath "C:\path\to\project"
+.\scripts\code-analyze.ps1 -ProjectPath "C:\path\to\project"
 ```
 
 Atau kalau sudah pakai session:
 ```powershell
-C:\Users\FANNNDI\Documents\opencode-setup\scripts\code-analyze.ps1
+.\scripts\code-analyze.ps1
 ```
 
 2. Script akan melakukan:
@@ -38,3 +38,4 @@ Setelah `ai-notes.md` ter-generate, kamu bisa:
 ## Task
 
 $ARGUMENTS
+

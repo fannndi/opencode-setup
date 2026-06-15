@@ -9,7 +9,7 @@ Buat project baru tanpa perlu coding. Tanya-jawab, AI yang kerjakan.
 ## Instructions
 
 ```powershell
-C:\Users\FANNNDI\Documents\opencode-setup\scripts\wizard.ps1
+.\scripts\wizard.ps1
 ```
 
 ## Alur
@@ -25,3 +25,4 @@ C:\Users\FANNNDI\Documents\opencode-setup\scripts\wizard.ps1
 ## Task
 
 $ARGUMENTS
+

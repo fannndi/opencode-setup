@@ -11,12 +11,12 @@ Jalankan analisis project untuk detect stack dan load skills yang sesuai.
 
 1. Jalankan script berikut (set project dulu atau kasih -ProjectPath):
 ```powershell
-C:\Users\FANNNDI\Documents\opencode-setup\scripts\analyze-project.ps1 -ProjectPath "C:\path\to\project"
+.\scripts\analyze-project.ps1 -ProjectPath "C:\path\to\project"
 ```
 
 Atau kalau sudah pakai session:
 ```powershell
-C:\Users\FANNNDI\Documents\opencode-setup\scripts\analyze-project.ps1
+.\scripts\analyze-project.ps1
 ```
 
 2. Script akan:
@@ -52,3 +52,4 @@ C:\Users\FANNNDI\Documents\opencode-setup\scripts\analyze-project.ps1
 ## Task
 
 $ARGUMENTS
+

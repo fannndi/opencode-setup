@@ -9,7 +9,7 @@ Ubah ide Anda menjadi Product Requirements Document (PRD) otomatis via AI.
 ## Instructions
 
 ```powershell
-C:\Users\FANNNDI\Documents\opencode-setup\scripts\generate-prd.ps1 -Idea "deskripsi aplikasi Anda"
+.\scripts\generate-prd.ps1 -Idea "deskripsi aplikasi Anda"
 ```
 
 ## Contoh
@@ -29,3 +29,4 @@ C:\Users\FANNNDI\Documents\opencode-setup\scripts\generate-prd.ps1 -Idea "deskri
 ## Task
 
 $ARGUMENTS
+

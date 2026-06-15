@@ -11,7 +11,7 @@ Jalankan daily workflow untuk free models.
 
 1. Jalankan script berikut (dari mana saja):
 ```powershell
-C:\Users\FANNNDI\Documents\opencode-setup\scripts\start.ps1 -Profile gratis
+.\scripts\start.ps1 -Profile gratis
 ```
 
 2. Review output workflow
@@ -34,3 +34,4 @@ Workflow akan:
 ## Task
 
 $ARGUMENTS
+

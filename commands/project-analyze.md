@@ -12,7 +12,7 @@ Analisa PRD.md dan buat rekomendasi lengkap untuk project ini.
 1. Baca file `prd.md` di project root
 2. Set project path dulu atau kasih parameter:
 ```powershell
-C:\Users\FANNNDI\Documents\opencode-setup\scripts\project-analyze.ps1 -ProjectPath "C:\path\to\project"
+.\scripts\project-analyze.ps1 -ProjectPath "C:\path\to\project"
 ```
 3. Baca `Feature/list.md` dan `Skill/skill-list.md` untuk referensi
 4. Generate file `ai-notes.md` di project root
@@ -120,3 +120,4 @@ C:\Users\FANNNDI\Documents\opencode-setup\scripts\project-analyze.ps1 -ProjectPa
 ## Task
 
 $ARGUMENTS
+

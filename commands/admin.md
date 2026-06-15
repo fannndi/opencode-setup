@@ -10,7 +10,7 @@ Update ECC dan 9Router ke versi terbaru, rebuild plugin, dan cek kesehatan.
 
 Jalankan script berikut:
 ```powershell
-C:\Users\FANNNDI\Documents\opencode-setup\scripts\admin-update.ps1
+.\scripts\admin-update.ps1
 ```
 
 ## Yang Dilakukan
@@ -31,3 +31,4 @@ ECC dan 9Router akan ter-update, changelogs terisi, plugin di-rebuild jika perlu
 ## Task
 
 $ARGUMENTS
+

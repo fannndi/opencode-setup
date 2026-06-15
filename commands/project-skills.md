@@ -11,12 +11,12 @@ Tampilkan skills yang cocok untuk project yang sedang aktif.
 
 Jalankan script berikut:
 ```powershell
-C:\Users\FANNNDI\Documents\opencode-setup\scripts\project-skills.ps1
+.\scripts\project-skills.ps1
 ```
 
 Atau untuk project tertentu:
 ```powershell
-C:\Users\FANNNDI\Documents\opencode-setup\scripts\project-skills.ps1 -ProjectPath "C:\path\to\project"
+.\scripts\project-skills.ps1 -ProjectPath "C:\path\to\project"
 ```
 
 ## Output
@@ -29,3 +29,4 @@ C:\Users\FANNNDI\Documents\opencode-setup\scripts\project-skills.ps1 -ProjectPat
 ## Task
 
 $ARGUMENTS
+

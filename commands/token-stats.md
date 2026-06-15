@@ -9,7 +9,7 @@ Tampilkan estimasi token usage, session stats, dan rekomendasi.
 ## Instructions
 
 ```powershell
-C:\Users\FANNNDI\Documents\opencode-setup\scripts\token-tracker.ps1
+.\scripts\token-tracker.ps1
 ```
 
 ## Output
@@ -24,3 +24,4 @@ C:\Users\FANNNDI\Documents\opencode-setup\scripts\token-tracker.ps1
 ## Task
 
 $ARGUMENTS
+
