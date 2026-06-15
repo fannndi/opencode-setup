@@ -1,8 +1,8 @@
 # Development Plan — opencode-setup ✅
 
 > **Generated:** 2026-06-15 via self-improvement analysis
-> **Last Updated:** 2026-06-15 (final)
-> **Status:** `v2.5.0` — Semua task P0-P3 selesai
+> **Last Updated:** 2026-06-15
+> **Status:** `v3.0` — Knowledge-Driven Development Platform
 >
 > Checklist hasil eksekusi DEV-PLAN.
 
@@ -83,3 +83,174 @@
 
 Semua task P0-P3 di service-hub sudah selesai.
 Lihat `Project/service-hub/TODO.md` untuk detail final.
+
+---
+
+## 🔷 Phase 0: Local LLM Foundation
+
+**Goal:** Ollama + Qwen 2.5 3B berjalan local
+
+### Hardware
+- GPU: NVIDIA MX150 2GB VRAM → Qwen 2.5 3B Q4_K_M (~2GB)
+- RAM: 16GB → model ~3GB + system ~4GB ✅
+- Storage: Qwen 3B Q4 ~2GB
+- OS: Windows 10 LTSC (Ollama supports Windows)
+
+### Tasks
+1. Install Ollama for Windows
+2. Pull Qwen 2.5 3B: `ollama pull qwen2.5:3b`
+3. Create `scripts/llm-adapter.ps1` — wrapper API call ke local LLM
+4. Test: `curl http://localhost:11434/api/generate`
+5. Verify response time < 5s per prompt
+
+---
+
+## 🔷 Phase 1: Intent Compiler
+
+**Goal:** Natural language → structured JSON specification
+
+### Files
+- `scripts/intent-compiler.ps1` — **CREATE**
+
+### Flow
+```
+Human: "Buat CRUD penduduk desa"
+  → Local LLM
+  → { domain, module, features, validation, roles, security, stack }
+  → OpenCode eksekusi dengan spec jelas
+```
+
+### Output Schema
+```json
+{
+  "domain": "village_information_system",
+  "module": "resident_management",
+  "features": ["crud", "audit_log"],
+  "validation": ["nik"],
+  "roles": ["admin"],
+  "security": ["prepared_statement", "input_validation", "csrf_protection"],
+  "stack": ["php", "mysql"]
+}
+```
+
+### Fallback
+- Kalo local LLM mati → back to existing regex `Detect-Intent`
+
+---
+
+## 🔷 Phase 2: Skill Router
+
+**Goal:** Load cuma skill relevan, bukan 270 sekaligus
+
+### Files
+- `scripts/skill-router.ps1` — **CREATE**
+- `profiles/gratis/opencode.jsonc` — MODIFY (instructions array dinamis)
+
+### Flow
+```
+Intent JSON
+  → Local LLM pilih top 5-10 skill dari 270
+  → Generate opencode.jsonc instructions
+  → OpenCode load cuma skill terpilih
+```
+
+### Target
+- Token hemat: **60-80%** baseline
+- Response time lebih cepat
+- Context window lega
+
+---
+
+## 🔷 Phase 3: Memory Evolution
+
+**Goal:** Flat storage → structured knowledge base
+
+### Files
+- `scripts/memory.ps1` — MODIFY
+- `scripts/hooks/instinct-extract.ps1` — MODIFY
+
+### Changes
+1. **YAML frontmatter** — tambah tags, category, severity ke setiap file
+2. **Dedup** — content hash, hindari duplikat pattern
+3. **TTL archival** — memory > 30 hari di-archive
+4. **Pattern mining via LLM** — ganti regex pairing dengan local LLM
+
+### Output Pattern Format
+```markdown
+---
+id: 23
+tags: [sql-injection, php, security]
+severity: critical
+extracted: 2026-06-15
+---
+# Prepared Statement Pattern
+
+**Issue:** SQL query built using string concatenation
+**Risk:** SQL Injection
+**Resolution:** Use parameterized queries / prepared statements
+**Prevention:** Always use PDO or mysqli prepared statements
+```
+
+---
+
+## 🔷 Phase 4: Error Classification + Session Intelligence
+
+**Goal:** Stack trace → structured error. Session → summary + decision log
+
+### Files
+- `scripts/error-classifier.ps1` — **CREATE**
+- `scripts/hooks/instinct-extract.ps1` — MODIFY
+- `scripts/session-manager.ps1` — MODIFY
+
+### Error Classification
+```
+Input: Raw PHP/JS/Python stack trace
+  → Local LLM
+  → { category, root_cause, impact, fix }
+  → Save ke Memory/<slug>/errors/
+```
+
+### Session Intelligence
+- At session close:
+  - Local LLM summarize: what was built, what failed, decisions
+  - Update decision log
+  - Update pattern relevance scores
+
+---
+
+## 🔷 Phase 5: Self-Improvement Loop
+
+**Goal:** System improves over time from execution history
+
+### Files
+- `scripts/hooks/self-heal.ps1` — MODIFY
+- `scripts/agent-core.ps1` — MODIFY
+
+### Loop
+```
+Execution → Review → Reflection → Knowledge Extraction → Memory Update → Future Optimization
+```
+
+### Security Review (after code gen)
+- SQL Injection detection (PHP spesifik)
+- XSS detection
+- CSRF detection
+- Auth review
+- Input validation
+- Hardcoded secret detection
+
+---
+
+## Summary
+
+| Phase | Nama | Effort | Impact | Dependency |
+|-------|------|--------|--------|------------|
+| P0 | Local LLM Foundation | 45m | 🔴 Prerequisite | — |
+| P1 | Intent Compiler | 2h | 🔴 Intent quality | P0 |
+| P2 | Skill Router | 2h | 🟡 Token hemat | P1 |
+| P3 | Memory Evolution | 3h | 🟢 Knowledge mgmt | P0 |
+| P4 | Error + Session Intel | 2.5h | 🟡 Debug speed | P0 |
+| P5 | Self-Improvement Loop | 3h | 🔴 Auto-evolution | All above |
+
+**Total:** ~13h
+**Quick Win:** Phase 0 — install Ollama (30 menit)
