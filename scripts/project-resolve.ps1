@@ -12,15 +12,12 @@
 #   Get-MemoryDir             — Get memory/ dir for project
 #   Clone-Project             — Clone GitHub repo to path
 #   Ensure-ProjectDirs        — Create session + memory dirs
-
-param(
-    [Parameter(Mandatory=$false)]
-    [ValidateSet("resolve", "active", "list", "switch", "ensure")]
-    [string]$Action,
-
-    [string]$ProjectPath,
-    [string]$GitHubUrl
-)
+#
+# Direct execution:
+#   .\project-resolve.ps1 resolve "C:\path" "https://github.com/user/repo"
+#   .\project-resolve.ps1 active
+#   .\project-resolve.ps1 list
+#   .\project-resolve.ps1 switch "C:\path"
 
 $ErrorActionPreference = "Stop"
 $SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -37,18 +34,28 @@ function Get-Registry {
         return [PSCustomObject]@{
             version = "1.0"
             active_project = ""
-            projects = @{}
+            projects = [PSCustomObject]@{}
         }
     }
     try {
         $raw = Get-Content $REGISTRY_FILE -Raw | ConvertFrom-Json
-        return $raw
+        # Ensure projects is PSCustomObject (not corrupted)
+        if ($raw.projects -is [PSCustomObject]) {
+            return $raw
+        }
+        # Rebuild if corrupted
+        $clean = [PSCustomObject]@{
+            version = "1.0"
+            active_project = $raw.active_project
+            projects = [PSCustomObject]@{}
+        }
+        return $clean
     } catch {
         Write-Host "  [WARN] Registry corrupt, rebuilding..." -ForegroundColor Yellow
         return [PSCustomObject]@{
             version = "1.0"
             active_project = ""
-            projects = @{}
+            projects = [PSCustomObject]@{}
         }
     }
 }
@@ -56,6 +63,16 @@ function Get-Registry {
 function Set-Registry {
     param([PSCustomObject]$Registry)
     New-Item -ItemType Directory -Path $OPENCODE_DIR -Force | Out-Null
+
+    # Clean up projects — convert to PSCustomObject to avoid PowerShell internal properties
+    $cleanProjects = [PSCustomObject]@{}
+    if ($Registry.projects.PSObject.Properties) {
+        foreach ($prop in $Registry.projects.PSObject.Properties) {
+            $cleanProjects | Add-Member -NotePropertyName $prop.Name -NotePropertyValue $prop.Value -Force
+        }
+    }
+    $Registry.projects = $cleanProjects
+
     $Registry | ConvertTo-Json -Depth 10 | Set-Content -Path $REGISTRY_FILE -Encoding UTF8
 }
 
@@ -136,14 +153,14 @@ function Resolve-Project {
             last_seen = $timestamp
         }
 
-        # Add to registry (rebuild projects hashtable properly)
-        $projectsHash = @{}
+        # Add to registry (use PSCustomObject to avoid PowerShell internal properties)
+        $newProjects = [PSCustomObject]@{}
         foreach ($prop in $registry.projects.PSObject.Properties) {
-            $projectsHash[$prop.Name] = $prop.Value
+            $newProjects | Add-Member -NotePropertyName $prop.Name -NotePropertyValue $prop.Value -Force
         }
-        $projectsHash[$normalized] = $newProject
+        $newProjects | Add-Member -NotePropertyName $normalized -NotePropertyValue $newProject -Force
 
-        $registry.projects = $projectsHash
+        $registry.projects = $newProjects
         $registry.active_project = $normalized
         Set-Registry -Registry $registry
         Write-Host "  [PROJECT] Created new: $slug" -ForegroundColor Green
@@ -280,14 +297,18 @@ function List-Projects {
 }
 
 # ============================================================
-# Direct execution
+# Direct execution (when run, not sourced)
 # ============================================================
 
-if ($Action) {
-    switch ($Action) {
+if ($MyInvocation.InvocationName -ne '.') {
+    $action = $args[0]
+    $projectPathArg = $args[1]
+    $githubUrlArg = $args[2]
+
+    switch ($action) {
         "resolve" {
-            if (-not $ProjectPath) { Write-Host "Error: -ProjectPath required" -ForegroundColor Red; exit 1 }
-            $result = Resolve-Project -Path $ProjectPath -GitHubUrl $GitHubUrl
+            if (-not $projectPathArg) { Write-Host "Error: project path required" -ForegroundColor Red; exit 1 }
+            $result = Resolve-Project -Path $projectPathArg -GitHubUrl $githubUrlArg
             Write-Host "  Resolved: $result" -ForegroundColor Cyan
         }
         "active" {
@@ -297,16 +318,20 @@ if ($Action) {
         }
         "list" { List-Projects }
         "switch" {
-            if (-not $ProjectPath) { Write-Host "Error: -ProjectPath required" -ForegroundColor Red; exit 1 }
-            Set-ActiveProject -Path $ProjectPath
-            Write-Host "  Switched to: $ProjectPath" -ForegroundColor Green
+            if (-not $projectPathArg) { Write-Host "Error: project path required" -ForegroundColor Red; exit 1 }
+            Set-ActiveProject -Path $projectPathArg
+            Write-Host "  Switched to: $projectPathArg" -ForegroundColor Green
         }
         "ensure" {
-            if (-not $ProjectPath) { Write-Host "Error: -ProjectPath required" -ForegroundColor Red; exit 1 }
-            $slug = Get-ProjectSlug -Path $ProjectPath
+            if (-not $projectPathArg) { Write-Host "Error: project path required" -ForegroundColor Red; exit 1 }
+            $slug = Get-ProjectSlug -Path $projectPathArg
             $dir = "$OPENCODE_DIR\projects\$slug"
             Ensure-ProjectDirs -ProjectDir $dir
             Write-Host "  Ensured: $dir" -ForegroundColor Green
+        }
+        default {
+            Write-Host "Usage: .\project-resolve.ps1 <action> [projectPath] [githubUrl]" -ForegroundColor Yellow
+            Write-Host "Actions: resolve, active, list, switch, ensure" -ForegroundColor Gray
         }
     }
 }

@@ -175,8 +175,7 @@ function Add-Error {
 switch ($Action) {
     "save" {
         if (-not $Value) { Write-Host "[ERROR] -Value required" -ForegroundColor Red; exit 1 }
-        $projectPath = if ($ProjectPath) { $ProjectPath } else { "opencode-setup" }
-        Save-Session -Project $projectPath
+        Save-Session -Project $(if ($ProjectPath) { Split-Path $ProjectPath -Leaf } else { "general" })
     }
     "read" { Read-Memory }
     "status" { Read-Memory }
