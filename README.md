@@ -150,9 +150,13 @@ Edit `api-key.txt`, paste API key, lalu:
 .\scripts\setup.ps1
 opencode
 /start-free
+
+# Set project — GitHub URL wajib, auto-clone + session terbuat
 /set-project C:\path\ke\project
 /code-analyze
 /analyze-project
+
+# Session tersimpan otomatis per project
 restart opencode
 ```
 
@@ -240,9 +244,16 @@ Verifikasi + quality gate + update dokumentasi — siap deploy.
 cd opencode-setup
 opencode
 /start-free
+
+# Clone project dari GitHub + setup session
 /set-project C:\Users\User\flutter-app
+# → Akan minta GitHub URL, clone ke Project/flutter-app/
+
+# Analisa project
 /code-analyze
 /analyze-project
+
+# Setelah restart, session otomatis terload
 restart
 
 /code-review lib/screens/
@@ -257,6 +268,7 @@ restart
 opencode
 /start-free
 /set-project C:\Users\User\flutter-app-baru
+# → Masukin GitHub URL → clone → session terbuat
 /project-analyze
 /analyze-project
 restart
@@ -269,10 +281,14 @@ restart
 
 ### Ganti Project
 
+Session & memory per project. Ganti project = auto-load konteks lama.
+
 ```powershell
+# Langsung set-path + GitHub → clone + buat session baru
 /set-project C:\Users\User\project-lain
-/code-analyze
-/analyze-project
+
+# Atau switch ke project yang sudah ada
+session-manager.ps1 -Action switch -ProjectPath "C:\Users\User\project-lain"
 ```
 
 ---
@@ -312,20 +328,26 @@ restart
 
 ```
 opencode-setup/
-├── scripts/                 # Automation scripts (30 file)
-├── commands/                # OpenCode command templates
-├── profiles/                # Config profiles (gratis / go)
-├── templates/               # Project templates (4)
-├── Feature/                 # 600+ komponen inventory
-├── Skill/                   # 270 skills catalog
-├── docs/                    # Dokumentasi
-├── ecc/                     # ECC repo (auto-cloned)
-├── 9router/                 # 9Router repo (auto-cloned)
+├── Project/                   # Per-project data: source, session, memory
+│   ├── service-hub/           # Project source code (cloned)
+│   ├── Session/
+│   │   └── service-hub/       # Session state per project
+│   └── Memory/
+│       └── service-hub/       # Memory per project (logs, patterns, errors)
+├── scripts/                   # Automation scripts (30 file)
+├── commands/                  # OpenCode command templates
+├── profiles/                  # Config profiles (gratis / go)
+├── templates/                 # Project templates (4)
+├── Feature/                   # 600+ komponen inventory
+├── Skill/                     # 270 skills catalog
+├── docs/                      # Dokumentasi
+├── ecc/                       # ECC repo (auto-cloned)
+├── 9router/                   # 9Router repo (auto-cloned)
 ├── CHANGELOG.md
 ├── caveman-mode.md
 ├── api-key.txt
 ├── README.md
-└── install.bat              # One-click installer
+└── install.bat                # One-click installer
 ```
 
 ---

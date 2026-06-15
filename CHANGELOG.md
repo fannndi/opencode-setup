@@ -4,6 +4,32 @@ Semua perubahan penting di project ini.
 
 ---
 
+## [2.3.0] — 2026-06-15
+
+### Added
+- **Per-project session & memory** — Setiap project punya session.json + memory/ sendiri di `Project/<slug>/`
+- **Project directory structure** — `Project/Session/<slug>/`, `Project/Memory/<slug>/`, `Project/<slug>/` (source)
+- **project-resolve.ps1** — Core script: registry CRUD, path resolve, auto-clone dari GitHub
+- **session-manager.ps1** — Updated: per-project sessions, list all projects, switch project
+- **memory.ps1** — Updated: per-project memory directories
+- **GitHub auto-clone** — `/set-project` sekarang minta GitHub URL, clone ke `Project/<slug>/`
+- **registry.json** — Path-to-project mapping dengan last_seen tracking
+- **P3 tasks** — 10 task quality & infrastructure baru di service-hub TODO.md
+- **Logging, Redis, Monitoring** — Task untuk AI agent di TODO.md (P3)
+
+### Changed
+- **13 scripts** — Updated from flat `.opencode-session.json` to per-project session via project-resolve
+- **start.ps1** — Session save/write menggunakan `Project/Session/<slug>/session.json`
+- **token-tracker.ps1** — Membaca session dari active project
+- **.gitignore** — Add `Project/` (cloned repos + user session/memory data)
+- **Set-project command** — Wajib GitHub URL + auto-clone
+
+### Removed
+- `.opencode-session.json` — Migrated to per-project format
+- `.sync-state.json` — Cleaned up
+- `.opencode/` directory — Replaced by `Project/`
+
+---
 ## [2.2.0] — 2026-06-15
 
 ### Fixed
