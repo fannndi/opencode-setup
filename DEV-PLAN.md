@@ -126,6 +126,37 @@ Lihat `Project/service-hub/TODO.md` untuk detail final.
 
 **File:** `scripts/llm-benchmark.ps1` — akan dibuat di Phase 0
 
+### LLM Mode Toggle
+
+**Files:** `scripts/llm-mode.ps1` — CREATE, `scripts/llm-adapter.ps1` — MODIFY
+
+**Konsep:** Mode ON/OFF biar laptop gak overheat kalo outdoor.
+
+| Mode | Local LLM | Intent | Skill Load | Memory Extract | GPU |
+|------|-----------|--------|------------|----------------|-----|
+| 🟢 ON | Ollama running | LLM → JSON spec | LLM select skills | LLM mine patterns | ✅ Active |
+| 🔴 OFF | Ollama mati | Regex fallback | Default 19 skills | Regex pairing | ❌ Idle |
+
+**Commands:**
+| Command | Fungsi |
+|---------|--------|
+| `./scripts/llm-mode.ps1 on` | Start Ollama + enable LLM features |
+| `./scripts/llm-mode.ps1 off` | Stop Ollama + disable LLM features |
+| `./scripts/llm-mode.ps1 status` | Current mode + model info |
+
+**Auto-fallback di `llm-adapter.ps1`:**
+- Mode OFF → return null → caller pake fallback regex
+- Ollama crash/unreachable → auto-disable ke OFF
+- Mode ON + Ollama running → proceed dengan LLM
+
+**Setiap script punya dual-path:**
+| Script | LLM ON | LLM OFF |
+|--------|--------|---------|
+| `intent-compiler.ps1` | LLM → JSON spec | Regex `Detect-Intent` |
+| `skill-router.ps1` | LLM select skills | Default 19 skills |
+| `error-classifier.ps1` | LLM → structured error | Raw stack trace |
+| `instinct-extract.ps1` | LLM → pattern markdown | Regex pairing |
+
 ### Tasks
 1. Install Ollama for Windows: `winget install Ollama.Ollama`
 2. Pull kedua model: `ollama pull qwen2.5-coder:3b && ollama pull qwen3:1.7b`
