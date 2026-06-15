@@ -4,6 +4,24 @@ Semua perubahan penting di project ini.
 
 ---
 
+## [3.4.0] — 2026-06-15 — LLM Audit + Self-Improvement Loop
+
+### Added — LLM Code Audit
+- **llm-audit.ps1** — Autonomous code audit using local LLM (qwen2.5-coder:3b)
+- **3 audit modes** — quality (error handling, style), security (vulns, secrets), perf (efficiency)
+- **Loop mode** — continuous audit cycle. Kirim file bertubi-tubi ke LLM tanpa jeda
+- **GPU stress test** — Loop mode maksimalin VRAM MX150 2GB (~90% load, ~1.8GB VRAM)
+- **Auto-report** — hasil audit disimpan ke `Project/Knowledge/<slug>/audits/`
+- **/audit command** — `/audit <path>` atau `/audit scripts\ -Loop`
+
+### Self-Improvement Cycle (completed)
+```
+Execution → LLM Audit → Findings → Knowledge Base → Future Execution
+```
+Now wired: setiap iterasi audit feed hasilnya ke Knowledge base.
+
+---
+
 ## [3.2.0] — 2026-06-15 — 3-Mode Operating System
 
 ### Added — Operating Modes

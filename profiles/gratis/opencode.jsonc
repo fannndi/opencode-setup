@@ -306,6 +306,8 @@
     "detect": { "description": "Deteksi stack project aktif", "template": "powershell -ExecutionPolicy Bypass -File \"C:\\Users\\FANNNDI\\Documents\\opencode-setup\\scripts\\agent-core.ps1\" detect \"$ARGUMENTS\"\n\n$ARGUMENTS" },
     "auto-load": { "description": "Auto-load skills sesuai stack project", "template": "powershell -ExecutionPolicy Bypass -File \"C:\\Users\\FANNNDI\\Documents\\opencode-setup\\scripts\\agent-core.ps1\" auto-load \"$ARGUMENTS\"\n\n$ARGUMENTS" },
     "llm": { "description": "Set operating mode: eco, balanced, or performance", "template": "powershell -ExecutionPolicy Bypass -File \"C:\\Users\\FANNNDI\\Documents\\opencode-setup\\scripts\\llm-mode.ps1\" $ARGUMENTS\n\n$ARGUMENTS" },
+    "audit": { "description": "LLM-powered code audit with loop mode", "template": "powershell -ExecutionPolicy Bypass -File \"C:\\Users\\FANNNDI\\Documents\\opencode-setup\\scripts\\llm-audit.ps1\" -Path \"$ARGUMENTS\" -Loop`n\n$ARGUMENTS" },
+    "intent": { "description": "Compile natural language to structured spec", "template": "powershell -ExecutionPolicy Bypass -File \"C:\\Users\\FANNNDI\\Documents\\opencode-setup\\scripts\\intent-compiler.ps1\" -Query \"$ARGUMENTS\"\n\n$ARGUMENTS" },
     "intent": { "description": "Compile natural language to structured spec", "template": "powershell -ExecutionPolicy Bypass -File \"C:\\Users\\FANNNDI\\Documents\\opencode-setup\\scripts\\intent-compiler.ps1\" -Query \"$ARGUMENTS\"\n\n$ARGUMENTS" },
     "route": { "description": "Route intent to relevant ECC skills", "template": "powershell -ExecutionPolicy Bypass -File \"C:\\Users\\FANNNDI\\Documents\\opencode-setup\\scripts\\skill-router.ps1\" -Query \"$ARGUMENTS\"\n\n$ARGUMENTS" }
   },
