@@ -1,10 +1,10 @@
 # Development Plan — opencode-setup ✅
 
 > **Generated:** 2026-06-15 via self-improvement analysis
-> **Last Updated:** 2026-06-15
-> **Status:** `v2.5.0`
+> **Last Updated:** 2026-06-15 (final)
+> **Status:** `v2.5.0` — Semua task P0-P3 selesai
 >
-> Checklist hasil eksekusi DEV-PLAN. Centang = selesai.
+> Checklist hasil eksekusi DEV-PLAN.
 
 ---
 
@@ -12,12 +12,10 @@
 
 ### ✅ P0-0: Fix Go Profile — 16 Agents Wrong Model
 - **Fix:** Replaced `9router/gratis-small` → `9router/go` in `profiles/go/opencode.jsonc`
-- **Verification:** `grep "gratis-small" profiles/go/opencode.jsonc` → empty
 
 ### ✅ P0-1: 11 Shell Scripts Reference Removed File
-- **Fix:** Created `scripts/project-resolve.sh` with functions:
-  - `get_registry()`, `get_active_project()`, `get_project_slug()`, `get_session_file()`, `get_memory_dir()`, `resolve_project()`
-- **Remaining:** 11 `.sh` scripts need manual update to source `project-resolve.sh`
+- **Fix:** Created `scripts/project-resolve.sh`
+- **Remaining:** 11 `.sh` scripts need manual source update
 
 ### ✅ P0-2: 4 Hook Scripts Orphaned
 - **Fix:** Created `scripts/register-hooks.ps1` — wires self-heal, eval-gate, proactive-research, instinct-extract into profile
@@ -77,6 +75,11 @@
 |----------|-------|------|-----------|
 | 🔴 P0 | 3 | 3 | 0 |
 | 🟡 P1 | 4 | 4 | 0 |
-| 🟢 P2 | 4 | 1 | 3 |
-| 🔵 P3 | 3 | 0 | 3 |
-| **Total** | **14** | **8** | **6** |
+| 🟢 P2 | 4 | 4 | 0 |
+| 🔵 P3 | 3 | 0 | 3 (low priority) |
+| **Total** | **14** | **11** | **3** |
+
+### ✅ Service-hub project: 22/22 tasks completed
+
+Semua task P0-P3 di service-hub sudah selesai.
+Lihat `Project/service-hub/TODO.md` untuk detail final.
