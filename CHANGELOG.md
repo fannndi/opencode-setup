@@ -4,7 +4,45 @@ Semua perubahan penting di project ini.
 
 ---
 
-## [3.4.0] — 2026-06-15 — LLM Audit + Self-Improvement Loop
+## [4.1.0] — 2026-06-15 — Self-Improvement Loop v2
+
+### Added — Feedback Analysis
+- **llm-feedback.ps1** — Analyze `.opencode/llm-failures.jsonl` → categorize → LLM recommendations
+- Failure categories: timeout, json_parse, connection, model_error
+- Per-script + per-model breakdown
+- Auto-trim log to 100 entries (with `-Apply`)
+
+### Added — Auto-Evolution
+- **llm-evolve.ps1** — Calculate failure rate, avg latency, timeout/JSON ratio
+- Config recommendations: adjust Timeout/Temperature/Model based on stats
+- State persisted to `.opencode/llm-evolve.jsonl`
+
+### Added — Profile Optimizer
+- **profile-optimizer.ps1** — Track skill usage patterns vs profile load
+- Identify: high-usage skills not loaded, low-usage skills wasting context
+- Skill usage via `.opencode/skill-usage.jsonl`
+- Load/unload recommendations
+
+### Added — Knowledge Miner
+- **knowledge-miner.ps1** — Scan memory sessions → LLM extract patterns → save to knowledge
+- PERFORMANCE mode: LLM extraction with tags
+- ECO mode: regex keyword extraction
+- Save to `Project/Knowledge/<slug>/auto-mined/`
+
+### Self-Improvement Cycle
+```
+LLM call → usage logged → failure logged
+  ↓ (periodic)
+Feedback analysis → categorize → recommendations
+  ↓
+Evolve → adjust config
+  ↓
+Profile optimizer → load/unload skills
+  ↓
+Knowledge miner → sessions → patterns → knowledge
+```
+
+---
 
 ### Added — LLM Code Audit
 - **llm-audit.ps1** — Autonomous code audit using local LLM (qwen2.5-coder:3b)
