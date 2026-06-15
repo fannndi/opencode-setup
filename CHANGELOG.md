@@ -4,36 +4,27 @@ Semua perubahan penting di project ini.
 
 ---
 
-## [2.6.0] — 2026-06-15 — Service-Hub Project Delivery
+## [2.6.0] — 2026-06-15
 
-### Service-Hub (22/22 tasks completed)
+### Fixed
+- **Go profile model routing** — Semua sub-agent pake `9router/go`
+- **Absolute paths** — Semua command `.md` pake relative path
+- **Shell scripts** — `project-resolve.sh` untuk cross-platform session
 
-Semua task P0-P3 di `Project/service-hub/` selesai:
+### Added
+- **Agent Core** — intent detection, skill auto-loader, resume session
+- **Agent Dashboard** — system overview, memory stats
+- **Task Queue** — autonomous DAG execution
+- **Tool Creator** — template-based script generator
+- **4 agent hooks** — self-heal, eval-gate, instinct-extract, proactive-research
+- **register-hooks.ps1** — wire hooks into profile config
+- **project-resolve.sh** — shell equivalent for Linux/macOS
+- **DEV-PLAN.md** — self-improvement roadmap
 
-| Task | Hasil |
-|------|-------|
-| P0-0 | Dynamic device models |
-| P0-1 | God file split (24 files, 2002→476 lines) |
-| P0-2 | ServiceFlowScreen performance (IndexedStack + 5 step widgets) |
-| P1-1 | Widget consolidation (formatters, EmptyState, AsyncPage) |
-| P1-2 | Sessions screen + backend endpoints |
-| P1-5 | Rate limiting POST /orders |
-| P1-6 | Dead code removed + Dio consolidated |
-| P2-1 | CI/CD (.github/workflows/ci.yml) |
-| P2-2 | Widget tests (23 total) |
-| P3-1 | Security audit |
-| P3-2 | Pino structured logging |
-| P3-3 | Redis caching |
-| P3-4 | Production audit (deploy guide, docker limits) |
-| P3-5 | DB indexes |
-| P3-7 | Code quality (unused imports, const fixes) |
-| P3-8 | Prometheus metrics |
-| P3-9 | Flutter const constructors |
-| P3-10 | WhatsApp email fallback |
-
-### Verifikasi
-- Frontend: `flutter analyze` — 0 errors, 23 tests pass
-- Backend: `tsc --noEmit` — 0 new errors, 55 tests pass (4 suites)
+### Changed
+- **Per-project session** — `Project/` directory structure
+- **.gitignore** — Project/ di-ignore
+- **15 command files** — absolute → relative paths
 
 ---
 
