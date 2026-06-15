@@ -4,7 +4,33 @@ Semua perubahan penting di project ini.
 
 ---
 
-## [2.6.0] — 2026-06-15
+## [3.0.0] — 2026-06-15 — Personal Knowledge Operating System
+
+### Added — Local LLM Foundation
+- **llm-mode.ps1** — Toggle local LLM ON/OFF (thermal management untuk outdoor)
+- **llm-adapter.ps1** — Ollama API wrapper dengan auto-fallback saat mode OFF
+- **llm-benchmark.ps1** — Benchmark harness: 5 scenarios, 3 models (including no-LLM baseline)
+- **/llm command** — `/llm on|off|status` via opencode.jsonc
+
+### Architecture (DEV-PLAN v3.0)
+- **2 operating modes** — ON (local LLM) / OFF (regex fallback)
+- **Default model** — `qwen3:1.7b` (1.4GB VRAM, 0.6GB headroom)
+- **Performance model** — `qwen2.5-coder:3b` (optional upgrade)
+- **1-Month MVP** — Week 1-4 roadmap (Intent Compiler → Skill Router → Benchmark)
+- **ROI ranking** — Intent Compiler #1, Skill Router #2
+- **What NOT to use LLM for** — Task Queue, Git ops, Registry, Self-heal
+
+### Changed
+- **DEV-PLAN.md** — Rewritten v3.0: simplified architecture, 2 modes, hardware-first constraints
+
+### Files Created
+| File | Purpose |
+|------|---------|
+| `scripts/llm-mode.ps1` | ON/OFF toggle + status |
+| `scripts/llm-adapter.ps1` | Ollama API wrapper |
+| `scripts/llm-benchmark.ps1` | 5-scenario benchmark |
+
+---
 
 ### Fixed
 - **Go profile model routing** — Semua sub-agent pake `9router/go`

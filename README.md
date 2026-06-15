@@ -147,6 +147,7 @@ Sistem agent yang bisa autonomous: detect stack → load skills → decompose go
 | `/detect <path>` | Deteksi stack project | `/detect C:\project` |
 | `/auto-load <path>` | Auto-load skill sesuai stack | `/auto-load C:\project` |
 | `/resume` | Resume session terakhir | `/resume` |
+| `/llm on\|off\|status` | Toggle local LLM mode | `/llm status` |
 | `/dashboard` | Tampilkan sistem overview | `/dashboard` |
 | `/task-queue <goal>` | Autonomous goal → subtasks | `/task-queue "bikin login page"` |
 | `/tool-create <template>` | Generate script/command | `/tool-create script=deploy` |
@@ -187,6 +188,21 @@ User: "bikin fitur payment"
 | Eval Gate | After editing test files | Auto-run tests |
 | Instinct Extract | Session end | Extract patterns to memory |
 | Proactive Research | Before Edit/Write | Track new libraries |
+
+---
+
+### Local LLM Mode
+
+Sistem bisa jalan dengan atau tanpa local LLM. Mode ON = pake Ollama, mode OFF = regex fallback.
+
+```powershell
+/llm on       # Aktifkan local LLM (butuh Ollama + qwen3:1.7b)
+/llm off      # Matikan (hemat baterai, anti overheat outdoor)
+/llm status   # Cek status Ollama + model
+```
+
+**Default model:** `qwen3:1.7b` — cocok MX150 2GB (1.4GB VRAM, 0.6GB headroom).
+**Auto-fallback:** Kalo Ollama mati, semua script otomatis pake regex. Gak perlu manual.
 
 ---
 
