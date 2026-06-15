@@ -1,45 +1,17 @@
 ---
-description: [COMBO] Bug Fix — build-fix + quality-gate + memory
+description: [COMBO] Bug Fix — preprocess + build-fix + quality-gate + memory + learn
 type: combo
 agent: build
 ---
-
 # Bug Fix
-
-Fix error build + verifikasi + simpan solusi — 1x jalan.
-
-## ⚡ Auto Docs Trigger
-Sebelum mulai, baca:
-- `project-memory/errors/` — error sebelumnya dan solusinya
-- `CHANGELOG.md` — update terbaru
-
+Fix error build + verifikasi + simpan solusi — dengan enriched context.
 ## Skills yang Diaktifkan
-| Skill | Sumber | Fungsi |
-|-------|--------|--------|
-| error-handling | Feature | Typed errors, boundaries, retry |
-| verification-loop | Feature | Build/type/lint/test |
-| continuous-learning-v2 | Feature | Ekstraksi pola dari session |
-| coding-standards | Feature | KISS, DRY, YAGNI |
-
+error-handling, verification-loop, continuous-learning-v2, coding-standards
 ## Instruksi
-1. `/build-fix` — AI analisa dan fix error build
-2. `/quality-gate` — verifikasi fix berhasil
-3. `memory add-error "nama error" "solusi"` — simpan solusi ke memori
-
-## ✅ Auto-Changelog
-```
-### YYYY-MM-DD — Bug Fix
-- Error: [nama]
-- Solution: [deskripsi]
-- Iterations: [jumlah]
-- Status: fixed ✅
-```
-
-## 🔴 Error Recovery
-- Jika `/build-fix` gagal: cek error message, kadang butuh install dependency dulu
-- Jika `/quality-gate` gagal: masih ada issue yang belum di-fix
-- Setelah fix: jalankan `/quick-review` untuk verifikasi menyeluruh
-
+1. **`/go "fix bug: [description]"`**
+2. `/build-fix` — AI analisa dan fix error build
+3. `/quality-gate` — verifikasi fix berhasil
+4. `memory add-error "[error]" "[solution]"` — simpan solusi
+5. **`/learn "Fixed: [bug description]"`**
 ## Task
-
 $ARGUMENTS

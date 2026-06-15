@@ -1,48 +1,20 @@
 ---
-description: [COMBO] Audit — code-analyze + analyze-project + project-skills + memory save
+description: [COMBO] Audit — preprocess + code-analyze + analyze-project + project-skills + memory + learn
 type: combo
 agent: build
 ---
-
 # Full Audit — Combo
-
-Scan kode + deteksi stack + skills + simpan memori — 1x jalan.
-
-## ⚡ Auto Docs Trigger
-Sebelum mulai, baca:
-- `Feature/list.md` — fitur yang tersedia
-- `Skill/skill-list.md` — skill yang bisa dipakai
-- `docs/` — dokumentasi project
-
+Audit menyeluruh dengan enriched context.
 ## Skills yang Diaktifkan
-| Skill | Sumber | Fungsi |
-|-------|--------|--------|
-| codebase-onboarding | Feature | Memahami codebase baru |
-| coding-standards | Feature | Konvensi kode |
-| continuous-learning-v2 | Feature | Ekstraksi pola session |
-| skill-scout | Feature | Discovery skill yang cocok |
-| skill-stocktake | Feature | Inventory skill yang terpakai |
-
+codebase-onboarding, coding-standards, skill-scout
 ## Instruksi
-1. `/code-analyze` — scan source → ai-notes.md
-2. `/analyze-project` — deteksi stack + load skills
-3. `/project-skills` — lihat skills yang cocok
-4. `memory save "Full audit selesai: [stack], [skill count] skills"` — simpan ke memori
-
-## ✅ Auto-Changelog
-```
-### YYYY-MM-DD — Full Audit
-- Project: [nama]
-- Files: [jumlah]
-- Stack: [detected]
-- Skills: [jumlah] matched
-```
-
+1. **`/go "full audit"`** — preprocess context
+2. `/code-analyze` — scan source → ai-notes.md
+3. `/analyze-project` — deteksi stack + load skills
+4. `/project-skills` — lihat skills yang cocok
+5. `memory save "Full audit: [result]"` — simpan ke memori
+6. **`/learn "Audit complete"`**
 ## 🔴 Error Recovery
-- Jika `/code-analyze` gagal: pastikan project path benar
-- Jika `/analyze-project` gagal: ECC skills mungkin perlu di-reload dengan `/start-free`
-- Jika `/project-skills` gagal: cek koneksi 9Router
-
+Jika gagal: cek project path dengan `/set-project`
 ## Task
-
 $ARGUMENTS
