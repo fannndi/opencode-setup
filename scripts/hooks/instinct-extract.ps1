@@ -21,21 +21,23 @@ $errorsDir = "$memDir\errors"
 New-Item -ItemType Directory -Path $patternsDir -Force | Out-Null
 New-Item -ItemType Directory -Path $errorsDir -Force | Out-Null
 
-$llmMode = Get-LLMMode
+$operatingMode = Get-ModeForLLM
 
 # ============================================================
-# Extract 1: Session Summary + Error Patterns (LLM when ON)
+# Extract 1: Session Summary + Error Patterns
+# ECO → regex only. BALANCED → LLM summary. PERFORMANCE → LLM depth.
 # ============================================================
 if (Test-Path $sessionLog) {
     $content = Get-Content $sessionLog -Raw
 
-    if ($llmMode -eq "on" -and $content.Length -gt 50) {
-        # LLM extraction — richer analysis
+    if ($operatingMode -ne "eco" -and $content.Length -gt 50) {
+        # LLM extraction
+        $depthLevel = if ($operatingMode -eq "performance") { "deep analysis" } else { "brief summary" }
         $prompt = @"
-Analyze this development session log and extract:
+Analyze this development session log and extract $depthLevel:
 1. What problems occurred (max 3)
 2. What solutions were found
-3. Any reusable patterns
+3. Any reusable patterns or lessons
 
 Output ONLY JSON array:
 [{"problem": "...", "solution": "...", "pattern": "..."}]
@@ -43,7 +45,9 @@ Output ONLY JSON array:
 Session log:
 $content
 "@
-        $result = Invoke-LLM -Prompt $prompt -System "Output ONLY a JSON array. No explanation." -MaxTokens 1024 -Temperature 0.2 -TimeoutSec 30
+
+        $timeout = if ($operatingMode -eq "performance") { 60 } else { 30 }
+        $result = Invoke-LLM -Prompt $prompt -System "Output ONLY a JSON array. No explanation." -MaxTokens 1024 -Temperature 0.2 -TimeoutSec $timeout
 
         if ($result) {
             try {
@@ -60,7 +64,7 @@ $content
 - Solution: $($p.solution)
 - Pattern: $($p.pattern)
 - Date: $(Get-Date -Format "yyyy-MM-dd")
-- Extracted by: LLM
+- Extracted by: LLM ($operatingMode)
 "@ | Set-Content -Path $pf -Encoding UTF8
                             Write-Host "  [INSTINCT] LLM extracted: $($p.problem)" -ForegroundColor Green
                         }
@@ -70,7 +74,7 @@ $content
         }
     }
 
-    # Regex fallback — also runs alongside LLM for coverage
+    # Regex fallback — always runs for coverage
     $errorPatterns = [regex]::Matches($content, '(?:error|bug|fail|gagal|salah)[^:]*:\s*([^\n]+)', 'IgnoreCase')
     $solutionPatterns = [regex]::Matches($content, '(?:fix|solusi|resolve|fixed|fixed by)\s*:?\s*([^\n]+)', 'IgnoreCase')
 

@@ -191,19 +191,20 @@ Write-Host "  [ROUTER] Intent: $($intent.domain)/$($intent.module)" -ForegroundC
 Write-Host "  [ROUTER] Stack: $($intent.stack_hint -join ', ')" -ForegroundColor Gray
 
 # Determine mode
-$effectiveMode = $Mode
-if ($effectiveMode -eq "auto") {
-    $modeState = Get-LLMMode
-    $effectiveMode = if ($modeState -eq "on") { "on" } else { "off" }
-}
+$operatingMode = if ($Mode -eq "auto") { Get-ModeForLLM } else { $Mode }
+$effectiveMode = if ($operatingMode -eq "eco") { "off" } else { "on" }
+
+Write-Host "  [ROUTER] System mode: $operatingMode" -ForegroundColor Gray
 
 $skills = @()
 
 if ($effectiveMode -eq "on") {
+    Write-Host "  [ROUTER] Using LLM routing..." -ForegroundColor Gray
     $skills = RouteWithLLM -Intent $intent
 }
 
 if (-not $skills -or $skills.Count -eq 0) {
+    Write-Host "  [ROUTER] Using regex fallback..." -ForegroundColor Gray
     $skills = RouteWithRegex -Intent $intent
 }
 

@@ -4,6 +4,35 @@ Semua perubahan penting di project ini.
 
 ---
 
+## [3.2.0] — 2026-06-15 — 3-Mode Operating System
+
+### Added — Operating Modes
+- **ECO mode** — zero LLM, regex fallback only. Battery optimized, no GPU.
+- **BALANCED mode** — default. qwen3:1.7b. Search before generate.
+- **PERFORMANCE mode** — qwen2.5-coder:3b. Deep analysis, pattern mining.
+- Mode auto-switches model: ECO→none, BALANCED→qwen3:1.7b, PERFORMANCE→qwen2.5-coder:3b
+
+### Added — Knowledge Base
+- **knowledge.ps1** — structured, categorized, searchable knowledge separate from Memory
+- `Project/Knowledge/<slug>/` — per-project knowledge directory
+- Commands: `save`, `search`, `list`
+- YAML frontmatter (title, category, date)
+
+### Added — Memory Search
+- **memory search** — `.\memory.ps1 -Action search -Key "keyword"`
+- Recursive grep across sessions, patterns, and errors
+- Context preview (40 chars around match)
+
+### Changed
+- **llm-mode.ps1** — ECO/BALANCED/PERFORMANCE (was ON/OFF)
+- **llm-adapter.ps1** — `Get-OperatingMode`, `Get-ModeForLLM` functions
+- **intent-compiler.ps1** — respects 3 modes
+- **skill-router.ps1** — respects 3 modes
+- **instinct-extract.ps1** — ECO→regex, BALANCED→LLM summary, PERFORMANCE→deep
+- **/llm command** — `eco`, `balanced`, `performance` (not just on/off)
+
+---
+
 ## [3.1.0] — 2026-06-15 — Self-Improvement Round 2
 
 ### Improved — Intent Compiler

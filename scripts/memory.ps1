@@ -3,7 +3,7 @@
 
 param(
     [Parameter(Mandatory=$true)]
-    [ValidateSet("save", "read", "status", "add-pattern", "add-error")]
+    [ValidateSet("save", "read", "status", "search", "add-pattern", "add-error")]
     [string]$Action,
 
     [string]$Key,
@@ -165,6 +165,37 @@ switch ($Action) {
     }
     "read" { Read-Memory }
     "status" { Read-Memory }
+    "search" {
+        if (-not $Key) { Write-Host "[ERROR] -Key (search term) required" -ForegroundColor Red; exit 1 }
+        $memDir = Get-CurrentMemoryDir
+        if (-not $memDir) { Write-Host "  No active project." -ForegroundColor Yellow; exit 0 }
+        Write-Host ""
+        Write-Host "  Searching memory for: $Key" -ForegroundColor Cyan
+        $results = @()
+        foreach ($ext in @("*.md")) {
+            $files = Get-ChildItem -Path $memDir -Filter $ext -Recurse -ErrorAction SilentlyContinue
+            foreach ($f in $files) {
+                $content = Get-Content $f.FullName -Raw
+                if ($content -match $Key) {
+                    $lines = ($content -split "`n").Count
+                    $relPath = $f.FullName.Substring($memDir.Length + 1)
+                    Write-Host "  • $relPath ($lines lines)" -ForegroundColor Gray
+                    # Show matching context
+                    $matches = [regex]::Matches($content, "(?im).{0,40}$Key.{0,40}")
+                    foreach ($m in $matches | Select-Object -First 3) {
+                        Write-Host "    ...$($m.Value.Trim())..." -ForegroundColor DarkGray
+                    }
+                    $results += $f
+                }
+            }
+        }
+        if ($results.Count -eq 0) {
+            Write-Host "  No results found." -ForegroundColor Yellow
+        } else {
+            Write-Host "  $($results.Count) file(s) matched." -ForegroundColor Green
+        }
+        Write-Host ""
+    }
     "add-pattern" {
         if (-not $Key -or -not $Value) { Write-Host "[ERROR] -Key and -Value required" -ForegroundColor Red; exit 1 }
         Add-Pattern -Name $Key -Description $Value

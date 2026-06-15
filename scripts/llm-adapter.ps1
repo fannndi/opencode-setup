@@ -4,7 +4,6 @@
 
 param(
     [string]$Prompt,
-
     [string]$Model,
     [string]$System,
     [int]$MaxTokens = 1024,
@@ -18,15 +17,22 @@ $MODE_FILE = "$ROOT_DIR\.opencode\llm-mode.json"
 $OLLAMA_URL = "http://localhost:11434"
 
 # ============================================================
-# Check mode
+# Mode helpers (compatible with eco/balanced/performance)
 # ============================================================
 
-function Get-LLMMode {
-    if (-not (Test-Path $MODE_FILE)) { return "off" }
+function Get-OperatingMode {
+    if (-not (Test-Path $MODE_FILE)) { return "eco" }
     try {
         $state = Get-Content $MODE_FILE -Raw | ConvertFrom-Json
         return $state.mode
-    } catch { return "off" }
+    } catch { return "eco" }
+}
+
+function Get-LLMMode {
+    # Returns "on" if LLM available, "off" if eco
+    $mode = Get-OperatingMode
+    if ($mode -eq "eco") { return "off" }
+    return "on"
 }
 
 function Get-LLMModel {
@@ -37,6 +43,11 @@ function Get-LLMModel {
         } catch {}
     }
     return "qwen3:1.7b"
+}
+
+function Get-ModeForLLM {
+    # Returns "eco", "balanced", or "performance"
+    return Get-OperatingMode
 }
 
 # ============================================================
@@ -53,9 +64,9 @@ function Invoke-LLM {
         [int]$TimeoutSec
     )
 
-    $mode = Get-LLMMode
-    if ($mode -ne "on") {
-        Write-Warning "LLM mode is OFF. Enable with: .\llm-mode.ps1 on"
+    $mode = Get-OperatingMode
+    if ($mode -eq "eco") {
+        Write-Warning "ECO mode — LLM calls disabled. Enable with: .\llm-mode.ps1 balanced"
         return $null
     }
 

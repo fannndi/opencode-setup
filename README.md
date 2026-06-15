@@ -191,17 +191,25 @@ User: "bikin fitur payment"
 
 ---
 
-### Local LLM Mode
+### Operating Modes
 
-Sistem bisa jalan dengan atau tanpa local LLM. Mode ON = pake Ollama, mode OFF = regex fallback.
+Tiga mode sistem, dari paling hemat sampai paling powerful:
+
+| Mode | LLM | Model | GPU | Cocok untuk |
+|------|-----|-------|-----|-------------|
+| **ECO** | ❌ Mati | — | ❌ Idle | Outdoor, baterai tipis, cepat |
+| **BALANCED** | ✅ Aktif | qwen3:1.7b | ✅ 1.4GB | Default. Daily workflow |
+| **PERFORMANCE** | ✅ Aktif | qwen2.5-coder:3b | ✅ ~2GB | Charger connected, heavy session |
 
 ```powershell
-/llm on       # Aktifkan local LLM (butuh Ollama + qwen3:1.7b)
-/llm off      # Matikan (hemat baterai, anti overheat outdoor)
-/llm status   # Cek status Ollama + model
+/llm eco          # Hemat baterai, no GPU
+/llm balanced     # Default, search before generate
+/llm performance  # Full power, deep analysis
+/llm status       # Cek mode + Ollama
 ```
 
-**Default model:** `qwen3:1.7b` — cocok MX150 2GB (1.4GB VRAM, 0.6GB headroom).
+**Knowledge-First:** Sebelum pake LLM, sistem search memory + knowledge dulu. Kalo udah ada jawaban, gausah pake AI.
+
 **Auto-fallback:** Kalo Ollama mati atau timeout, semua script otomatis pake regex. Gak perlu manual.
 
 ### Intent Compiler

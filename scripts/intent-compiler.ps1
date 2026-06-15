@@ -190,17 +190,14 @@ function CompileWithRegex {
 # ============================================================
 # Main
 # ============================================================
-
 # Determine mode
-$effectiveMode = $Mode
-if ($effectiveMode -eq "auto") {
-    $modeState = Get-LLMMode
-    $effectiveMode = if ($modeState -eq "on") { "on" } else { "off" }
-}
+# ============================================================
+$operatingMode = if ($Mode -eq "auto") { Get-ModeForLLM } else { $Mode }
+$effectiveMode = if ($operatingMode -eq "eco") { "off" } else { "on" }
 
 Write-Host ""
 Write-Host "  [INTENT] Compiling: $Query" -ForegroundColor Cyan
-Write-Host "  [INTENT] Mode: $effectiveMode" -ForegroundColor Gray
+Write-Host "  [INTENT] System mode: $operatingMode" -ForegroundColor Gray
 
 $spec = $null
 
