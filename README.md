@@ -136,6 +136,60 @@ Dibuat agar siapapun bisa bikin aplikasi tanpa perlu coding dan tanpa biaya.
 
 ---
 
+## AI Agent System
+
+Sistem agent yang bisa autonomous: detect stack → load skills → decompose goal → execute.
+
+### Agent Commands
+
+| Command | Fungsi | Contoh |
+|---------|--------|--------|
+| `/detect <path>` | Deteksi stack project | `/detect C:\project` |
+| `/auto-load <path>` | Auto-load skill sesuai stack | `/auto-load C:\project` |
+| `/resume` | Resume session terakhir | `/resume` |
+| `/dashboard` | Tampilkan sistem overview | `/dashboard` |
+| `/task-queue <goal>` | Autonomous goal → subtasks | `/task-queue "bikin login page"` |
+| `/tool-create <template>` | Generate script/command | `/tool-create script=deploy` |
+
+### Agent Flow
+
+```
+User: "bikin fitur payment"
+  │
+  ├─ /task-queue "bikin fitur payment"
+  │
+  ├─ [Agent Core]
+  │   ├─ Detect stack (NestJS + Flutter)
+  │   ├─ Auto-load skills (backend-patterns, dart-flutter-patterns, api-design)
+  │   └─ Resume session (last progress: P0-1 at 80%)
+  │
+  ├─ [Task Decomposition]
+  │   ├─ Task A: Backend endpoint (depends: none)
+  │   ├─ Task B: Frontend screen (depends: A)
+  │   └─ Task C: Integration test (depends: A+B)
+  │
+  ├─ [Execute]
+  │   ├─ Execute A → self-heal → auto-fix errors
+  │   ├─ Execute B → self-heal → eval gate
+  │   └─ Execute C → eval gate → log memory
+  │
+  └─ [Result]
+      ├─ Features completed
+      ├─ Patterns extracted
+      └─ Session updated
+```
+
+### Agent Hooks (Auto-Execute)
+
+| Hook | Trigger | Action |
+|------|---------|--------|
+| Self-Heal | After Edit/Write | Check types, report errors |
+| Eval Gate | After editing test files | Auto-run tests |
+| Instinct Extract | Session end | Extract patterns to memory |
+| Proactive Research | Before Edit/Write | Track new libraries |
+
+---
+
 ## Quick Start
 
 ```powershell
@@ -330,11 +384,14 @@ session-manager.ps1 -Action switch -ProjectPath "C:\Users\User\project-lain"
 opencode-setup/
 ├── Project/                   # Per-project data: source, session, memory
 │   ├── service-hub/           # Project source code (cloned)
-│   ├── Session/
-│   │   └── service-hub/       # Session state per project
-│   └── Memory/
-│       └── service-hub/       # Memory per project (logs, patterns, errors)
-├── scripts/                   # Automation scripts (30 file)
+│   ├── Session/               # Session state per project
+│   └── Memory/                # Memory per project (logs, patterns, errors)
+├── scripts/                   # Automation scripts (40 file)
+│   ├── agent-core.ps1         # AI Agent: intent, skill-loader, decompose
+│   ├── agent-dashboard.ps1    # System overview dashboard
+│   ├── task-queue.ps1         # Autonomous task DAG execution
+│   ├── tool-creator.ps1       # Template-based script/command generator
+│   └── hooks/                 # Agent hooks (self-heal, instinct, eval)
 ├── commands/                  # OpenCode command templates
 ├── profiles/                  # Config profiles (gratis / go)
 ├── templates/                 # Project templates (4)

@@ -4,7 +4,35 @@ Semua perubahan penting di project ini.
 
 ---
 
-## [2.3.0] — 2026-06-15
+## [2.4.0] — 2026-06-15
+
+### Added — AI Agent System
+- **Agent Core** (`agent-core.ps1`) — Intent detection, stack auto-detect, skill auto-loader, session resume, task decomposition
+- **Self-Healing Hook** (`hooks/self-heal.ps1`) — Post-edit typecheck + error count detection
+- **Instinct Engine** (`hooks/instinct-extract.ps1`) — Stop hook: auto-extract error→solution patterns, framework dependencies
+- **Eval Gate** (`hooks/eval-gate.ps1`) — Post-edit hook: auto-run tests on spec/test file changes
+- **Proactive Research** (`hooks/proactive-research.ps1`) — Track unknown libraries, auto-log discoveries
+- **Agent Dashboard** (`agent-dashboard.ps1`) — Project overview, system health, memory stats, recommendations
+- **Task Queue** (`task-queue.ps1`) — Autonomous DAG execution engine: goal → decompose → execute
+- **Tool Creator** (`tool-creator.ps1`) — Template-based script/command generation
+- **8 new commands** — `/agent-core`, `/dashboard`, `/task-queue`, `/tool-create`, `/resume`, `/detect`, `/auto-load`
+
+### Changed
+- **project-resolve.ps1** — Stack detection integrated, registry tracks stack per project
+- **session-manager.ps1** — Supports `list` and `switch` for multi-project management
+- **opencode.jsonc (gratis)** — 8 agent commands registered
+
+### Flow
+```
+User: "bikin fitur A"
+→ /task-queue "bikin fitur A"
+→ Agent detect stack → auto-load skills
+→ Decompose: backend → frontend → test
+→ Execute each subtask
+→ Log ke memory, update session
+```
+
+---
 
 ### Added
 - **Per-project session & memory** — Setiap project punya session.json + memory/ sendiri di `Project/<slug>/`

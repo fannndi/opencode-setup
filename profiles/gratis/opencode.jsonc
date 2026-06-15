@@ -302,7 +302,14 @@
     "generate": { "description": "[COMBO] Generate: template + create", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/generate.md}\n\n$ARGUMENTS" },
     "bug-fix": { "description": "[COMBO] Bug fix: build-fix + quality-gate", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/bug-fix.md}\n\n$ARGUMENTS" },
     "security": { "description": "[COMBO] Security: audit + research", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/security.md}\n\n$ARGUMENTS" },
-    "deploy": { "description": "[COMBO] Deploy: verify + quality-gate + docs", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/deploy.md}\n\n$ARGUMENTS" }
+    "deploy": { "description": "[COMBO] Deploy: verify + quality-gate + docs", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/deploy.md}\n\n$ARGUMENTS" },
+    "agent-core": { "description": "AI Agent: intent detection, auto-load skills, session resume", "template": "Jalankan agent-core.ps1 dengan argumen:\n  detect <path>   — deteksi stack project\n  resume <path>   — resume session\n  auto-load <path> — auto-load skill sesuai stack\n  decompose <goal> — decompose goal jadi subtasks\n\n$ARGUMENTS" },
+    "dashboard": { "description": "Tampilkan agent dashboard", "template": "powershell -ExecutionPolicy Bypass -File \"C:\\Users\\FANNNDI\\Documents\\opencode-setup\\scripts\\agent-dashboard.ps1\"\n\n$ARGUMENTS" },
+    "task-queue": { "description": "[AUTO] Autonomous task queue — goal → decompose → execute", "template": ".\\scripts\\task-queue.ps1 -Goal \"$ARGUMENTS\"", "agent": "architect", "subtask": true },
+    "tool-create": { "description": "[AUTO] Create script/command from template", "template": ".\\scripts\\tool-creator.ps1 -TemplateName \"$ARGUMENTS\"\n\n$ARGUMENTS" },
+    "resume": { "description": "Resume context dari session terakhir", "template": "powershell -ExecutionPolicy Bypass -File \"C:\\Users\\FANNNDI\\Documents\\opencode-setup\\scripts\\agent-core.ps1\" resume\n\n$ARGUMENTS" },
+    "detect": { "description": "Deteksi stack project aktif", "template": "powershell -ExecutionPolicy Bypass -File \"C:\\Users\\FANNNDI\\Documents\\opencode-setup\\scripts\\agent-core.ps1\" detect \"$ARGUMENTS\"\n\n$ARGUMENTS" },
+    "auto-load": { "description": "Auto-load skills sesuai stack project", "template": "powershell -ExecutionPolicy Bypass -File \"C:\\Users\\FANNNDI\\Documents\\opencode-setup\\scripts\\agent-core.ps1\" auto-load \"$ARGUMENTS\"\n\n$ARGUMENTS" }
   },
 
   "permission": {
