@@ -1,493 +1,239 @@
-# Bu Rina Mau Bikin Aplikasi
+# Personal Knowledge Operating System
 
-Bu Rina punya toko kelontong. Setiap hari dia catat stok barang di buku, hitung manual pake kalkulator, dan sering kehabisan barang karena lupa order.
-
-Dia ingin punya **aplikasi kasir** — tapi tidak bisa coding. Dan tidak punya duit jutaan rupiah buat sewa programmer.
-
-**Sekarang ada solusinya.**
+Buat aplikasi tanpa coding. AI yang kerja. Semua gratis.
 
 ---
 
-## Yang Ini Bisa Bikin Aplikasi — Gratis
+## The Story
 
-Bayangkan ada **asisten pribadi** yang bisa bikin aplikasi. Anda tinggal ceritakan ide, dia yang kerjakan. Tidak perlu belajar coding. Tidak perlu bayar.
+Bu Rina punya toko kelontong. Catat stok di buku, hitung manual, sering kehabisan barang. Dia ingin aplikasi kasir — tapi tidak bisa coding dan tidak punya duit.
 
-Asisten ini kerja pakai 3 teknologi yang berjalan otomatis di belakang layar:
+**Sekarang tinggal bilang, AI yang kerjakan.**
 
-- **Otak AI** — paham 270+ bahasa dan cara bikin aplikasi
-- **Jaringan gratis** — menghubungkan ke AI tanpa biaya
-- **Sistem pintar** — memastikan semuanya jalan terus
-
----
-
-## Cara Pakai (3 Langkah)
-
-### Langkah 1: Download + Jalankan
-
-Download folder ini, lalu **double-click file bernama `install.bat`**.
-
-```
-install.bat       ← klik 2x, tunggu bentar
-   │
-   ├── Cek laptop (apa perlu install sesuatu?)
-   ├── Download otak AI (270+ skills)
-   ├── Siapkan jaringan gratis
-   └── Buka dashboard
-```
-
-Komputer akan kerja sendiri. Anda tinggal tunggu 1-2 menit.
-
-### Langkah 2: Ceritakan Ide
-
-Buka terminal (command prompt), ketik:
-
-```
-opencode
-/start-free
-/wizard
-```
-
-Lalu jawab pertanyaan dari AI:
-
-| AI Bertanya | Anda Jawab |
-|-------------|-----------|
-| Project baru atau yang sudah ada? | Baru |
-| Nama project? | Aplikasi Kasir |
-| Ceritakan aplikasi yang diinginkan? | _"Aplikasi untuk catat stok barang, laporan penjualan harian, dan cetak struk"_ |
-
-Seperti ngobrol dengan teman yang pengen bantu.
-
-### Langkah 3: Dapatkan Aplikasi
-
-AI akan:
-
-1. **Buat rencana** — fitur apa saja yang akan dibuat
-2. **Pilih teknologi** — aplikasi mobile atau website
-3. **Tulis kode** — kerjakan satu per satu
-4. **Tunjukkan hasil** — Anda bisa review dan minta revisi
-
----
-
-## Yang Perlu Disiapkan
-
-| Kebutuhan | Detail |
-|-----------|--------|
-| Laptop/Komputer | Windows 10 atau lebih baru |
-| Koneksi Internet | Untuk download pertama kali |
-| Ide Aplikasi | Ceritakan ke AI nanti |
-| Waktu | 10 menit pertama, sisanya biar AI kerja |
-| **Biaya** | **$0 — GRATIS TOTAL** |
-
----
-
-## Contoh: Bu Rina Bikin Aplikasi Kasir
-
-Bu Rina ikuti 3 langkah di atas. Dia ceritakan ke AI:
-
-> _"Saya ingin aplikasi kasir untuk toko kelontong. Bisa catat stok barang, laporan penjualan harian, dan cetak struk belanja."_
-
-**Hasilnya, AI langsung buat:**
-
-| Yang Dibuat | Isinya |
-|-------------|--------|
-| ✅ Rencana Aplikasi | Fitur: catat stok, laporan harian, cetak struk |
-| ✅ Pilihan Teknologi | Aplikasi mobile (Android + iPhone) |
-| ✅ Skills yang Dibutuhkan | Semua sudah siap, tinggal eksekusi |
-| ✅ Kode Program | Ditulis otomatis oleh AI |
-
-Bu Rina tinggal bilang: _"Tambahin fitur notifikasi kalau stok mau habis"_ — AI langsung kerjakan.
-
----
-
-## Ingin Tahu Lebih Dalam?
-
-Kalau Anda penasaran bagaimana cara kerjanya, atau ingin menggunakan fitur yang lebih canggih, baca dokumentasi lengkap di folder `docs/`.
-
-Atau cukup buka terminal dan ketik command berikut untuk lihat semua yang bisa dilakukan:
-
-```
-opencode
-/start-free
-```
-
-Ketika sudah masuk mode OpenCode, ketik `/` untuk melihat daftar perintah yang tersedia.
-
----
-
-## Credits
-
-Proyek ini adalah gabungan 3 teknologi open-source yang semuanya gratis:
-
-- **OpenCode** — AI coding assistant
-- **9Router** — Jaringan AI gratis
-- **ECC** — Pengetahuan 270+ bahasa pemrograman
-
-Dibuat agar siapapun bisa bikin aplikasi tanpa perlu coding dan tanpa biaya.
-
----
-
-**Selamat datang di masa depan — di mana Anda tinggal bilang, AI yang kerjakan.**
-
----
-
----
-
-# Untuk Developer
-
----
-
-## AI Agent System
-
-Sistem agent yang bisa autonomous: detect stack → load skills → decompose goal → execute.
-
-### Agent Commands
-
-| Command | Fungsi | Contoh |
-|---------|--------|--------|
-| `/go <query>` | **Preprocess → enriched context** (universal) | `/go "bikin CRUD penduduk"` |
-| `/detect <path>` | Deteksi stack project | `/detect C:\project` |
-| `/auto-load <path>` | Auto-load skill sesuai stack | `/auto-load C:\project` |
-| `/resume` | Resume session terakhir | `/resume` |
-| `/llm eco\|balanced\|performance` | Set operating mode | `/llm balanced` |
-| `/intent <query>` | Natural language → structured JSON spec | `/intent "buat CRUD"` |
-| `/route <query>` | Intent → skill list | `/route "PHP MySQL"` |
-| `/audit <path>` | LLM code audit | `/audit scripts\` |
-| `/learn <note>` | Save to memory + knowledge | `/learn "fixed login bug"` |
-| `/dashboard` | Tampilkan sistem overview | `/dashboard` |
-| `/task-queue <goal>` | Autonomous goal → subtasks | `/task-queue "bikin login page"` |
-| `/tool-create <template>` | Generate script/command | `/tool-create script=deploy` |
-
-### Agent Flow
-
-```
-User: "bikin fitur payment"
-  │
-  ├─ /task-queue "bikin fitur payment"
-  │
-  ├─ [Agent Core]
-  │   ├─ Detect stack (NestJS + Flutter)
-  │   ├─ Auto-load skills (backend-patterns, dart-flutter-patterns, api-design)
-  │   └─ Resume session (last progress: P0-1 at 80%)
-  │
-  ├─ [Task Decomposition]
-  │   ├─ Task A: Backend endpoint (depends: none)
-  │   ├─ Task B: Frontend screen (depends: A)
-  │   └─ Task C: Integration test (depends: A+B)
-  │
-  ├─ [Execute]
-  │   ├─ Execute A → self-heal → auto-fix errors
-  │   ├─ Execute B → self-heal → eval gate
-  │   └─ Execute C → eval gate → log memory
-  │
-  └─ [Result]
-      ├─ Features completed
-      ├─ Patterns extracted
-      └─ Session updated
-```
-
-### Agent Hooks (Auto-Execute)
-
-| Hook | Trigger | Action |
-|------|---------|--------|
-| Self-Heal | After Edit/Write | Check types, report errors |
-| Eval Gate | After editing test files | Auto-run tests |
-| Instinct Extract | Session end | Extract patterns to memory |
-| Proactive Research | Before Edit/Write | Track new libraries |
-
----
-
-### Operating Modes
-
-Tiga mode sistem, dari paling hemat sampai paling powerful:
-
-| Mode | LLM | Model | GPU | Cocok untuk |
-|------|-----|-------|-----|-------------|
-| **ECO** | ❌ Mati | — | ❌ Idle | Outdoor, baterai tipis, cepat |
-| **BALANCED** | ✅ Aktif | qwen3:1.7b | ✅ 1.4GB | Default. Daily workflow |
-| **PERFORMANCE** | ✅ Aktif | qwen2.5-coder:3b | ✅ ~2GB | Charger connected, heavy session |
-
-```powershell
-/llm eco          # Hemat baterai, no GPU
-/llm balanced     # Default, search before generate
-/llm performance  # Full power, deep analysis
-/llm status       # Cek mode + Ollama
-```
-
-**Knowledge-First:** Sebelum pake LLM, sistem search memory + knowledge dulu. Kalo udah ada jawaban, gausah pake AI.
-
-**Auto-fallback:** Kalo Ollama mati atau timeout, semua script otomatis pake regex. Gak perlu manual.
-
-### Intent Compiler
-
-Ubah bahasa manusia → structured JSON spec.
-
-```powershell
-/intent "buat CRUD penduduk desa"
-/intent "bikin login admin pake PHP"
-```
-
-Output: `{ domain, module, features, validation, roles, security, stack_hint }`
-
-LLM ON → output kaya (7+ fields, detail). LLM OFF → regex fallback (cepat, basic).
-
-### Skill Router
-
-Pilih skill relevan dari 270 ECC skills berdasarkan intent.
-
-```powershell
-/route "PHP MySQL desa"
-/route "Flutter mobile app"
-```
-
-Output: 3-10 nama skill yang relevan. Token hemat 60-80%. 
+Terinspirasi dari Bu Rina, sistem ini berevolusi jadi **Personal Knowledge Operating System** — gabungan AI agent, memory per-project, knowledge base, dan self-improvement loop. Semua jalan di laptop lokal, semua gratis.
 
 ---
 
 ## Quick Start
 
+### End User (2 langkah)
+```
+1. Download folder + double-click install.bat
+2. Buka terminal → opencode → /start gratis → /go "bikin aplikasi kasir"
+```
+
+### Developer
 ```powershell
 git clone https://github.com/fannndi/opencode-setup.git
 cd opencode-setup
 .\scripts\setup.ps1
+opencode
+/start gratis
 ```
 
-Edit `api-key.txt`, paste API key, lalu:
+---
+
+## Operating Modes
+
+Didesain untuk GPU minimal (MX150 2GB VRAM, 16GB RAM). Tiga mode:
+
+| Mode | LLM | Model | VRAM | Context Window | Chunk Size | Cocok |
+|------|-----|-------|------|----------------|------------|-------|
+| **ECO** | ❌ Mati | — | 0 GB | N/A | N/A | Outdoor, baterai tipis |
+| **BALANCED** | ✅ | qwen3:1.7b | ~1.4 GB | ~1500 tokens | 1000 chars | Default daily |
+| **PERFORMANCE** | ✅ | qwen2.5-coder:3b | ~2 GB | ~800 tokens | 600 chars | Charger connected |
 
 ```powershell
-.\scripts\setup.ps1
-opencode
-/start-free
+/llm eco          # GPU idle, all LLM skip
+/llm balanced     # Default
+/llm performance  # Full power
+/llm status       # Cek mode + model
+```
 
-# Set project — GitHub URL wajib, auto-clone + session terbuat
-/set-project C:\path\ke\project
-/code-analyze
-/analyze-project
+Setiap input user — bahkan "Hai" — lewat `Invoke-LLMEnrich` dulu sebelum model AI. ECO mode: pass-through tanpa LLM. 100% coverage.
 
-# Session tersimpan otomatis per project
-restart opencode
+---
+
+## Architecture
+
+### LLM Pipeline
+```
+Input User
+   │
+   ▼
+┌──────────────────────────────────┐
+│  Invoke-LLMEnrich (universal)    │
+│  ├─ ECO:        pass-through     │
+│  ├─ BALANCED:   enrich ~250 tok  │
+│  └─ PERFORMANCE: enrich ~512 tok │
+└──────────┬───────────────────────┘
+           │
+           ▼
+┌──────────────────────────────────┐
+│  Intent-Compiler (NL → JSON)     │
+│  Skill-Router (pick 3-10 skills) │
+│  Invoke-LLM (Ollama API)         │
+│  Invoke-LLMChunk (mode-aware)    │
+└──────────────────────────────────┘
+```
+
+### Self-Improvement Loop
+```
+Session Start → LLM-Evolve (config)
+   ↓
+User Works → Usage Telemetry
+   ↓
+Session End → Knowledge-Miner (session → patterns)
+   ↓
+Next Session → LLM-Feedback (failure analysis)
+```
+
+### Modular Code Constraint
+```
+1000 chars soft / 1500 hard max per file
+Satu file = satu function + doc
+Dependency tracking: # Requires: / # Exports:
+Max 5 file per dir, index.ps1 wajib
+Generator: .\create-function.ps1 -Name "Func" -Module "mod"
 ```
 
 ---
 
 ## Commands
 
-### 🌅 Morning Routine
-Pertama kali dijalankan setiap hari. 1x jalan, semua beres.
-
-| Combo | Langkah | Skills |
-|-------|---------|--------|
-| `/morning-routine` | start-free → admin → quality-gate → token-stats | verification-loop, cost-aware, strategic-compact |
-
-### 🚀 Start Project
-Setup project baru — scan code, deteksi stack, load AI skills.
-
-| Combo | Langkah | Skills |
-|-------|---------|--------|
-| `/start-project` | start-free → set-project → code-analyze → analyze-project | tdd-workflow, coding-standards, codebase-onboarding |
-
-### 📋 PRD Combo
-Ubah ide jadi rencana aplikasi lengkap dengan PRD.
-
-| Combo | Langkah | Skills |
-|-------|---------|--------|
-| `/prd-combo` | generate-prd → project-analyze → analyze-project | blueprint, product-capability, architecture-decision-records |
-
-### ⚡ Quick Review
-Review kode + cek keamanan + verifikasi sebelum commit.
-
-| Combo | Langkah | Skills |
-|-------|---------|--------|
-| `/quick-review` | code-review → security-scan → verify → research | coding-standards, security-review, verification-loop |
-
-### 🔍 Full Audit
-Audit menyeluruh — scan + deteksi + skills + simpan memori.
-
-| Combo | Langkah | Skills |
-|-------|---------|--------|
-| `/full-audit` | code-analyze → analyze-project → project-skills → memory | codebase-onboarding, continuous-learning-v2, skill-scout |
-
-### 🛠️ Maintenance
-Update system + cek kesehatan + reset session.
-
-| Combo | Langkah | Skills |
-|-------|---------|--------|
-| `/maintenance` | admin → quality-gate → reset-session | verification-loop, strategic-compact, context-budget |
-
-### 🎨 Generate
-Load template + generate boilerplate komponen.
-
-| Combo | Langkah | Skills |
-|-------|---------|--------|
-| `/generate` | template → create api → create widget → create model | coding-standards, 42 framework skills |
-
-### 🐛 Bug Fix
-Fix error build + verifikasi + simpan solusi ke memori.
-
-| Combo | Langkah | Skills |
-|-------|---------|--------|
-| `/bug-fix` | build-fix → quality-gate → memory | error-handling, continuous-learning-v2, coding-standards |
-
-### 🔒 Security
-Audit keamanan + verifikasi + cari referensi best practices.
-
-| Combo | Langkah | Skills |
-|-------|---------|--------|
-| `/security` | security → quality-gate → research | security-review, security-scan, deep-research |
-
-### 🚢 Deploy
-Verifikasi + quality gate + update dokumentasi — siap deploy.
-
-| Combo | Langkah | Skills |
-|-------|---------|--------|
-| `/deploy` | verify → quality-gate → update-docs | verification-loop, deployment-patterns, docker-patterns |
+| Command | Fungsi | Contoh |
+|---------|--------|--------|
+| `/go <query>` | Universal goal combo | `/go "bikin CRUD penduduk"` |
+| `/llm <mode>` | Set operating mode | `/llm balanced` |
+| `/audit <path>` | LLM code audit | `/audit scripts\` |
+| `/intent <query>` | NL → structured JSON spec | `/intent "buat CRUD"` |
+| `/route <query>` | Intent → relevant skills | `/route "PHP MySQL"` |
+| `/dashboard` | System overview | `/dashboard` |
+| `/task-queue <goal>` | Autonomous task DAG | `/task-queue "bikin login"` |
+| `/learn <note>` | Save to memory + knowledge | `/learn "fixed login bug"` |
 
 ---
 
-## Workflow Examples
+## Scripts
 
-### Flutter — Existing Code
+### LLM Layer
 
-```powershell
-cd opencode-setup
-opencode
-/start-free
+| Script | Fungsi |
+|--------|--------|
+| `llm-adapter.ps1` | Universal wrapper: Invoke-LLM, Invoke-LLMEnrich, Invoke-LLMChunk, failure logging, usage telemetry |
+| `llm-mode.ps1` | 3-mode toggle: eco/balanced/performance |
+| `llm-preprocess.ps1` | Universal input pipeline: stack → skill → feature → memory → knowledge → intent → route |
+| `intent-compiler.ps1` | Natural language → structured JSON spec (dual path: LLM + regex) |
+| `skill-router.ps1` | Select 3-10 skills from 270 ECC skills by intent |
+| `llm-audit.ps1` | Multi-mode code audit (quality/security/perf) with chunking |
+| `llm-benchmark.ps1` | Benchmark harness — 5 scenarios, 3 rounds, pass@k metrics |
+| `llm-feedback.ps1` | Analyze failure log → LLM recommendations → auto-config |
+| `llm-evolve.ps1` | Auto-adjust Timeout/Temperature/Model from usage stats |
 
-# Clone project dari GitHub + setup session
-/set-project C:\Users\User\flutter-app
-# → Akan minta GitHub URL, clone ke Project/flutter-app/
+### Agent Layer
 
-# Analisa project
-/code-analyze
-/analyze-project
+| Script | Fungsi |
+|--------|--------|
+| `agent-core.ps1` | Stack detection, intent classification, skill auto-loader, session resume |
+| `task-queue.ps1` | Autonomous DAG execution — decompose goal → dependency resolve → execute |
+| `agent-dashboard.ps1` | System overview: health, sessions, LLM usage, model status |
+| `tool-creator.ps1` | Template-based script/command generator |
+| `create-function.ps1` | Boilerplate function generator (ps1/ts/py/go) with 1500 char limit |
 
-# Setelah restart, session otomatis terload
-restart
+### Knowledge Layer
 
-/code-review lib/screens/
-/security-scan lib/
-/tdd buat halaman login
-/verify
-```
+| Script | Fungsi |
+|--------|--------|
+| `knowledge.ps1` | Structured, categorized, searchable knowledge base (semantic + keyword) |
+| `knowledge-miner.ps1` | Session logs → LLM extract patterns → auto-save to knowledge |
+| `memory.ps1` | Per-project session memory: logs, patterns, error solutions |
+| `profile-optimizer.ps1` | Track skill usage → recommend load/unload |
 
-### Flutter — Project Baru (dengan PRD)
+### Infrastructure
 
-```powershell
-opencode
-/start-free
-/set-project C:\Users\User\flutter-app-baru
-# → Masukin GitHub URL → clone → session terbuat
-/project-analyze
-/analyze-project
-restart
+| Script | Fungsi |
+|--------|--------|
+| `start.ps1` | Boot sequence: health check, auto-update, profile apply, model test |
+| `setup.ps1` | One-time install: prereq check, clone, build, config |
+| `install.ps1` | Quick installer: copy config + rules + build plugin |
+| `admin-update.ps1` | Update ECC + 9Router + rebuild plugin + LLM changelog summary |
+| `generate-prd.ps1` | Idea → LLM-enriched PRD document |
+| `project-analyze.ps1` | PRD → semantic stack + feature detection |
+| `code-analyze.ps1` | Project directory → semantic tech stack extraction |
+| `analyze-project.ps1` | File indicator → stack detection → skill loading |
+| `research.ps1` | Web search + LLM summarization via 9Router |
+| `quality-gate.ps1` | Multi-stage quality check + LLM analysis |
+| `wizard.ps1` | Interactive onboarding wizard (Indonesian) |
+| `create.ps1` | Component boilerplate: widget/api/test/model |
+| `template-loader.ps1` | Project template copier |
+| `session-manager.ps1` | CRUD session JSON files |
+| `project-resolve.ps1` | Active project resolution + slug management |
+| `token-tracker.ps1` | 9Router token usage display |
 
-/plan "buat halaman login"
-/tdd buat state management
-/code-review lib/
-/security-scan
-```
+### Hooks (Auto-Trigger)
 
-### Ganti Project
-
-Session & memory per project. Ganti project = auto-load konteks lama.
-
-```powershell
-# Langsung set-path + GitHub → clone + buat session baru
-/set-project C:\Users\User\project-lain
-
-# Atau switch ke project yang sudah ada
-session-manager.ps1 -Action switch -ProjectPath "C:\Users\User\project-lain"
-```
-
----
-
-## 📚 Referensi Lengkap
-
-| Ingin Lihat | Buka File Ini | Isinya |
-|-------------|---------------|--------|
-| 📖 **Semua Skills** (270) | [`Skill/skill-list.md`](Skill/skill-list.md) | Skill per kategori + per stack |
-| 🎯 **Semua Fitur** (600+) | [`Feature/list.md`](Feature/list.md) | Skills, Agents, Commands, Hooks, Rules, MCP |
-| ⌨️ **Semua Commands** (84) | [`docs/04-usage/01-commands.md`](docs/04-usage/01-commands.md) | Referensi lengkap slash commands |
-| 🐚 **Semua Scripts** (40) | [`docs/04-usage/02-scripts.md`](docs/04-usage/02-scripts.md) | Semua automation script |
-| 🔄 **Changelog** | [`CHANGELOG.md`](CHANGELOG.md) | Riwayat perubahan project |
-| 📋 **Admin Log** | [`log-admin.md`](log-admin.md) | History update admin |
-| 📋 **Dev Plan** | [`DEV-PLAN.md`](DEV-PLAN.md) | Self-improvement roadmap |
+| Hook | Trigger | Action |
+|------|---------|--------|
+| `self-heal.ps1` | After Edit/Write | Check types → LLM suggest fix |
+| `eval-gate.ps1` | After editing test files | Auto-run tests → LLM analyze |
+| `instinct-extract.ps1` | Session end | Session log → LLM pattern extraction → save to memory + knowledge |
+| `proactive-research.ps1` | Before Edit/Write | Unknown library detection → LLM research → save |
 
 ---
 
-## Biaya $0
-
-| Komponen | Biaya | Kegunaan |
-|----------|-------|----------|
-| OpenCode Free | ✅ $0 | AI coding assistant |
-| 9Router | ✅ $0 | AI gateway + combos |
-| ECC (270 skills) | ✅ $0 | Knowledge base |
-| MiMo Auto | ✅ $0 | Free AI model |
-
-| Komponen | Biaya | Kegunaan |
-|----------|-------|----------|
-| OpenCode Free | ✅ $0 | AI coding assistant |
-| 9Router | ✅ $0 | AI gateway + combos |
-| ECC (270 skills) | ✅ $0 | Knowledge base |
-| MiMo Auto | ✅ $0 | Free AI model |
-
----
-
-## Struktur
+## Project Structure
 
 ```
 opencode-setup/
-├── Project/                   # Per-project data: source, session, memory
-│   ├── service-hub/           # Project source code (cloned)
-│   ├── Session/               # Session state per project
-│   └── Memory/                # Memory per project (logs, patterns, errors)
-├── scripts/                   # Automation scripts (50 file)
-│   ├── llm-mode.ps1            # 3-mode OS toggle (eco/balanced/performance)
-│   ├── llm-adapter.ps1         # Ollama API wrapper with auto-fallback
-│   ├── llm-preprocess.ps1      # Universal input preprocessor (pipeline)
-│   ├── llm-feedback.ps1        # Analyze LLM failures → recommendations
-│   ├── llm-evolve.ps1          # Auto-adjust config from usage stats
-│   ├── llm-audit.ps1           # LLM-powered code audit with loop mode
-│   ├── llm-benchmark.ps1       # Benchmark harness (5 scenarios)
-│   ├── knowledge.ps1           # Structured, searchable knowledge base
-│   ├── knowledge-miner.ps1     # Session → LLM extract → knowledge
-│   ├── profile-optimizer.ps1   # Skill usage tracking → load/unload
-│   ├── agent-core.ps1          # AI Agent: intent, skill-loader, decompose
-│   ├── agent-dashboard.ps1     # System overview dashboard
-│   ├── task-queue.ps1          # Autonomous task DAG execution
-│   ├── tool-creator.ps1        # Template-based script/command generator
-│   └── hooks/                  # Agent hooks (self-heal, instinct, eval)
+├── Project/                   # Per-project data
+│   ├── <slug>/                # Cloned source
+│   ├── Session/<slug>/        # Session state
+│   └── Memory/<slug>/         # Logs, patterns, errors
+├── scripts/                   # 40+ automation scripts
+│   └── hooks/                 # 4 auto-trigger hooks
 ├── commands/                  # OpenCode command templates
-├── profiles/                  # Config profiles (gratis / go)
-├── templates/                 # Project templates (4)
-├── Feature/                   # 600+ komponen inventory
+├── profiles/                  # Config profiles
+├── templates/                 # Project templates
+├── rules/                     # Code constraints
+│   └── common/
+│       └── modular-code.md    # 1000 char rule
+├── Feature/                   # 600+ feature inventory
 ├── Skill/                     # 270 skills catalog
-├── docs/                      # Dokumentasi
+├── docs/                      # Documentation
 ├── ecc/                       # ECC repo (auto-cloned)
 ├── 9router/                   # 9Router repo (auto-cloned)
-├── DEV-PLAN.md                 # Self-improvement roadmap
-├── CHANGELOG.md
-├── caveman-mode.md
-├── api-key.txt
+├── .opencode/                 # Telemetry, usage logs (gitignored)
 ├── README.md
+├── DEV-PLAN.md                # Self-improvement roadmap
+├── CHANGELOG.md               # Release history
 └── install.bat                # One-click installer
 ```
 
 ---
 
-## Admin Workflow (Untuk Pengembangan Project Ini)
+## Cost
 
-```powershell
-.\scripts\admin-update.ps1     # Update ECC + 9Router + doctor check
-.\scripts\start.ps1            # Test model
-opencode                       # Verify commands jalan
-git add -A && git commit       # Save perubahan
-git push                       # Push ke repo
-```
+| Komponen | Biaya | Kegunaan |
+|----------|-------|----------|
+| OpenCode Free | ✅ $0 | AI coding assistant |
+| 9Router | ✅ $0 | AI gateway + free model combos |
+| ECC (270 skills) | ✅ $0 | Knowledge base |
+| Ollama (qwen3:1.7b / qwen2.5-coder:3b) | ✅ $0 | Local LLM |
 
-### Changelogs
+**Total: $0.00.** Tidak perlu API key. Tidak perlu kartu kredit.
 
-| File | Isi |
-|------|-----|
-| [changelog-ecc.md](changelog-ecc.md) | Perubahan ECC (skills, agents, commands) |
-| [changelog-9router.md](changelog-9router.md) | Perubahan 9Router (models, features) |
-| [log-admin.md](log-admin.md) | History update admin |
+---
+
+## Credits
+
+Proyek ini gabungan 3 teknologi open-source gratis:
+
+- **OpenCode** — AI coding assistant by Anomaly Co.
+- **9Router** — AI gateway dengan free model combos (MiMo, DeepSeek, Mimo)
+- **ECC** (Everything Claude Code) — 270+ skills, 84 commands, agent hooks
+
+Dibuat agar siapapun bisa bikin aplikasi tanpa coding dan tanpa biaya.
+
+---
+
+**Masa depan: tinggal bilang, AI yang kerjakan.**
