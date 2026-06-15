@@ -11,6 +11,9 @@ api-key.txt
 # Per-project data: cloned source, sessions, memory
 Project/
 
+# Local state files
+.opencode/
+
 # Old session files (deprecated)
 .opencode-session.json
 ai-notes.md
