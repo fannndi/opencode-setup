@@ -77,6 +77,8 @@ if ($lowUsageLoaded) {
 # Recommendations
 Write-Host ""
 Write-Host "  Recommendations:" -ForegroundColor Cyan
+
+$RECOMMEND_FILE = "$ROOT_DIR\.opencode\recommended-skills.json"
 $highUsageNotLoaded = $topSkills | Where-Object { $_.Key -notin $loadedSkills }
 if ($highUsageNotLoaded) {
     foreach ($s in $highUsageNotLoaded) {
@@ -89,6 +91,23 @@ if ($lowUsageLoaded) {
     }
 }
 if (-not $highUsageNotLoaded -and -not $lowUsageLoaded) {
+    Write-Host "    • Profile is optimal. No changes needed." -ForegroundColor Gray
+}
+
+# Save recommendations if there's data
+if ($skillUsage.Count -gt 0) {
+    New-Item -ItemType Directory -Path "$ROOT_DIR\.opencode" -Force | Out-Null
+    $recs = [PSCustomObject]@{
+        timestamp = Get-Date -Format "yyyy-MM-ddTHH:mm:sszzz"
+        skill_usage_total = $skillUsage.Count
+        current_loaded = $loadedSkills.Count
+        recommended_load = @($highUsageNotLoaded | ForEach-Object { $_.Key })
+        recommended_unload = @($lowUsageLoaded | Select-Object -First 5 | ForEach-Object { $_ })
+    }
+    $recs | ConvertTo-Json -Depth 3 | Set-Content -Path $RECOMMEND_FILE -Encoding UTF8
+    Write-Host ""
+    Write-Host "  [OPTIMIZER] Recommendations saved" -ForegroundColor Gray
+}
     Write-Host "    • Profile is optimal. No changes needed." -ForegroundColor Gray
 }
 

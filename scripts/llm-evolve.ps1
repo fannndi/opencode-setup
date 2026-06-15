@@ -109,7 +109,48 @@ $state = [PSCustomObject]@{
 
 $evolveLog = "$ROOT_DIR\.opencode\llm-evolve.jsonl"
 Add-Content -Path $evolveLog -Value ($state | ConvertTo-Json -Compress) -Encoding UTF8
-
 Write-Host "  [EVOLVE] State logged." -ForegroundColor Gray
+
+# ============================================================
+# Step 5: Apply fixes (if -Apply)
+# ============================================================
+
+if ($Apply) {
+    $applied = @()
+    
+    # Auto-fix 1: Timeout rate > 30% → naikin default (set env var)
+    if ($timeoutCount -gt $totalFailures * 0.3 -and $totalFailures -gt 2) {
+        [Environment]::SetEnvironmentVariable("LLM_DEFAULT_TIMEOUT", "180", "User")
+        $applied += "TimeoutSec default 60->180 (env: LLM_DEFAULT_TIMEOUT)"
+    }
+    
+    # Auto-fix 2: JSON fail rate > 30% → turunin temperature
+    if ($jsonFailCount -gt $totalFailures * 0.3 -and $totalFailures -gt 2) {
+        [Environment]::SetEnvironmentVariable("LLM_DEFAULT_TEMPERATURE", "0.1", "User")
+        $applied += "Temperature default 0.3->0.1 (env: LLM_DEFAULT_TEMPERATURE)"
+    }
+    
+    # Auto-fix 3: Failure rate > 50% → switch ke balanced mode (smaller model)
+    if ($failureRate -gt 50 -and $totalCalls -gt 10) {
+        & "$SETUP_DIR\llm-mode.ps1" eco 2>$null
+        $applied += "Switched to ECO mode (failure rate $failureRate%)"
+    }
+    
+    # Auto-fix 4: Trim failure log kalo > 100 entries
+    if ((Get-Content "$ROOT_DIR\.opencode\llm-failures.jsonl" -ErrorAction SilentlyContinue | Measure-Object).Count -gt 100) {
+        $trimmed = Get-Content "$ROOT_DIR\.opencode\llm-failures.jsonl" -ErrorAction SilentlyContinue | Select-Object -Last 100
+        $trimmed | Set-Content "$ROOT_DIR\.opencode\llm-failures.jsonl" -Encoding UTF8
+        $applied += "Trimmed failure log to 100 entries"
+    }
+    
+    if ($applied.Count -gt 0) {
+        Write-Host ""
+        Write-Host "  [EVOLVE] Applied $($applied.Count) fixes:" -ForegroundColor Green
+        foreach ($a in $applied) { Write-Host "    • $a" -ForegroundColor Gray }
+    } else {
+        Write-Host "  [EVOLVE] No fixes needed." -ForegroundColor Gray
+    }
+}
+
 Write-Host "  [EVOLVE] Done." -ForegroundColor Green
 Write-Host ""

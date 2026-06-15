@@ -156,4 +156,11 @@ if (Test-Path $sf) {
     } catch {}
 }
 
+# Auto-mine knowledge in PERFORMANCE mode
+if ($operatingMode -eq "performance") {
+    try {
+        & "$SETUP_DIR\knowledge-miner.ps1" -ProjectPath $activeProject -Days 1 2>&1 | Out-Null
+    } catch {}
+}
+
 exit 0

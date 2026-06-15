@@ -544,6 +544,14 @@ if ($ProjectPath) {
     Write-Host "  [SESSION] No project set, session not saved" -ForegroundColor Yellow
 }
 
+# Auto-run self-improvement loop (async, non-blocking)
+try {
+    & "$SETUP_DIR\llm-evolve.ps1" -Apply 2>&1 | Out-Null
+} catch {}
+try {
+    & "$SETUP_DIR\llm-feedback.ps1" 2>&1 | Out-Null
+} catch {}
+
 Write-Host ""
 Write-Host "  ╔══════════════════════════════════════════════════╗" -ForegroundColor Green
 Write-Host "  ║              All systems GO!                     ║" -ForegroundColor Green

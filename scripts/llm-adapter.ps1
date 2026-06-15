@@ -125,6 +125,25 @@ function Invoke-LLM {
             -TimeoutSec $TimeoutSec `
             -ErrorAction Stop
 
+        # Log usage
+        try {
+            $callerInfo = Get-PSCallStack | Select-Object -Skip 2 -First 1
+            $callerScript = if ($callerInfo) { Split-Path $callerInfo.ScriptName -Leaf } else { "unknown" }
+            $usageEntry = @{
+                timestamp = Get-Date -Format "yyyy-MM-ddTHH:mm:sszzz"
+                script = $callerScript
+                model = $response.model
+                prompt_hash = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($Prompt.Substring(0, [Math]::Min(100, $Prompt.Length))))
+                total_duration = $response.total_duration
+                eval_count = $response.eval_count
+                tokens_per_second = [math]::Round($response.eval_count / ($response.total_duration / 1e9), 2)
+                success = $true
+            }
+            $usageFile = "$ROOT_DIR\.opencode\llm-usage.jsonl"
+            New-Item -ItemType Directory -Path (Split-Path $usageFile -Parent) -Force | Out-Null
+            Add-Content -Path $usageFile -Value ($usageEntry | ConvertTo-Json -Compress) -Encoding UTF8
+        } catch {}
+
         return [PSCustomObject]@{
             response = $response.message.content
             model = $response.model
@@ -140,7 +159,7 @@ function Invoke-LLM {
         Write-Warning "LLM call failed: $errMsg"
         if ($errMsg -match "ConnectFailure|connection refused|No connection") {
             Write-Warning "Ollama not reachable. Auto-disabling LLM mode."
-            $null = & "$SETUP_DIR\llm-mode.ps1" balanced 2>$null
+            $null = & "$SETUP_DIR\llm-mode.ps1" eco 2>$null
         }
         return $null
     }
