@@ -130,7 +130,15 @@ function Audit-File {
     foreach ($chunk in $chunks) {
         Write-Host "    [AUDIT] File $FileIndex/$TotalFiles — chunk $($chunk.num)/$totalChunks ($($chunk.text.Length) chars)" -ForegroundColor Gray
 
-        $fullPrompt = "File: $relPath (chunk $($chunk.num)/$totalChunks, starts near line $($chunk.start_line))`n`n$($chunk.text)`n`n$prompt"
+        if ((Get-OperatingMode) -eq "eco") {
+            Write-Host "    [AUDIT] ECO mode — skipping LLM" -ForegroundColor DarkGray
+            continue
+        }
+
+        $enrichedChunk = Invoke-LLMEnrich -Text $chunk.text -Context "code audit chunk"
+        if (-not $enrichedChunk) { $enrichedChunk = $chunk.text }
+
+        $fullPrompt = "File: $relPath (chunk $($chunk.num)/$totalChunks, starts near line $($chunk.start_line))`n`n$enrichedChunk`n`n$prompt"
         
         $result = Invoke-LLM -Prompt $fullPrompt -System "Output ONLY a JSON array of findings. No explanation." -MaxTokens 256 -Temperature 0.2 -TimeoutSec 120
 

@@ -45,6 +45,8 @@ if (Test-Path $sessionLog) {
     if ($operatingMode -ne "eco" -and $content.Length -gt 50) {
         # LLM extraction
         $depthLevel = if ($operatingMode -eq "performance") { "deep analysis" } else { "brief summary" }
+        $enrichedContent = Invoke-LLMEnrich -Text $content -Context "pattern extraction from session"
+        if (-not $enrichedContent) { $enrichedContent = $content }
         $prompt = @"
 Analyze this development session log and extract $depthLevel:
 1. What problems occurred (max 3)
@@ -55,7 +57,7 @@ Output ONLY JSON array:
 [{"problem": "...", "solution": "...", "pattern": "..."}]
 
 Session log:
-$content
+$enrichedContent
 "@
 
         $timeout = if ($operatingMode -eq "performance") { 60 } else { 30 }

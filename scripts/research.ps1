@@ -15,6 +15,7 @@ $SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ROOT_DIR = Split-Path -Parent $SETUP_DIR
 $API_URL = "http://localhost:20128"
 $API_PASS = "123456"
+. "$SETUP_DIR\llm-adapter.ps1"
 
 # ============================================================
 # Helpers
@@ -47,6 +48,9 @@ if ($Query.Length -gt 40) { Write-Host "  ║         $( ' ' * 10)$($Query.Subst
 Write-Host "  ╚══════════════════════════════════════════════════╝" -ForegroundColor Cyan
 Write-Host ""
 
+$enrichedQuery = Invoke-LLMEnrich -Text $Query -Context "research query enrichment"
+if (-not $enrichedQuery) { $enrichedQuery = $Query }
+
 $totalSteps = 3
 $sourceUrls = @()
 $allText = ""
@@ -71,7 +75,7 @@ try {
 $searchResults = $null
 try {
     $searchBody = @{
-        query = $Query
+        query = $enrichedQuery
         max_results = $MaxResults
     } | ConvertTo-Json -Depth 5
 
@@ -93,7 +97,7 @@ if (-not $searchResults) {
     try {
         $fetchBody = @{
             model = "jina-reader"
-            url = "https://s.jina.ai/$($Query -replace ' ', '+')"
+            url = "https://s.jina.ai/$($enrichedQuery -replace ' ', '+')"
             max_characters = 3000
         } | ConvertTo-Json -Depth 5
 
@@ -150,7 +154,7 @@ foreach ($m in @($model) + $fallbackModels) {
             model = $m
             messages = @(
                 @{ role = "system"; content = $systemPrompt }
-                @{ role = "user"; content = $Query }
+                @{ role = "user"; content = $enrichedQuery }
             )
             max_tokens = 500
         } | ConvertTo-Json -Depth 5

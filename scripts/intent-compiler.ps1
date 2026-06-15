@@ -50,11 +50,13 @@ Schema:
 function CompileWithLLM {
     param([string]$Query)
 
-    $prompt = "Convert this request to the specified JSON format.`nRequest: $Query`n`nOutput ONLY the JSON specification. No explanation."
+    $prompt = "Convert this request to the specified JSON format.`nRequest: $enrichedQuery`n`nOutput ONLY the JSON specification. No explanation."
 
     $MAX_RETRIES = 2
     $attempt = 0
     $spec = $null
+    $enrichedQuery = Invoke-LLMEnrich -Text $Query -Context "intent compilation"
+    if (-not $enrichedQuery) { $enrichedQuery = $Query }
 
     while (-not $spec -and $attempt -lt $MAX_RETRIES) {
         $attempt++
@@ -83,7 +85,7 @@ function CompileWithLLM {
             # Log failure and retry
             Write-LLMFailure -Script "intent-compiler" -Model (Get-LLMModel) -Prompt $prompt -RawOutput $text -Error $_.Exception.Message
             if ($attempt -lt $MAX_RETRIES) {
-                $prompt = "Your previous output was invalid JSON: $($_.Exception.Message)`n`nRetry with ONLY valid JSON. No explanation.`n`nRequest: $Query"
+                $prompt = "Your previous output was invalid JSON: $($_.Exception.Message)`n`nRetry with ONLY valid JSON. No explanation.`n`nRequest: $enrichedQuery"
                 continue
             }
             return $null

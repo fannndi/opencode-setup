@@ -52,6 +52,8 @@ foreach ($sf in $sessionFiles) {
     Write-Host "  Processing: $($sf.Name)" -ForegroundColor Gray
 
     if ($mode -ne "eco") {
+        $enrichedContent = Invoke-LLMEnrich -Text $content -Context "knowledge mining session log"
+        if (-not $enrichedContent) { $enrichedContent = $content }
         $prompt = @"
 Extract reusable patterns from this dev session log.
 
@@ -65,7 +67,7 @@ Output ONLY a JSON array:
 [{"pattern":"...","context":"...","solution":"...","tags":["...",]}]"
 
 Session:
-$content
+$enrichedContent
 "@
         $result = Invoke-LLM -Prompt $prompt -System "Extract patterns. Output ONLY JSON array." -MaxTokens 1024 -Temperature 0.2 -TimeoutSec 60
 

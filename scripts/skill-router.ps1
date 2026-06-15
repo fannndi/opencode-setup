@@ -108,6 +108,7 @@ Select the 8-12 most relevant skills for this project. Output ONLY a JSON array.
 Project: $($Intent.domain)/$($Intent.module)
 Stack: $($Intent.stack_hint -join ', ')
 Features: $($Intent.features -join ', ')
+Query: $enrichedQuery
 
 Available skills by category:
 $skillText
@@ -124,6 +125,8 @@ $skillText
             $prompt = "Output ONLY a raw JSON array starting with [. No markdown, no code fences, no explanation. Array of skill names for project: $($Intent.domain)/$($Intent.module)"
         }
 
+        $enrichedQuery = Invoke-LLMEnrich -Text $Query -Context "skill selection"
+        if (-not $enrichedQuery) { $enrichedQuery = $Query }
         $result = Invoke-LLM -Prompt $prompt -System "Output ONLY a JSON array of skill names. No explanation." -MaxTokens 1024 -Temperature 0.2 -TimeoutSec 60
         if (-not $result) { return $null }
 

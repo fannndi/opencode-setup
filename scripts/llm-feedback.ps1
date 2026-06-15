@@ -112,7 +112,9 @@ Output ONLY a JSON array of recommendations:
 "@
 
     Write-Host "  Analyzing with LLM..." -ForegroundColor Gray
-    $result = Invoke-LLM -Prompt $prompt -System "You are a system optimizer. Output ONLY JSON." -MaxTokens 1024 -Temperature 0.3 -TimeoutSec 60
+    $enrichedPrompt = Invoke-LLMEnrich -Text $prompt -Context "failure analysis"
+    if (-not $enrichedPrompt) { $enrichedPrompt = $prompt }
+    $result = Invoke-LLM -Prompt $enrichedPrompt -System "You are a system optimizer. Output ONLY JSON." -MaxTokens 1024 -Temperature 0.3 -TimeoutSec 60
 
     if ($result) {
         Write-Host ""

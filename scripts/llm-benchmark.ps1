@@ -75,8 +75,14 @@ foreach ($model in $MODELS) {
                 $response = '{"status":"baseline","method":"regex"}'
                 $valid = $true
             } else {
+                if ((Get-OperatingMode) -eq "eco") {
+                    Write-Host "  [BENCH]     ECO mode — skipping LLM for $($scenario.name)" -ForegroundColor DarkGray
+                    continue
+                }
+                $enrichedBmInput = Invoke-LLMEnrich -Text $scenario.prompt -Context "benchmark enrichment"
+                if (-not $enrichedBmInput) { $enrichedBmInput = $scenario.prompt }
                 try {
-                    $result = Invoke-LLM -Prompt $scenario.prompt -Model $model -System $scenario.system -MaxTokens 256 -TimeoutSec 60
+                    $result = Invoke-LLM -Prompt $enrichedBmInput -Model $model -System $scenario.system -MaxTokens 256 -TimeoutSec 60
                     if ($result) {
                         $latency = [math]::Round($result.total_duration / 1e9, 3)
                         $tps = $result.tokens_per_second

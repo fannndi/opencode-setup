@@ -12,6 +12,7 @@ $ROOT_DIR = Split-Path -Parent $SETUP_DIR
 
 . "$SETUP_DIR\project-resolve.ps1"
 . "$SETUP_DIR\agent-core.ps1"
+. "$SETUP_DIR\llm-adapter.ps1"
 
 if (-not $ProjectPath) {
     $ProjectPath = Get-ActiveProject
@@ -33,7 +34,10 @@ Write-Host ""
 
 Write-Host "  [QUEUE] Goal: $Goal" -ForegroundColor Cyan
 
-$tasks = Decompose-Task -Goal $Goal
+$enrichedGoal = Invoke-LLMEnrich -Text $Goal -Context "task decomposition enrichment"
+if (-not $enrichedGoal) { $enrichedGoal = $Goal }
+
+$tasks = Decompose-Task -Goal $enrichedGoal
 Show-TaskPlan -Tasks $tasks
 
 # ============================================================
@@ -128,7 +132,7 @@ if ($ProjectPath) {
     if (Test-Path $sf) {
         try {
             $session = Get-Content $sf -Raw | ConvertFrom-Json
-            $session.last_action = "/task-queue: $Goal"
+            $session.last_action = "/task-queue: $enrichedGoal"
             $session.updated_at = Get-Date -Format "yyyy-MM-ddTHH:mm:sszzz"
             $session | ConvertTo-Json -Depth 10 | Set-Content -Path $sf -Encoding UTF8
         } catch {}

@@ -66,6 +66,8 @@ function Get-FeatureIndex {
 # ============================================================
 
 $operatingMode = Get-ModeForLLM
+$enrichedQuery = Invoke-LLMEnrich -Text $Query -Context "universal preprocess"
+if (-not $enrichedQuery) { $enrichedQuery = $Query }
 $spec = $null
 $matchedSkills = @()
 $matchedFeatures = @()
@@ -76,7 +78,7 @@ $knowledgeResults = @()
 if (-not $ProjectPath) { $ProjectPath = Get-ActiveProject }
 
 # ── Step 1: Intent compiler (LLM or regex) ──
-$spec = & "$SETUP_DIR\intent-compiler.ps1" -Query $Query -Mode auto
+$spec = & "$SETUP_DIR\intent-compiler.ps1" -Query $enrichedQuery -Mode auto
 
 $stackHint = if ($spec) { $spec.stack_hint -join ', ' } else { "" }
 $domain = if ($spec) { $spec.domain } else { "unknown" }
@@ -148,7 +150,7 @@ if ($ProjectPath) {
 }
 
 # ── Step 6: Skill routing ──
-$routed = & "$SETUP_DIR\skill-router.ps1" -Query $Query -Mode auto
+$routed = & "$SETUP_DIR\skill-router.ps1" -Query $enrichedQuery -Mode auto
 
 # ============================================================
 # Build enriched context
