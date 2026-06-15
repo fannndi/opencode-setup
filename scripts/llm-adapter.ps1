@@ -1,8 +1,8 @@
 # LLM Adapter — Wrapper for local Ollama API with auto-fallback
-# Usage: .\llm-adapter.ps1 -Prompt "your text" [-Model "qwen3:1.7b"] [-System "system prompt"]
+# Usage: . .\llm-adapter.ps1  (source for functions)
+#        .\llm-adapter.ps1 -Prompt "your text" [-Model "qwen3:1.7b"] (direct execution)
 
 param(
-    [Parameter(Mandatory=$true)]
     [string]$Prompt,
 
     [string]$Model,
@@ -104,13 +104,13 @@ function Invoke-LLM {
 }
 
 # ============================================================
-# Execute
+# Execute (only when run directly, not sourced)
 # ============================================================
 
-$result = Invoke-LLM -Prompt $Prompt -Model $Model -System $System -MaxTokens $MaxTokens -Temperature $Temperature -TimeoutSec $TimeoutSec
+if ($MyInvocation.InvocationName -ne '.' -and $Prompt) {
+    $result = Invoke-LLM -Prompt $Prompt -Model $Model -System $System -MaxTokens $MaxTokens -Temperature $Temperature -TimeoutSec $TimeoutSec
 
-if ($result) {
-    $result | ConvertTo-Json -Depth 3
-} else {
-    # Silent exit — caller handles null
+    if ($result) {
+        $result | ConvertTo-Json -Depth 3
+    }
 }
