@@ -93,32 +93,71 @@ $ACTIVE_MODES = if ($Mode -eq "all") { @("quality", "security", "perf") } else {
 # Audit Single File
 # ============================================================
 
+$CHUNK_SIZE = 1000  # chars per chunk — optimal untuk MX150 2GB (10-15s per chunk)
+
 function Audit-File {
-    param([string]$FilePath, [string]$Mode, [int]$FileIndex, [int]$TotalFiles)
+    param([string]$FilePath, [string]$Mode, [int]$FileIndex, [int]$TotalFiles, [int]$Depth = 1)
 
     $relPath = if ($FilePath.StartsWith($ROOT_DIR)) { $FilePath.Substring($ROOT_DIR.Length + 1) } else { $FilePath }
     $content = Get-Content $FilePath -Raw -ErrorAction SilentlyContinue
-    if (-not $content -or $content.Length -eq 0) { return $null }
-
-    # Truncate if too long (32K context window - overhead)
-    if ($content.Length -gt 28000) { $content = $content.Substring(0, 28000) + "`n... [TRUNCATED]" }
+    if (-not $content -or $content.Length -eq 0) { return @() }
 
     $prompt = $PROMPTS[$Mode]
-    $fullPrompt = "File: $relPath ($($content.Length) chars)`n`n$content`n`n$prompt"
+    $allFindings = @()
 
-    Write-Host "    [AUDIT] Mode=$Mode file=$relPath ($($content.Length) chars)" -ForegroundColor Gray
+    # Chunk file into segments
+    $chunks = @()
+    $pos = 0
+    $chunkNum = 0
+    $totalChunks = [math]::Max(1, [math]::Ceiling($content.Length / $CHUNK_SIZE))
 
-    $result = Invoke-LLM -Prompt $fullPrompt -System "Output ONLY a JSON array of findings. No explanation." -MaxTokens 2048 -Temperature 0.2 -TimeoutSec 90
-
-    if (-not $result) { return @() }
-
-    try {
-        $findings = $result.response | ConvertFrom-Json
-        if ($findings -is [array]) {
-            return $findings
+    while ($pos -lt $content.Length) {
+        $chunkNum++
+        $endPos = [math]::Min($pos + $CHUNK_SIZE, $content.Length)
+        
+        # Overlap 200 chars for context continuity
+        $overlapPos = [math]::Max(0, $pos - 200)
+        $chunkText = $content.Substring($overlapPos, $endPos - $overlapPos)
+        
+        $chunks += @{
+            num = $chunkNum
+            text = $chunkText
+            start_line = ($content.Substring(0, $overlapPos) -split "`n").Count
         }
-    } catch {}
-    return @()
+        $pos = $endPos
+    }
+
+    foreach ($chunk in $chunks) {
+        Write-Host "    [AUDIT] File $FileIndex/$TotalFiles — chunk $($chunk.num)/$totalChunks ($($chunk.text.Length) chars)" -ForegroundColor Gray
+
+        $fullPrompt = "File: $relPath (chunk $($chunk.num)/$totalChunks, starts near line $($chunk.start_line))`n`n$($chunk.text)`n`n$prompt"
+        
+        $result = Invoke-LLM -Prompt $fullPrompt -System "Output ONLY a JSON array of findings. No explanation." -MaxTokens 256 -Temperature 0.2 -TimeoutSec 120
+
+        if ($result) {
+            try {
+                $text = $result.response.Trim()
+                # Clean markdown code blocks if present
+                if ($text -match '```(?:json)?\s*([\s\S]*?)```') {
+                    $text = $Matches[1].Trim()
+                }
+                $findings = $text | ConvertFrom-Json
+                if ($findings -is [array]) {
+                    # Adjust line numbers for chunk position
+                    foreach ($f in $findings) {
+                        if ($f.line -and $f.line -gt 0) {
+                            $f.line = $f.line + $chunk.start_line - 1
+                        }
+                    }
+                    $allFindings += $findings
+                }
+            } catch {
+                Write-LLMFailure -Script "llm-audit" -Model (Get-LLMModel) -Prompt $fullPrompt.Substring(0, [Math]::Min(200, $fullPrompt.Length)) -RawOutput $result.response -Error $_.Exception.Message
+            }
+        }
+    }
+
+    return $allFindings
 }
 
 # ============================================================
