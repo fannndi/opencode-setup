@@ -51,43 +51,60 @@ function CompileWithLLM {
     param([string]$Query)
 
     $prompt = "Convert this request to the specified JSON format.`nRequest: $Query`n`nOutput ONLY the JSON specification. No explanation."
-    $result = Invoke-LLM -Prompt $prompt -System $SYSTEM_PROMPT -MaxTokens 2048 -Temperature 0.1 -TimeoutSec 60
 
-    if (-not $result) { return $null }
+    $MAX_RETRIES = 2
+    $attempt = 0
+    $spec = $null
 
-    $text = $result.response.Trim()
+    while (-not $spec -and $attempt -lt $MAX_RETRIES) {
+        $attempt++
+        if ($attempt -gt 1) {
+            Write-Host "  [INTENT] Retry $attempt..." -ForegroundColor Yellow
+        }
 
-    # Clean markdown code blocks if present
-    if ($text -match '```(?:json)?\s*([\s\S]*?)```') {
-        $text = $Matches[1].Trim()
-    }
+        $result = Invoke-LLM -Prompt $prompt -System $SYSTEM_PROMPT -MaxTokens 2048 -Temperature 0.1 -TimeoutSec 60
+        if (-not $result) { return $null }
 
-    # Validate JSON
-    try {
-        $spec = $text | ConvertFrom-Json
-        if ($spec.error) {
-            Write-Warning "LLM returned error: $($spec.error)"
+        $text = $result.response.Trim()
+
+        # Clean markdown code blocks if present
+        if ($text -match '```(?:json)?\s*([\s\S]*?)```') {
+            $text = $Matches[1].Trim()
+        }
+
+        # Validate JSON
+        try {
+            $spec = $text | ConvertFrom-Json
+            if ($spec.error) {
+                Write-Warning "LLM returned error: $($spec.error)"
+                return $null
+            }
+        } catch {
+            # Log failure and retry
+            Write-LLMFailure -Script "intent-compiler" -Model (Get-LLMModel) -Prompt $prompt -RawOutput $text -Error $_.Exception.Message
+            if ($attempt -lt $MAX_RETRIES) {
+                $prompt = "Your previous output was invalid JSON: $($_.Exception.Message)`n`nRetry with ONLY valid JSON. No explanation.`n`nRequest: $Query"
+                continue
+            }
             return $null
         }
-        # Add metadata
-        $spec | Add-Member -NotePropertyName "_compiler" -NotePropertyValue "llm" -Force
-        if (-not $spec.PSObject.Properties.Name.Contains("confidence")) {
-            $spec | Add-Member -NotePropertyName "confidence" -NotePropertyValue 0.8 -Force
-        }
-        if (-not $spec.PSObject.Properties.Name.Contains("estimated_hours")) {
-            $spec | Add-Member -NotePropertyName "estimated_hours" -NotePropertyValue 0 -Force
-        }
-        if (-not $spec.PSObject.Properties.Name.Contains("language")) {
-            $spec | Add-Member -NotePropertyName "language" -NotePropertyValue "id" -Force
-        }
-        if (-not $spec.PSObject.Properties.Name.Contains("dependencies")) {
-            $spec | Add-Member -NotePropertyName "dependencies" -NotePropertyValue @() -Force
-        }
-        return $spec
-    } catch {
-        Write-Warning "LLM returned invalid JSON. Falling back to regex."
-        return $null
     }
+
+    # Add metadata
+    $spec | Add-Member -NotePropertyName "_compiler" -NotePropertyValue "llm" -Force
+    if (-not $spec.PSObject.Properties.Name.Contains("confidence")) {
+        $spec | Add-Member -NotePropertyName "confidence" -NotePropertyValue 0.8 -Force
+    }
+    if (-not $spec.PSObject.Properties.Name.Contains("estimated_hours")) {
+        $spec | Add-Member -NotePropertyName "estimated_hours" -NotePropertyValue 0 -Force
+    }
+    if (-not $spec.PSObject.Properties.Name.Contains("language")) {
+        $spec | Add-Member -NotePropertyName "language" -NotePropertyValue "id" -Force
+    }
+    if (-not $spec.PSObject.Properties.Name.Contains("dependencies")) {
+        $spec | Add-Member -NotePropertyName "dependencies" -NotePropertyValue @() -Force
+    }
+    return $spec
 }
 
 # ============================================================

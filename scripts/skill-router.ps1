@@ -113,18 +113,35 @@ Available skills by category:
 $skillText
 "@
 
-    $result = Invoke-LLM -Prompt $prompt -System "Output ONLY a JSON array of skill names. No explanation." -MaxTokens 1024 -Temperature 0.2 -TimeoutSec 60
+    $MAX_RETRIES = 2
+    $attempt = 0
+    $selected = @()
 
-    if (-not $result) { return $null }
+    while ($selected.Count -eq 0 -and $attempt -lt $MAX_RETRIES) {
+        $attempt++
+        if ($attempt -gt 1) {
+            Write-Host "  [ROUTER] Retry $attempt..." -ForegroundColor Yellow
+            $prompt = "Output ONLY a raw JSON array starting with [. No markdown, no code fences, no explanation. Array of skill names for project: $($Intent.domain)/$($Intent.module)"
+        }
 
-    $text = $result.response.Trim()
-    if ($text -match '\[([\s\S]*)\]') {
+        $result = Invoke-LLM -Prompt $prompt -System "Output ONLY a JSON array of skill names. No explanation." -MaxTokens 1024 -Temperature 0.2 -TimeoutSec 60
+        if (-not $result) { return $null }
+
+        $text = $result.response.Trim()
+
+        # Try parsing as direct JSON array
         try {
-            $selected = $text | ConvertFrom-Json
-            return @($selected) | Where-Object { $_ -in $SKILL_NAMES }
-        } catch {}
+            $parsed = $text | ConvertFrom-Json
+            if ($parsed -is [array]) {
+                $selected = @($parsed) | Where-Object { $_ -in $SKILL_NAMES }
+            }
+        } catch {
+            Write-LLMFailure -Script "skill-router" -Model (Get-LLMModel) -Prompt $prompt -RawOutput $text -Error $_.Exception.Message
+            if ($attempt -ge $MAX_RETRIES) { return $null }
+            continue
+        }
     }
-    return $null
+    return $selected
 }
 
 # ============================================================

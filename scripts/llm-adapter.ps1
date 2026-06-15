@@ -51,6 +51,34 @@ function Get-ModeForLLM {
 }
 
 # ============================================================
+# Failure logging — append to .opencode/llm-failures.jsonl
+# ============================================================
+
+$FAILURE_LOG = "$ROOT_DIR\.opencode\llm-failures.jsonl"
+
+function Write-LLMFailure {
+    param(
+        [string]$Script,
+        [string]$Model,
+        [string]$Prompt,
+        [string]$RawOutput,
+        [string]$Error
+    )
+    try {
+        New-Item -ItemType Directory -Path (Split-Path $FAILURE_LOG -Parent) -Force | Out-Null
+        $entry = @{
+            timestamp = Get-Date -Format "yyyy-MM-ddTHH:mm:sszzz"
+            script = $Script
+            model = $Model
+            prompt_hash = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($Prompt.Substring(0, [Math]::Min(100, $Prompt.Length))))
+            raw_output = $RawOutput
+            error = $Error
+        }
+        Add-Content -Path $FAILURE_LOG -Value ($entry | ConvertTo-Json -Compress) -Encoding UTF8
+    } catch {}
+}
+
+# ============================================================
 # Invoke LLM — uses /api/chat for instruction-tuned models
 # ============================================================
 
@@ -107,10 +135,12 @@ function Invoke-LLM {
             eval_count = $response.eval_count
         }
     } catch {
-        Write-Warning "LLM call failed: $($_.Exception.Message)"
-        if ($_.Exception.Message -match "ConnectFailure|connection refused|No connection") {
+        $errMsg = $_.Exception.Message
+        Write-LLMFailure -Script "llm-adapter" -Model $Model -Prompt $Prompt -RawOutput "" -Error $errMsg
+        Write-Warning "LLM call failed: $errMsg"
+        if ($errMsg -match "ConnectFailure|connection refused|No connection") {
             Write-Warning "Ollama not reachable. Auto-disabling LLM mode."
-            $null = & "$SETUP_DIR\llm-mode.ps1" off
+            $null = & "$SETUP_DIR\llm-mode.ps1" balanced 2>$null
         }
         return $null
     }

@@ -21,6 +21,18 @@ $errorsDir = "$memDir\errors"
 New-Item -ItemType Directory -Path $patternsDir -Force | Out-Null
 New-Item -ItemType Directory -Path $errorsDir -Force | Out-Null
 
+# ============================================================
+# Auto-save session log entry (so memory is never empty)
+# ============================================================
+$timestamp = Get-Date -Format "HH:mm:ss"
+$autoEntry = "`n### $timestamp — Session end (auto)`n- Mode: $(Get-OperatingMode)`n- Action: /stop"
+if (Test-Path $sessionLog) {
+    Add-Content -Path $sessionLog -Value $autoEntry -Encoding UTF8
+} else {
+    $header = "# Session Log — $(Get-Date -Format 'yyyy-MM-dd')`n$autoEntry"
+    Set-Content -Path $sessionLog -Value $header -Encoding UTF8
+}
+
 $operatingMode = Get-ModeForLLM
 
 # ============================================================
@@ -59,7 +71,7 @@ $content
                         $safeName = ($p.problem -replace '[^\w\-]', '_').Substring(0, [Math]::Min(40, $p.problem.Length))
                         $pf = "$errorsDir\$safeName.md"
                         if (-not (Test-Path $pf)) {
-@"
+@" 
 # $($p.problem)
 - Solution: $($p.solution)
 - Pattern: $($p.pattern)
@@ -67,6 +79,12 @@ $content
 - Extracted by: LLM ($operatingMode)
 "@ | Set-Content -Path $pf -Encoding UTF8
                             Write-Host "  [INSTINCT] LLM extracted: $($p.problem)" -ForegroundColor Green
+                        }
+                        # Also save to knowledge base for reusable patterns
+                        if ($p.solution.Length -gt 50 -and $operatingMode -eq "performance") {
+                            try {
+                                & "$SETUP_DIR\knowledge.ps1" -Action save -Key $safeName -Value "$($p.solution)`n---`n$($p.pattern)" -Category "auto-extracted" -ProjectPath $activeProject
+                            } catch {}
                         }
                     }
                 }

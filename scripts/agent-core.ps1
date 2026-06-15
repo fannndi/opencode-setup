@@ -171,10 +171,14 @@ function Detect-Intent {
         if ($score -gt 0) { $scores[$intent] = $score }
     }
 
-    if ($scores.Count -eq 0) { return "general" }
+    if ($scores.Count -eq 0) { return @{intent = "general"; confidence = 0.0} }
 
-    # Return highest scoring intent
-    return ($scores.GetEnumerator() | Sort-Object Value -Descending | Select-Object -First 1).Key
+    # Return highest scoring intent with normalized confidence
+    $top = $scores.GetEnumerator() | Sort-Object Value -Descending | Select-Object -First 1
+    $maxPossible = $INTENT_PATTERNS[$top.Key].Count
+    $confidence = if ($maxPossible -gt 0) { [math]::Round($top.Value / $maxPossible, 2) } else { 0.5 }
+
+    return @{intent = $top.Key; confidence = $confidence; method = "regex"}
 }
 
 # ============================================================
