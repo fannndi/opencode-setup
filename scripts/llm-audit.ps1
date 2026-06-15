@@ -93,7 +93,7 @@ $ACTIVE_MODES = if ($Mode -eq "all") { @("quality", "security", "perf") } else {
 # Audit Single File
 # ============================================================
 
-$CHUNK_SIZE = 1000  # chars per chunk — optimal untuk MX150 2GB (10-15s per chunk)
+$CHUNK_SIZE = Get-ChunkSize  # mode-aware: balanced=1000, performance=600
 
 function Audit-File {
     param([string]$FilePath, [string]$Mode, [int]$FileIndex, [int]$TotalFiles, [int]$Depth = 1)

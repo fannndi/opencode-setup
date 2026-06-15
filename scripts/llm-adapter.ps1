@@ -79,17 +79,89 @@ function Invoke-LLMEnrich {
     $timeout = if ($mode -eq "performance") { 60 } else { 30 }
 
     $result = Invoke-LLM -Prompt $prompt -System $System -MaxTokens $tokens -Temperature 0.3 -TimeoutSec $timeout
-    if (-not $result) { return $Input }
+    if (-not $result) { return $Text }
 
     $text = $result.response.Trim()
     return $text
 }
 
 # ============================================================
-# Failure logging
+# Chunk sizes per mode — GPU-aware (MX150 2GB)
+# Balanced: 1000 chars = ~250 tokens (16.7% of 1500 context)
+# Performance: 600 chars = ~150 tokens (18.7% of 800 context)
 # ============================================================
 
-$FAILURE_LOG = "$ROOT_DIR\.opencode\llm-failures.jsonl"
+# ============================================================
+# Chunk sizes per mode — GPU-aware (MX150 2GB)
+# Balanced: 1000 chars = ~250 tokens (16.7% of 1500 context)
+# Performance: 600 chars = ~150 tokens (18.7% of 800 context)
+# ============================================================
+
+$OVERLAP_CHARS = 200
+
+function Get-ChunkSize {
+    $mode = Get-OperatingMode
+    $sizes = @{ eco = 0; balanced = 1000; performance = 600 }
+    return $sizes[$mode]
+}
+
+function Invoke-LLMChunk {
+    param(
+        [string]$Text,
+        [string]$System,
+        [string]$SystemMerge,
+        [int]$MaxTokens = 256,
+        [double]$Temperature = 0.2,
+        [int]$TimeoutSec = 120,
+        [scriptblock]$ProcessResult,
+        [int]$CustomChunkSize
+    )
+
+    $mode = Get-OperatingMode
+    if ($mode -eq "eco") { return @() }
+
+    $chunkSize = if ($CustomChunkSize) { $CustomChunkSize } else { Get-ChunkSize }
+    if ($chunkSize -le 0) { return @() }
+
+    $allResults = @()
+    $pos = 0
+    $chunkNum = 0
+    $totalChunks = [math]::Max(1, [math]::Ceiling($Text.Length / $chunkSize))
+
+    while ($pos -lt $Text.Length) {
+        $chunkNum++
+        $endPos = [math]::Min($pos + $chunkSize, $Text.Length)
+        $overlapPos = [math]::Max(0, $pos - $OVERLAP_CHARS)
+        $chunkText = $Text.Substring($overlapPos, $endPos - $overlapPos)
+
+        $prompt = if ($totalChunks -gt 1) {
+            "Part $chunkNum/$totalChunks.`n`n$chunkText"
+        } else { $chunkText }
+
+        $result = Invoke-LLM -Prompt $prompt -System $System -MaxTokens $MaxTokens -Temperature $Temperature -TimeoutSec $TimeoutSec
+        if (-not $result) { continue }
+
+        if ($ProcessResult) {
+            $parsed = & $ProcessResult $result.response
+            if ($parsed) { $allResults += $parsed }
+        } else {
+            $allResults += $result.response
+        }
+
+        $pos = $endPos
+    }
+
+    if ($totalChunks -gt 1 -and $SystemMerge -and $allResults.Count -gt 1) {
+        $merged = Invoke-LLM -Prompt ($allResults -join "`n---`n") -System $SystemMerge -MaxTokens $MaxTokens -Temperature $Temperature -TimeoutSec $TimeoutSec
+        if ($merged) { return $merged.response }
+    }
+
+    return $allResults
+}
+
+# ============================================================
+# Failure logging
+# ============================================================
 
 function Write-LLMFailure {
     param(
