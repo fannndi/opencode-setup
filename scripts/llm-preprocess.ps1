@@ -90,7 +90,7 @@ if ($allSkills.Count -gt 0) {
     if ($stackHint) { $stackWords = $stackHint -split ',\s*' }
     $stackWords += $domain, $module
 
-    foreach $word in $stackWords.Skip(0) {
+    foreach ($word in $stackWords) {
         $matches = $allSkills | Where-Object {
             $_.stack -match $word -or $_.category -match $word -or $_.purpose -match $word
         }
@@ -103,7 +103,7 @@ if ($allSkills.Count -gt 0) {
 $allFeatures = Get-FeatureIndex
 if ($allFeatures.Count -gt 0) {
     $searchTerms = @($domain, $module) + ($spec.features)
-    foreach $term in $searchTerms {
+    foreach ($term in $searchTerms) {
         $matches = $allFeatures | Where-Object {
             $_.name -match $term -or $_.category -match $term -or $_.description -match $term
         }
@@ -117,7 +117,7 @@ if ($ProjectPath) {
     try {
         $memDir = Get-MemoryDir -ProjectPath $ProjectPath
         $searchTerms = @($domain, $module) + $spec.features
-        foreach ($term in $searchTerms.Skip(0)) {
+        foreach ($term in $searchTerms) {
             if (-not $term) { continue }
             $found = Get-ChildItem -Path $memDir -Filter "*.md" -Recurse -ErrorAction SilentlyContinue |
                 Where-Object { (Get-Content $_.FullName -Raw) -match $term }
@@ -135,7 +135,7 @@ if ($ProjectPath) {
         $knowDir = "$ROOT_DIR\Project\Knowledge\$slug"
         if (Test-Path $knowDir) {
             $searchTerms = @($domain, $module) + $spec.features
-            foreach ($term in $searchTerms.Skip(0)) {
+        foreach ($term in $searchTerms) {
                 if (-not $term) { continue }
                 $found = Get-ChildItem -Path $knowDir -Filter "*.md" -Recurse -ErrorAction SilentlyContinue |
                     Where-Object { (Get-Content $_.FullName -Raw) -match $term }
