@@ -15,7 +15,6 @@ $ProgressPreference = "SilentlyContinue"
 
 $SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ROOT_DIR = Split-Path -Parent $SETUP_DIR
-$SESSION_FILE = "$ROOT_DIR\.opencode-session.json"
 $ECC_DIR = "$ROOT_DIR\ecc"
 $ROUTER_DIR = "$ROOT_DIR\9router"
 $SYNC_STATE = "$ROOT_DIR\.sync-state.json"
@@ -25,19 +24,15 @@ $PROFILE_CONFIG = "$ROOT_DIR\profiles\$Profile\opencode.jsonc"
 $API_URL = "http://localhost:20128"
 $API_PASS = "123456"
 
+# Source project-resolve
+. "$SETUP_DIR\project-resolve.ps1"
+
 # ============================================================
 # Resolve Project Path (Master Control)
 # ============================================================
 
 if (-not $ProjectPath) {
-    try {
-        if (Test-Path $SESSION_FILE) {
-            $session = Get-Content $SESSION_FILE -Raw | ConvertFrom-Json
-            if ($session.PSObject.Properties.Name -contains "current_project") {
-                $ProjectPath = $session.current_project
-            }
-        }
-    } catch {}
+    $ProjectPath = Get-ActiveProject
 }
 
 if ($ProjectPath) { Write-Host "  [SESSION] Project: $ProjectPath" -ForegroundColor Gray }
@@ -508,25 +503,48 @@ Write-Step "7/$totalSteps" "Status summary"
 # Save Session
 # ============================================================
 
-$timestamp = Get-Date -Format "yyyy-MM-ddTHH:mm:sszzz"
-$sessionData = [PSCustomObject]@{
-    version = "1.0"
-    last_profile = $Profile
-    stack = if ($session) { $session.stack } else { "" }
-    skills_loaded = if ($session) { $session.skills_loaded } else { @() }
-    rules_applied = if ($session) { $session.rules_applied } else { @() }
-    workflow_state = [PSCustomObject]@{
-        prd_analyzed = if ($session) { $session.workflow_state.prd_analyzed } else { $false }
-        ai_notes_generated = if ($session) { $session.workflow_state.ai_notes_generated } else { $false }
-        analyze_project_done = if ($session) { $session.workflow_state.analyze_project_done } else { $false }
+# ============================================================
+# Save Session (per-project)
+# ============================================================
+
+if ($ProjectPath) {
+    $slug = Get-ProjectSlug -Path $ProjectPath
+    $sessionDir = "$OPENCODE_DIR\projects\$slug"
+    Ensure-ProjectDirs -ProjectDir $sessionDir
+    $sessionFile = "$sessionDir\session.json"
+
+    # Read existing session if present
+    $oldSession = $null
+    if (Test-Path $sessionFile) {
+        try { $oldSession = Get-Content $sessionFile -Raw | ConvertFrom-Json } catch {}
     }
-    last_action = "/start-$Profile"
-    created_at = if ($session) { $session.created_at } else { $timestamp }
-    updated_at = $timestamp
+
+    $timestamp = Get-Date -Format "yyyy-MM-ddTHH:mm:sszzz"
+    $sessionData = [PSCustomObject]@{
+        version = "2.0"
+        project_path = $ProjectPath
+        project_name = $slug
+        github_url = if ($oldSession -and $oldSession.github_url) { $oldSession.github_url } else { "" }
+        last_profile = $Profile
+        stack = if ($oldSession) { $oldSession.stack } else { "" }
+        skills_loaded = if ($oldSession) { $oldSession.skills_loaded } else { @() }
+        rules_applied = if ($oldSession) { $oldSession.rules_applied } else { @() }
+        workflow_state = [PSCustomObject]@{
+            prd_analyzed = if ($oldSession) { $oldSession.workflow_state.prd_analyzed } else { $false }
+            ai_notes_generated = if ($oldSession) { $oldSession.workflow_state.ai_notes_generated } else { $false }
+            analyze_project_done = if ($oldSession) { $oldSession.workflow_state.analyze_project_done } else { $false }
+        }
+        last_action = "/start-$Profile"
+        created_at = if ($oldSession) { $oldSession.created_at } else { $timestamp }
+        updated_at = $timestamp
+    }
+    $sessionData | ConvertTo-Json -Depth 10 | Set-Content -Path $sessionFile -Encoding UTF8
+    Write-Host ""
+    Write-Host "  [SESSION] Saved to .opencode/projects/$slug/session.json" -ForegroundColor Gray
+} else {
+    Write-Host ""
+    Write-Host "  [SESSION] No project set, session not saved" -ForegroundColor Yellow
 }
-$sessionData | ConvertTo-Json -Depth 10 | Set-Content -Path $SESSION_FILE -Encoding UTF8
-Write-Host ""
-Write-Host "  [SESSION] Saved to .opencode-session.json" -ForegroundColor Gray
 
 Write-Host ""
 Write-Host "  ╔══════════════════════════════════════════════════╗" -ForegroundColor Green

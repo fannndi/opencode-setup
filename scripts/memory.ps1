@@ -1,5 +1,5 @@
-# Memory Manager — Simpan & baca memori session
-# Usage: .\memory.ps1 -Action save|read|status
+# Memory Manager — Per-project memory
+# Usage: .\memory.ps1 -Action save|read|status|add-pattern|add-error
 
 param(
     [Parameter(Mandatory=$true)]
@@ -14,7 +14,42 @@ param(
 $ErrorActionPreference = "Stop"
 $SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ROOT_DIR = Split-Path -Parent $SETUP_DIR
-$MEMORY_DIR = "$ROOT_DIR\project-memory"
+$OPENCODE_DIR = "$ROOT_DIR\.opencode"
+
+# Source project-resolve
+. "$SETUP_DIR\project-resolve.ps1"
+
+# ============================================================
+# Resolve Memory Directory
+# ============================================================
+
+function Get-CurrentMemoryDir {
+    # If ProjectPath given, use it
+    if ($ProjectPath) {
+        $normalized = $ProjectPath.TrimEnd('\', '/')
+        $slug = Get-ProjectSlug -Path $normalized
+        $md = "$OPENCODE_DIR\projects\$slug\memory"
+        if (Test-Path $md) { return $md }
+        # Create if not exists
+        $dir = "$OPENCODE_DIR\projects\$slug"
+        Ensure-ProjectDirs -ProjectDir $dir
+        return $md
+    }
+
+    # Try active project from registry
+    $active = Get-ActiveProject
+    if ($active) {
+        $slug = Get-ProjectSlug -Path $active
+        $md = "$OPENCODE_DIR\projects\$slug\memory"
+        if (Test-Path $md) { return $md }
+        $dir = "$OPENCODE_DIR\projects\$slug"
+        Ensure-ProjectDirs -ProjectDir $dir
+        return $md
+    }
+
+    # Fallback
+    return $null
+}
 
 # ============================================================
 # Save session note
@@ -22,11 +57,17 @@ $MEMORY_DIR = "$ROOT_DIR\project-memory"
 
 function Save-Session {
     param([string]$Project)
+    $memDir = Get-CurrentMemoryDir
+    if (-not $memDir) {
+        Write-Host "  No project active. Use /set-project first." -ForegroundColor Yellow
+        return
+    }
+
     $today = Get-Date -Format "yyyy-MM-dd"
     $time = Get-Date -Format "HH:mm:ss"
-    $sessionFile = "$MEMORY_DIR\sessions\$today.md"
+    $sessionFile = "$memDir\sessions\$today.md"
     $entry = "`n### $time - Project: $Project`n$Value`n"
-    
+
     if (Test-Path $sessionFile) { Add-Content -Path $sessionFile -Value $entry -Encoding UTF8 }
     else {
         $header = "# Session Log — $today`n`n$entry"
@@ -40,11 +81,18 @@ function Save-Session {
 # ============================================================
 
 function Read-Memory {
+    $memDir = Get-CurrentMemoryDir
+    if (-not $memDir) {
+        Write-Host "  No project active. Use /set-project first." -ForegroundColor Yellow
+        return
+    }
+
+    $slug = Split-Path (Split-Path $memDir -Parent) -Leaf
     Write-Host ""
-    Write-Host "  ─── Project Memory ───" -ForegroundColor Cyan
-    
+    Write-Host "  ─── Project Memory: $slug ───" -ForegroundColor Cyan
+
     # Sessions
-    $sessionFiles = Get-ChildItem "$MEMORY_DIR\sessions\*.md" -ErrorAction SilentlyContinue | Sort-Object Name -Descending | Select-Object -First 5
+    $sessionFiles = Get-ChildItem "$memDir\sessions\*.md" -ErrorAction SilentlyContinue | Sort-Object Name -Descending | Select-Object -First 5
     if ($sessionFiles) {
         Write-Host ""
         Write-Host "  Recent sessions:" -ForegroundColor Yellow
@@ -53,9 +101,9 @@ function Read-Memory {
             Write-Host "  • $($f.BaseName) — $firstLine" -ForegroundColor Gray
         }
     }
-    
+
     # Patterns
-    $patternFiles = Get-ChildItem "$MEMORY_DIR\patterns\*.md" -ErrorAction SilentlyContinue
+    $patternFiles = Get-ChildItem "$memDir\patterns\*.md" -ErrorAction SilentlyContinue
     if ($patternFiles) {
         Write-Host ""
         Write-Host "  Patterns learned:" -ForegroundColor Yellow
@@ -64,9 +112,9 @@ function Read-Memory {
             Write-Host "  • $($f.BaseName): $desc" -ForegroundColor Gray
         }
     }
-    
+
     # Errors
-    $errorFiles = Get-ChildItem "$MEMORY_DIR\errors\*.md" -ErrorAction SilentlyContinue
+    $errorFiles = Get-ChildItem "$memDir\errors\*.md" -ErrorAction SilentlyContinue
     if ($errorFiles) {
         Write-Host ""
         Write-Host "  Error history:" -ForegroundColor Yellow
@@ -75,15 +123,7 @@ function Read-Memory {
             Write-Host "  • $($f.BaseName) — $solution" -ForegroundColor Gray
         }
     }
-    
-    # Preferences
-    $prefFile = "$MEMORY_DIR\preferences\current.md"
-    if (Test-Path $prefFile) {
-        Write-Host ""
-        Write-Host "  Preferences:" -ForegroundColor Yellow
-        Get-Content $prefFile | ForEach-Object { Write-Host "  • $_" -ForegroundColor Gray }
-    }
-    
+
     Write-Host ""
 }
 
@@ -93,9 +133,14 @@ function Read-Memory {
 
 function Add-Pattern {
     param([string]$Name, [string]$Description)
+    $memDir = Get-CurrentMemoryDir
+    if (-not $memDir) {
+        Write-Host "  No project active." -ForegroundColor Yellow
+        return
+    }
     $safeName = $Name -replace '[^\w\-]', '_'
-    $file = "$MEMORY_DIR\patterns\$safeName.md"
-    @"
+    $file = "$memDir\patterns\$safeName.md"
+@"
 # $Name
 $Description
 "@ | Set-Content -Path $file -Encoding UTF8
@@ -108,8 +153,13 @@ $Description
 
 function Add-Error {
     param([string]$Name, [string]$Solution)
+    $memDir = Get-CurrentMemoryDir
+    if (-not $memDir) {
+        Write-Host "  No project active." -ForegroundColor Yellow
+        return
+    }
     $safeName = $Name -replace '[^\w\-]', '_'
-    $file = "$MEMORY_DIR\errors\$safeName.md"
+    $file = "$memDir\errors\$safeName.md"
 @"
 # $Name
 - Solution: $Solution

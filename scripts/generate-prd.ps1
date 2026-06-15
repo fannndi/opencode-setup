@@ -13,23 +13,18 @@ $ProgressPreference = "SilentlyContinue"
 
 $SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ROOT_DIR = Split-Path -Parent $SETUP_DIR
-$SESSION_FILE = "$ROOT_DIR\.opencode-session.json"
 $API_URL = "http://localhost:20128"
 $API_PASS = "123456"
+
+# Source project-resolve
+. "$SETUP_DIR\project-resolve.ps1"
 
 # ============================================================
 # Resolve project path
 # ============================================================
 
 if (-not $ProjectPath) {
-    try {
-        if (Test-Path $SESSION_FILE) {
-            $session = Get-Content $SESSION_FILE -Raw | ConvertFrom-Json
-            if ($session.PSObject.Properties.Name -contains "current_project") {
-                $ProjectPath = $session.current_project
-            }
-        }
-    } catch {}
+    $ProjectPath = Get-ActiveProject
 }
 
 if (-not $ProjectPath) {

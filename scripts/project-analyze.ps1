@@ -10,56 +10,34 @@ $ProgressPreference = "SilentlyContinue"
 
 $SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ROOT_DIR = Split-Path -Parent $SETUP_DIR
-$SESSION_FILE = "$ROOT_DIR\.opencode-session.json"
 $ECC_DIR = "$ROOT_DIR\ecc"
 $SKILL_LIST = "$ROOT_DIR\Skill\skill-list.md"
 $FEATURE_LIST = "$ROOT_DIR\Feature\list.md"
+
+# Source project-resolve
+. "$SETUP_DIR\project-resolve.ps1"
 
 # ============================================================
 # Resolve Project Path
 # ============================================================
 
-function Get-ProjectPath {
-    if ($ProjectPath) { return $ProjectPath }
-    $sessionPath = Read-SessionKey -Key "current_project"
-    if ($sessionPath) {
-        Write-Host "  [SESSION] Using project: $sessionPath" -ForegroundColor Gray
-        return $sessionPath
-    }
-    return Split-Path -Parent $ROOT_DIR
+if (-not $ProjectPath) {
+    $ProjectPath = Get-ActiveProject
 }
 
-function Read-SessionKey {
-    param([string]$Key)
-    if (-not (Test-Path $SESSION_FILE)) { return $null }
-    try {
-        $session = Get-Content $SESSION_FILE -Raw | ConvertFrom-Json
-        if ($session.PSObject.Properties.Name -contains $Key) { return $session.$Key }
-    } catch {}
-    return $null
+if (-not $ProjectPath) {
+    $ProjectPath = Split-Path -Parent $ROOT_DIR
 }
 
-function Write-SessionKey {
-    param([string]$Key, [string]$Value)
-    $hash = @{}
-    if (Test-Path $SESSION_FILE) {
-        try {
-            $existing = Get-Content $SESSION_FILE -Raw | ConvertFrom-Json
-            $existing.PSObject.Properties | ForEach-Object { $hash[$_.Name] = $_.Value }
-        } catch {}
-    }
-    if (-not $hash.ContainsKey("version")) { $hash.version = "1.0" }
-    $hash[$Key] = $Value
-    $hash | ConvertTo-Json -Depth 10 | Set-Content -Path $SESSION_FILE -Encoding UTF8
-}
-
-$PROJECT_DIR = Get-ProjectPath
+$PROJECT_DIR = $ProjectPath
 if (-not (Test-Path $PROJECT_DIR)) {
     Write-Host "  [ERROR] Path not found: $PROJECT_DIR" -ForegroundColor Red
     Write-Host "  Usage: .\project-analyze.ps1 -ProjectPath 'C:\path\to\project'" -ForegroundColor Yellow
     exit 1
 }
-Write-SessionKey -Key "current_project" -Value $PROJECT_DIR
+
+# Ensure session exists for this project
+Resolve-Project -Path $PROJECT_DIR | Out-Null
 
 $PRD_FILE = "$PROJECT_DIR\prd.md"
 $AI_NOTES = "$PROJECT_DIR\ai-notes.md"

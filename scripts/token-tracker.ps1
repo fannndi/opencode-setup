@@ -6,9 +6,11 @@ $ProgressPreference = "SilentlyContinue"
 
 $SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ROOT_DIR = Split-Path -Parent $SETUP_DIR
-$SESSION_FILE = "$ROOT_DIR\.opencode-session.json"
 $API_URL = "http://localhost:20128"
 $API_PASS = "123456"
+
+# Source project-resolve
+. "$SETUP_DIR\project-resolve.ps1"
 
 Write-Host ""
 Write-Host "  ╔══════════════════════════════════════════════════╗" -ForegroundColor Cyan
@@ -55,44 +57,57 @@ try {
 Write-Host ""
 Write-Host "  ─── Session Stats ───" -ForegroundColor Cyan
 
-if (Test-Path $SESSION_FILE) {
-    try {
-        $session = Get-Content $SESSION_FILE -Raw | ConvertFrom-Json
-        Write-Host "  Profile:     $($session.last_profile)" -ForegroundColor White
-        Write-Host "  Project:     $($session.current_project)" -ForegroundColor White
-        Write-Host "  Stack:       $($session.stack)" -ForegroundColor White
-        Write-Host "  Last action: $($session.last_action)" -ForegroundColor White
-        Write-Host "  Iteration:   $($session.iteration)" -ForegroundColor White
+$activeProject = Get-ActiveProject
+if ($activeProject) {
+    $slug = Get-ProjectSlug -Path $activeProject
+    $sessionFile = "$OPENCODE_DIR\projects\$slug\session.json"
+    if (Test-Path $sessionFile) {
+        try {
+            $session = Get-Content $sessionFile -Raw | ConvertFrom-Json
+            Write-Host "  Profile:     $($session.last_profile)" -ForegroundColor White
+            Write-Host "  Project:     $($session.project_name)" -ForegroundColor White
+            Write-Host "  Path:        $($session.project_path)" -ForegroundColor White
+            Write-Host "  Stack:       $($session.stack)" -ForegroundColor White
+            Write-Host "  Last action: $($session.last_action)" -ForegroundColor White
 
-        # Token tracking from session
-        if ($session.PSObject.Properties.Name -contains "total_tokens" -and $session.total_tokens -gt 0) {
-            $totalTokens = $session.total_tokens
-            $totalCalls = $session.total_calls
+            if ($session.PSObject.Properties.Name -contains "total_tokens" -and $session.total_tokens -gt 0) {
+                $totalTokens = $session.total_tokens
+                $totalCalls = $session.total_calls
+            }
+        } catch {
+            Write-Host "  No session data" -ForegroundColor Gray
         }
-
-        Write-Host ""
-        Write-Host "  ─── Estimated Usage ───" -ForegroundColor Cyan
-        Write-Host "  Total tokens: $totalTokens" -ForegroundColor White
-        Write-Host "  API calls:    $totalCalls" -ForegroundColor White
-
-        # Estimate cost (free = $0)
-        if ($session.last_profile -eq "gratis") {
-            Write-Host "  Cost:        FREE" -ForegroundColor Green
-        } else {
-            $estCost = [math]::Round(($totalTokens / 1000000) * 5, 2)
-            Write-Host "  Est. cost:   `$$estCost (Go rate)" -ForegroundColor Yellow
-        }
-
-        # Context warning
-        if ($totalTokens -gt 100000) {
-            Write-Host ""
-            Write-Host "  ⚠️  High token usage ($totalTokens). Consider /compact" -ForegroundColor Yellow
-        }
-    } catch {
+    } else {
         Write-Host "  No session data" -ForegroundColor Gray
     }
 } else {
-    Write-Host "  No session data" -ForegroundColor Gray
+    Write-Host "  No active project" -ForegroundColor Yellow
+}
+
+Write-Host ""
+Write-Host "  ─── Estimated Usage ───" -ForegroundColor Cyan
+Write-Host "  Total tokens: $totalTokens" -ForegroundColor White
+Write-Host "  API calls:    $totalCalls" -ForegroundColor White
+
+if ($activeProject) {
+    $slug = Get-ProjectSlug -Path $activeProject
+    $sessionFile = "$OPENCODE_DIR\projects\$slug\session.json"
+    if (Test-Path $sessionFile) {
+        try {
+            $session = Get-Content $sessionFile -Raw | ConvertFrom-Json
+            if ($session.last_profile -eq "gratis") {
+                Write-Host "  Cost:        FREE" -ForegroundColor Green
+            } else {
+                $estCost = [math]::Round(($totalTokens / 1000000) * 5, 2)
+                Write-Host "  Est. cost:   `$$estCost (Go rate)" -ForegroundColor Yellow
+            }
+        } catch {}
+    }
+}
+
+if ($totalTokens -gt 100000) {
+    Write-Host ""
+    Write-Host "  ⚠️  High token usage ($totalTokens). Consider /compact" -ForegroundColor Yellow
 }
 
 Write-Host ""

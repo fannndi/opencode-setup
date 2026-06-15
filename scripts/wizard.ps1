@@ -6,7 +6,9 @@ $ProgressPreference = "SilentlyContinue"
 
 $SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ROOT_DIR = Split-Path -Parent $SETUP_DIR
-$SESSION_FILE = "$ROOT_DIR\.opencode-session.json"
+
+# Source project-resolve
+. "$SETUP_DIR\project-resolve.ps1"
 
 function Write-Header {
     param([string]$Title)
@@ -89,8 +91,8 @@ if ($mode -eq "1") {
 
 # Save to session
 try {
-    $session = @{ current_project = $projectPath }
-    $session | ConvertTo-Json -Depth 5 | Set-Content -Path $SESSION_FILE -Encoding UTF8
+    Resolve-Project -Path $projectPath | Out-Null
+    Set-ActiveProject -Path $projectPath
 } catch {}
 
 Wait-Key

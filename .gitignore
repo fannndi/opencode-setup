@@ -8,13 +8,13 @@ ecc/
 # API keys (sensitive)
 api-key.txt
 
-# Session state (private, user-specific)
+# Per-project sessions & memory (user-specific)
+.opencode/
+
+# Old flat session (deprecated, kept for migration)
 .opencode-session.json
 .iteration.json
 ai-notes.md
-
-# Project memory (user-specific)
-project-memory/
 
 # Config backups
 *.bak.*
@@ -22,5 +22,3 @@ project-memory/
 # OS
 .DS_Store
 Thumbs.db
-
-# .sync-state.json is NOT ignored (committed for zip backup)

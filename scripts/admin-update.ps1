@@ -12,9 +12,11 @@ $SYNC_STATE = "$ROOT_DIR\.sync-state.json"
 $ADMIN_LOG = "$ROOT_DIR\log-admin.md"
 $CHANGELOG_ECC = "$ROOT_DIR\changelog-ecc.md"
 $CHANGELOG_9R = "$ROOT_DIR\changelog-9router.md"
-$SESSION_FILE = "$ROOT_DIR\.opencode-session.json"
 $API_URL = "http://localhost:20128"
 $API_PASS = "123456"
+
+# Source project-resolve
+. "$SETUP_DIR\project-resolve.ps1"
 
 # ============================================================
 # Helpers
@@ -238,9 +240,10 @@ try {
     Write-Fail "Combos: Unable to verify"
 }
 
-# Check session file
-if (Test-Path $SESSION_FILE) {
-    Write-OK "Session: Active"
+# Check session
+$activeProject = Get-ActiveProject
+if ($activeProject) {
+    Write-OK "Session: Active ($activeProject)"
 } else {
     Write-Info "Session: None"
 }
