@@ -8,10 +8,11 @@ ecc/
 # API keys (sensitive)
 api-key.txt
 
-# Per-project sessions & memory (user-specific)
-.opencode/
+# Per-project data: cloned source, sessions, memory
+Project/
 
-# Old flat session (deprecated, kept for migration)
+# Old session/memory (deprecated)
+.opencode/
 .opencode-session.json
 .iteration.json
 ai-notes.md

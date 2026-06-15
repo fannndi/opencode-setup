@@ -59,8 +59,7 @@ Write-Host "  ─── Session Stats ───" -ForegroundColor Cyan
 
 $activeProject = Get-ActiveProject
 if ($activeProject) {
-    $slug = Get-ProjectSlug -Path $activeProject
-    $sessionFile = "$OPENCODE_DIR\projects\$slug\session.json"
+    $sessionFile = Get-SessionFile -ProjectPath $activeProject
     if (Test-Path $sessionFile) {
         try {
             $session = Get-Content $sessionFile -Raw | ConvertFrom-Json
@@ -90,8 +89,7 @@ Write-Host "  Total tokens: $totalTokens" -ForegroundColor White
 Write-Host "  API calls:    $totalCalls" -ForegroundColor White
 
 if ($activeProject) {
-    $slug = Get-ProjectSlug -Path $activeProject
-    $sessionFile = "$OPENCODE_DIR\projects\$slug\session.json"
+    $sessionFile = Get-SessionFile -ProjectPath $activeProject
     if (Test-Path $sessionFile) {
         try {
             $session = Get-Content $sessionFile -Raw | ConvertFrom-Json

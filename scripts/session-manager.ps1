@@ -14,8 +14,8 @@ param(
 $ErrorActionPreference = "Stop"
 $SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ROOT_DIR = Split-Path -Parent $SETUP_DIR
-$OPENCODE_DIR = "$ROOT_DIR\.opencode"
-$REGISTRY_FILE = "$OPENCODE_DIR\registry.json"
+$PROJECT_ROOT = "$ROOT_DIR\Project"
+$REGISTRY_FILE = "$PROJECT_ROOT\registry.json"
 
 # Source project-resolve
 . "$SETUP_DIR\project-resolve.ps1"
@@ -25,27 +25,17 @@ $REGISTRY_FILE = "$OPENCODE_DIR\registry.json"
 # ============================================================
 
 function Get-CurrentSessionFile {
-    # If ProjectPath given, use it
     if ($ProjectPath) {
         $normalized = $ProjectPath.TrimEnd('\', '/')
-        $slug = Get-ProjectSlug -Path $normalized
-        $sf = "$OPENCODE_DIR\projects\$slug\session.json"
+        $sf = Get-SessionFile -ProjectPath $normalized
         if (Test-Path $sf) { return $sf }
         return $null
     }
 
-    # Try active project from registry
     $active = Get-ActiveProject
     if ($active) {
-        $slug = Get-ProjectSlug -Path $active
-        $sf = "$OPENCODE_DIR\projects\$slug\session.json"
+        $sf = Get-SessionFile -ProjectPath $active
         if (Test-Path $sf) { return $sf }
-    }
-
-    # Fallback: old flat file (migration)
-    $oldFile = "$ROOT_DIR\.opencode-session.json"
-    if (Test-Path $oldFile) {
-        return $oldFile
     }
 
     return $null
@@ -61,10 +51,8 @@ function Read-Session {
         Write-Host "  No session found. Use /set-project first." -ForegroundColor Yellow
         return $null
     }
-
     try {
-        $session = Get-Content $sf -Raw | ConvertFrom-Json
-        return $session
+        return Get-Content $sf -Raw | ConvertFrom-Json
     } catch {
         Write-Host "  Session file corrupt." -ForegroundColor Yellow
         return $null
@@ -76,26 +64,16 @@ function Read-Session {
 # ============================================================
 
 function Write-Session {
-    param(
-        [string]$Key,
-        [string]$Value
-    )
+    param([string]$Key, [string]$Value)
 
-    $sf = Get-CurrentSessionFile
-    $timestamp = Get-Date -Format "yyyy-MM-ddTHH:mm:sszzz"
-
-    if (-not $sf) {
-        # No session exists — create if we have a project
-        $active = Get-ActiveProject
-        if (-not $active) {
-            Write-Host "  No active project. Use /set-project first." -ForegroundColor Yellow
-            return
-        }
-        $slug = Get-ProjectSlug -Path $active
-        $sf = "$OPENCODE_DIR\projects\$slug\session.json"
-        $projectDir = "$OPENCODE_DIR\projects\$slug"
-        Ensure-ProjectDirs -ProjectDir $projectDir
+    $active = Get-ActiveProject
+    if (-not $active) {
+        Write-Host "  No active project. Use /set-project first." -ForegroundColor Yellow
+        return
     }
+
+    $sf = Get-SessionFile -ProjectPath $active
+    $timestamp = Get-Date -Format "yyyy-MM-ddTHH:mm:sszzz"
 
     $session = $null
     if (Test-Path $sf) {
@@ -103,11 +81,10 @@ function Write-Session {
     }
 
     if ($null -eq $session) {
-        $active = Get-ActiveProject
-        $slug = if ($active) { Get-ProjectSlug -Path $active } else { "unknown" }
+        $slug = Get-ProjectSlug -Path $active
         $session = [PSCustomObject]@{
             version = "2.0"
-            project_path = if ($active) { $active } else { "" }
+            project_path = $active
             project_name = $slug
             github_url = ""
             last_profile = ""
@@ -125,7 +102,6 @@ function Write-Session {
         }
     }
 
-    # Update the specific key
     switch ($Key) {
         "profile" { $session.last_profile = $Value }
         "stack" { $session.stack = $Value }
@@ -151,7 +127,7 @@ function Reset-Session {
     $sf = Get-CurrentSessionFile
     if ($sf -and (Test-Path $sf)) {
         Remove-Item $sf -Force
-        Write-Host "  Session reset. Starting fresh." -ForegroundColor Yellow
+        Write-Host "  Session reset." -ForegroundColor Yellow
     } else {
         Write-Host "  No session to reset." -ForegroundColor Gray
     }
@@ -163,7 +139,6 @@ function Reset-Session {
 
 function Show-Status {
     $session = Read-Session
-
     if ($null -eq $session) {
         Write-Host "  Status: No session (fresh start)" -ForegroundColor Yellow
         return
@@ -197,12 +172,10 @@ function Show-Status {
 switch ($Action) {
     "read" {
         $session = Read-Session
-        if ($null -ne $session) {
-            $session | ConvertTo-Json -Depth 10
-        }
+        if ($null -ne $session) { $session | ConvertTo-Json -Depth 10 }
     }
     "write" {
-        if (-not $Key) { Write-Host "Error: -Key required for write" -ForegroundColor Red; exit 1 }
+        if (-not $Key) { Write-Host "Error: -Key required" -ForegroundColor Red; exit 1 }
         Write-Session -Key $Key -Value $Value
     }
     "reset" { Reset-Session }

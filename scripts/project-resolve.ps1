@@ -1,17 +1,18 @@
 # Project Resolve — Per-project session & memory management
 # Usage: Source this file in other scripts, or run directly for testing
 #
-# Functions:
-#   Get-Registry              — Read registry.json
-#   Set-Registry              — Write registry.json
-#   Resolve-Project           — Path → project dir (create if needed)
-#   Get-ActiveProject         — Get current active project path
-#   Set-ActiveProject         — Set active project
-#   List-Projects             — List all projects
-#   Get-SessionFile           — Get session.json path for project
-#   Get-MemoryDir             — Get memory/ dir for project
-#   Clone-Project             — Clone GitHub repo to path
-#   Ensure-ProjectDirs        — Create session + memory dirs
+# New directory structure:
+#   Project/
+#     <slug>/                ← cloned source code
+#     Session/
+#       <slug>/
+#         session.json
+#     Memory/
+#       <slug>/
+#         sessions/
+#         patterns/
+#         errors/
+#     registry.json
 #
 # Direct execution:
 #   .\project-resolve.ps1 resolve "C:\path" "https://github.com/user/repo"
@@ -20,10 +21,11 @@
 #   .\project-resolve.ps1 switch "C:\path"
 
 $ErrorActionPreference = "Stop"
+
 $SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ROOT_DIR = Split-Path -Parent $SETUP_DIR
-$OPENCODE_DIR = "$ROOT_DIR\.opencode"
-$REGISTRY_FILE = "$OPENCODE_DIR\registry.json"
+$PROJECT_ROOT = "$ROOT_DIR\Project"
+$REGISTRY_FILE = "$PROJECT_ROOT\registry.json"
 
 # ============================================================
 # Registry CRUD
@@ -39,11 +41,9 @@ function Get-Registry {
     }
     try {
         $raw = Get-Content $REGISTRY_FILE -Raw | ConvertFrom-Json
-        # Ensure projects is PSCustomObject (not corrupted)
         if ($raw.projects -is [PSCustomObject]) {
             return $raw
         }
-        # Rebuild if corrupted
         $clean = [PSCustomObject]@{
             version = "1.0"
             active_project = $raw.active_project
@@ -62,9 +62,8 @@ function Get-Registry {
 
 function Set-Registry {
     param([PSCustomObject]$Registry)
-    New-Item -ItemType Directory -Path $OPENCODE_DIR -Force | Out-Null
+    New-Item -ItemType Directory -Path $PROJECT_ROOT -Force | Out-Null
 
-    # Clean up projects — convert to PSCustomObject to avoid PowerShell internal properties
     $cleanProjects = [PSCustomObject]@{}
     if ($Registry.projects.PSObject.Properties) {
         foreach ($prop in $Registry.projects.PSObject.Properties) {
@@ -88,13 +87,14 @@ function Get-ProjectSlug {
 }
 
 function Ensure-ProjectDirs {
-    param([string]$ProjectDir)
+    param([string]$Slug)
     $dirs = @(
-        "$ProjectDir",
-        "$ProjectDir\memory",
-        "$ProjectDir\memory\sessions",
-        "$ProjectDir\memory\patterns",
-        "$ProjectDir\memory\errors"
+        "$PROJECT_ROOT\$Slug",
+        "$PROJECT_ROOT\Session\$Slug",
+        "$PROJECT_ROOT\Memory\$Slug",
+        "$PROJECT_ROOT\Memory\$Slug\sessions",
+        "$PROJECT_ROOT\Memory\$Slug\patterns",
+        "$PROJECT_ROOT\Memory\$Slug\errors"
     )
     foreach ($d in $dirs) {
         New-Item -ItemType Directory -Path $d -Force | Out-Null
@@ -104,13 +104,13 @@ function Ensure-ProjectDirs {
 function Get-SessionFile {
     param([string]$ProjectPath)
     $slug = Get-ProjectSlug -Path $ProjectPath
-    return "$OPENCODE_DIR\projects\$slug\session.json"
+    return "$PROJECT_ROOT\Session\$slug\session.json"
 }
 
 function Get-MemoryDir {
     param([string]$ProjectPath)
     $slug = Get-ProjectSlug -Path $ProjectPath
-    return "$OPENCODE_DIR\projects\$slug\memory"
+    return "$PROJECT_ROOT\Memory\$slug"
 }
 
 # ============================================================
@@ -125,27 +125,23 @@ function Resolve-Project {
 
     $normalized = $Path.TrimEnd('\', '/')
     $slug = Get-ProjectSlug -Path $normalized
-    $projectDir = "$OPENCODE_DIR\projects\$slug"
-    $sessionFile = "$projectDir\session.json"
 
-    # Ensure dirs exist
-    Ensure-ProjectDirs -ProjectDir $projectDir
+    # Ensure all dirs exist
+    Ensure-ProjectDirs -Slug $slug
 
     # Check registry
     $registry = Get-Registry
     $exists = $registry.projects.PSObject.Properties.Name -contains $normalized
 
     if ($exists) {
-        # Update last_seen
         $registry.projects.$normalized.last_seen = Get-Date -Format "yyyy-MM-ddTHH:mm:sszzz"
         if ($GitHubUrl) { $registry.projects.$normalized.github_url = $GitHubUrl }
         Set-Registry -Registry $registry
         Write-Host "  [PROJECT] Loaded existing: $slug" -ForegroundColor Green
     } else {
-        # Register new project
         $timestamp = Get-Date -Format "yyyy-MM-ddTHH:mm:sszzz"
         $newProject = [PSCustomObject]@{
-            dir = $slug
+            slug = $slug
             github_url = if ($GitHubUrl) { $GitHubUrl } else { "" }
             stack = ""
             profile = ""
@@ -153,7 +149,6 @@ function Resolve-Project {
             last_seen = $timestamp
         }
 
-        # Add to registry (use PSCustomObject to avoid PowerShell internal properties)
         $newProjects = [PSCustomObject]@{}
         foreach ($prop in $registry.projects.PSObject.Properties) {
             $newProjects | Add-Member -NotePropertyName $prop.Name -NotePropertyValue $prop.Value -Force
@@ -167,6 +162,7 @@ function Resolve-Project {
     }
 
     # Create session.json if not exists
+    $sessionFile = Get-SessionFile -ProjectPath $normalized
     if (-not (Test-Path $sessionFile)) {
         $timestamp = Get-Date -Format "yyyy-MM-ddTHH:mm:sszzz"
         $session = [PSCustomObject]@{
@@ -188,7 +184,7 @@ function Resolve-Project {
             updated_at = $timestamp
         }
         $session | ConvertTo-Json -Depth 10 | Set-Content -Path $sessionFile -Encoding UTF8
-        Write-Host "  [SESSION] Created: $slug/session.json" -ForegroundColor Gray
+        Write-Host "  [SESSION] Created: Session/$slug/session.json" -ForegroundColor Gray
     }
 
     return $normalized
@@ -204,19 +200,18 @@ function Clone-Project {
         [string]$Destination
     )
 
+    if (Test-Path "$Destination\.git") {
+        Write-Host "  [CLONE] Already cloned, pulling latest..." -ForegroundColor Gray
+        git -C $Destination pull --quiet 2>$null
+        return $true
+    }
+
     if (Test-Path $Destination) {
-        Write-Host "  [CLONE] Path already exists: $Destination" -ForegroundColor Yellow
-        # Check if it's a git repo
-        if (Test-Path "$Destination\.git") {
-            Write-Host "  [CLONE] Git repo detected, pulling latest..." -ForegroundColor Gray
-            git -C $Destination pull --quiet 2>$null
-            return $true
-        }
-        Write-Host "  [CLONE] Not a git repo" -ForegroundColor Yellow
+        Write-Host "  [CLONE] Path exists but not a git repo" -ForegroundColor Yellow
         return $false
     }
 
-    Write-Host "  [CLONE] Cloning $Url → $Destination" -ForegroundColor Cyan
+    Write-Host "  [CLONE] Cloning $Url" -ForegroundColor Cyan
     $parentDir = Split-Path $Destination -Parent
     New-Item -ItemType Directory -Path $parentDir -Force | Out-Null
 
@@ -280,7 +275,7 @@ function List-Projects {
         $marker = if ($isActive) { " * " } else { "   " }
         $color = if ($isActive) { "Green" } else { "White" }
 
-        Write-Host "  $marker$($info.dir)" -ForegroundColor $color
+        Write-Host "  $marker$($info.slug)" -ForegroundColor $color
         Write-Host "      Path:   $path" -ForegroundColor Gray
         if ($info.github_url) {
             Write-Host "      GitHub: $($info.github_url)" -ForegroundColor Gray
@@ -325,9 +320,8 @@ if ($MyInvocation.InvocationName -ne '.') {
         "ensure" {
             if (-not $projectPathArg) { Write-Host "Error: project path required" -ForegroundColor Red; exit 1 }
             $slug = Get-ProjectSlug -Path $projectPathArg
-            $dir = "$OPENCODE_DIR\projects\$slug"
-            Ensure-ProjectDirs -ProjectDir $dir
-            Write-Host "  Ensured: $dir" -ForegroundColor Green
+            Ensure-ProjectDirs -Slug $slug
+            Write-Host "  Ensured: $slug" -ForegroundColor Green
         }
         default {
             Write-Host "Usage: .\project-resolve.ps1 <action> [projectPath] [githubUrl]" -ForegroundColor Yellow

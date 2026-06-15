@@ -14,7 +14,7 @@ param(
 $ErrorActionPreference = "Stop"
 $SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ROOT_DIR = Split-Path -Parent $SETUP_DIR
-$OPENCODE_DIR = "$ROOT_DIR\.opencode"
+$PROJECT_ROOT = "$ROOT_DIR\Project"
 
 # Source project-resolve
 . "$SETUP_DIR\project-resolve.ps1"
@@ -24,30 +24,24 @@ $OPENCODE_DIR = "$ROOT_DIR\.opencode"
 # ============================================================
 
 function Get-CurrentMemoryDir {
-    # If ProjectPath given, use it
     if ($ProjectPath) {
         $normalized = $ProjectPath.TrimEnd('\', '/')
-        $slug = Get-ProjectSlug -Path $normalized
-        $md = "$OPENCODE_DIR\projects\$slug\memory"
+        $md = Get-MemoryDir -ProjectPath $normalized
         if (Test-Path $md) { return $md }
-        # Create if not exists
-        $dir = "$OPENCODE_DIR\projects\$slug"
-        Ensure-ProjectDirs -ProjectDir $dir
+        $slug = Get-ProjectSlug -Path $normalized
+        Ensure-ProjectDirs -Slug $slug
         return $md
     }
 
-    # Try active project from registry
     $active = Get-ActiveProject
     if ($active) {
-        $slug = Get-ProjectSlug -Path $active
-        $md = "$OPENCODE_DIR\projects\$slug\memory"
+        $md = Get-MemoryDir -ProjectPath $active
         if (Test-Path $md) { return $md }
-        $dir = "$OPENCODE_DIR\projects\$slug"
-        Ensure-ProjectDirs -ProjectDir $dir
+        $slug = Get-ProjectSlug -Path $active
+        Ensure-ProjectDirs -Slug $slug
         return $md
     }
 
-    # Fallback
     return $null
 }
 
@@ -73,7 +67,7 @@ function Save-Session {
         $header = "# Session Log — $today`n`n$entry"
         Set-Content -Path $sessionFile -Value $header -Encoding UTF8
     }
-    Write-Host "  [MEMORY] Saved to sessions/$today.md" -ForegroundColor Green
+    Write-Host "  [MEMORY] Saved to Memory/$((Split-Path $memDir -Leaf))/sessions/$today.md" -ForegroundColor Green
 }
 
 # ============================================================
@@ -87,11 +81,10 @@ function Read-Memory {
         return
     }
 
-    $slug = Split-Path (Split-Path $memDir -Parent) -Leaf
+    $slug = Split-Path $memDir -Leaf
     Write-Host ""
     Write-Host "  ─── Project Memory: $slug ───" -ForegroundColor Cyan
 
-    # Sessions
     $sessionFiles = Get-ChildItem "$memDir\sessions\*.md" -ErrorAction SilentlyContinue | Sort-Object Name -Descending | Select-Object -First 5
     if ($sessionFiles) {
         Write-Host ""
@@ -102,7 +95,6 @@ function Read-Memory {
         }
     }
 
-    # Patterns
     $patternFiles = Get-ChildItem "$memDir\patterns\*.md" -ErrorAction SilentlyContinue
     if ($patternFiles) {
         Write-Host ""
@@ -113,7 +105,6 @@ function Read-Memory {
         }
     }
 
-    # Errors
     $errorFiles = Get-ChildItem "$memDir\errors\*.md" -ErrorAction SilentlyContinue
     if ($errorFiles) {
         Write-Host ""
@@ -134,10 +125,7 @@ function Read-Memory {
 function Add-Pattern {
     param([string]$Name, [string]$Description)
     $memDir = Get-CurrentMemoryDir
-    if (-not $memDir) {
-        Write-Host "  No project active." -ForegroundColor Yellow
-        return
-    }
+    if (-not $memDir) { Write-Host "  No project active." -ForegroundColor Yellow; return }
     $safeName = $Name -replace '[^\w\-]', '_'
     $file = "$memDir\patterns\$safeName.md"
 @"
@@ -154,10 +142,7 @@ $Description
 function Add-Error {
     param([string]$Name, [string]$Solution)
     $memDir = Get-CurrentMemoryDir
-    if (-not $memDir) {
-        Write-Host "  No project active." -ForegroundColor Yellow
-        return
-    }
+    if (-not $memDir) { Write-Host "  No project active." -ForegroundColor Yellow; return }
     $safeName = $Name -replace '[^\w\-]', '_'
     $file = "$memDir\errors\$safeName.md"
 @"
@@ -175,16 +160,17 @@ function Add-Error {
 switch ($Action) {
     "save" {
         if (-not $Value) { Write-Host "[ERROR] -Value required" -ForegroundColor Red; exit 1 }
-        Save-Session -Project $(if ($ProjectPath) { Split-Path $ProjectPath -Leaf } else { "general" })
+        $projName = if ($ProjectPath) { Split-Path $ProjectPath -Leaf } else { "general" }
+        Save-Session -Project $projName
     }
     "read" { Read-Memory }
     "status" { Read-Memory }
     "add-pattern" {
-        if (-not $Key -or -not $Value) { Write-Host "[ERROR] -Key (pattern name) and -Value (description) required" -ForegroundColor Red; exit 1 }
+        if (-not $Key -or -not $Value) { Write-Host "[ERROR] -Key and -Value required" -ForegroundColor Red; exit 1 }
         Add-Pattern -Name $Key -Description $Value
     }
     "add-error" {
-        if (-not $Key -or -not $Value) { Write-Host "[ERROR] -Key (error name) and -Value (solution) required" -ForegroundColor Red; exit 1 }
+        if (-not $Key -or -not $Value) { Write-Host "[ERROR] -Key and -Value required" -ForegroundColor Red; exit 1 }
         Add-Error -Name $Key -Solution $Value
     }
 }

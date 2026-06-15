@@ -15,6 +15,7 @@ $ProgressPreference = "SilentlyContinue"
 
 $SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ROOT_DIR = Split-Path -Parent $SETUP_DIR
+$PROJECT_ROOT = "$ROOT_DIR\Project"
 $ECC_DIR = "$ROOT_DIR\ecc"
 $ROUTER_DIR = "$ROOT_DIR\9router"
 $SYNC_STATE = "$ROOT_DIR\.sync-state.json"
@@ -84,12 +85,16 @@ Write-Host ""
 # ============================================================
 
 $session = $null
-if (Test-Path $SESSION_FILE) {
-    try {
-        $session = Get-Content $SESSION_FILE -Raw | ConvertFrom-Json
-        Write-Host "  [SESSION] Loaded previous session ($($session.last_action))" -ForegroundColor Gray
-    } catch {
-        Write-Host "  [SESSION] Corrupt, starting fresh" -ForegroundColor Yellow
+$activeProject = Get-ActiveProject
+if ($activeProject) {
+    $sf = Get-SessionFile -ProjectPath $activeProject
+    if (Test-Path $sf) {
+        try {
+            $session = Get-Content $sf -Raw | ConvertFrom-Json
+            Write-Host "  [SESSION] Loaded previous session ($($session.last_action))" -ForegroundColor Gray
+        } catch {
+            Write-Host "  [SESSION] Corrupt, starting fresh" -ForegroundColor Yellow
+        }
     }
 }
 
@@ -149,15 +154,9 @@ if (-not $pluginBuilt) {
 }
 
 # Check session
-if (Test-Path $SESSION_FILE) {
-    try {
-        $null = Get-Content $SESSION_FILE -Raw | ConvertFrom-Json
-        Write-Host "  [HEAL] Session: OK" -ForegroundColor Green
-    } catch {
-        Write-Host "  [HEAL] Session corrupt. Resetting..." -ForegroundColor Yellow
-        Remove-Item $SESSION_FILE -Force -ErrorAction SilentlyContinue
-        Write-Host "  [HEAL] Session reset" -ForegroundColor Green
-    }
+$activeProj = Get-ActiveProject
+if ($activeProj) {
+    Write-Host "  [HEAL] Session: $activeProj" -ForegroundColor Green
 } else {
     Write-Host "  [HEAL] Session: none (fresh start)" -ForegroundColor Gray
 }
@@ -509,9 +508,8 @@ Write-Step "7/$totalSteps" "Status summary"
 
 if ($ProjectPath) {
     $slug = Get-ProjectSlug -Path $ProjectPath
-    $sessionDir = "$OPENCODE_DIR\projects\$slug"
-    Ensure-ProjectDirs -ProjectDir $sessionDir
-    $sessionFile = "$sessionDir\session.json"
+    $sessionFile = "$PROJECT_ROOT\Session\$slug\session.json"
+    Ensure-ProjectDirs -Slug $slug
 
     # Read existing session if present
     $oldSession = $null
@@ -540,7 +538,7 @@ if ($ProjectPath) {
     }
     $sessionData | ConvertTo-Json -Depth 10 | Set-Content -Path $sessionFile -Encoding UTF8
     Write-Host ""
-    Write-Host "  [SESSION] Saved to .opencode/projects/$slug/session.json" -ForegroundColor Gray
+    Write-Host "  [SESSION] Saved to Project/Session/$slug/session.json" -ForegroundColor Gray
 } else {
     Write-Host ""
     Write-Host "  [SESSION] No project set, session not saved" -ForegroundColor Yellow
