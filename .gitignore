@@ -16,7 +16,6 @@ Project/
 
 # Old session files (deprecated)
 .opencode-session.json
-ai-notes.md
 
 # Config backups
 *.bak.*

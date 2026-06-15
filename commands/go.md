@@ -1,31 +1,44 @@
 ---
-description: Universal — preprocess input, then execute with enriched context
+description: Universal combo — goal-based, AI decompose, preprocess + execute + learn
 ---
 
-# Go
+# Go — Universal Combo
 
-Universal development command: input → preprocess → enriched context → execute.
+Satu command untuk semua workflow. Goal-based, bukan step-based.
 
-## Flow
+## Cara Kerja
 
-```powershell
-.\scripts\llm-preprocess.ps1 -Query "$ARGUMENTS"
-```
+1. **Preprocess** — jalankan `llm-preprocess.ps1` (intent → skill index 270 → feature index 600+ → memory → knowledge)
+2. **AI Decompose** — AI tentukan langkah yang relevan untuk goal ini
+3. **Execute** — jalankan step dengan auto-recovery (error = skip → retry → log)
+4. **Learn** — simpan hasil ke memory + knowledge via `knowledge-miner.ps1`
 
-Preprocessor akan:
-1. Detect stack project (file scanning)
-2. Match skill index (270 skills) → recommend relevant
-3. Match feature index (600+ features) → suggest reuse
-4. Search memory (related sessions)
-5. Search knowledge (patterns)
-6. Intent compile → structured spec
-7. Skill route → 5-10 relevant skills
+## Contoh
 
-Output enriched context siap pakai.
+| Perintah | Yang Dilakukan |
+|----------|----------------|
+| `/go morning routine` | Update system, start 9Router, health check, token stats |
+| `/go review project` | Code review + security scan + verify + learn |
+| `/go fix bug: [desc]` | Build-fix + quality-gate + error log ke knowledge |
+| `/go deploy v1.2` | Verify + quality-gate + update-docs + commit |
+| `/go setup project` | Start-free + set-project + code-analyze + learn |
 
-## Eco Mode (LLM OFF)
+## Constraints (otomatis)
 
-Tanpa LLM tetap kerja — pake regex fallback.
+| Constraint | Sumber |
+|------------|--------|
+| Profile | session → last_profile |
+| Project | registry → active_project |
+| Mode | llm-mode.json (eco/balanced/performance) |
+| Last action | session → last_action |
+
+## Integrasi
+
+- **Skill index** — 270 skills dari `Skill/skill-list.md`
+- **Feature index** — 600+ features dari `Feature/list.md`
+- **Memory** — session logs per project (`Project/Memory/`)
+- **Knowledge** — patterns per project (`Project/Knowledge/`)
+- **Error recovery** — built-in, gak perlu manual
 
 ## Task
 

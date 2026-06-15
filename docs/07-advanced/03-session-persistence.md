@@ -42,7 +42,7 @@ Jadi kalau restart, tidak perlu ulang dari awal.
 /project-analyze
     ├── Baca prd.md
     ├── Baca session file → tau stack sebelumnya
-    ├── Generate ai-notes.md
+
     └── Update session: prd_analyzed = true
 
 /analyze-project
@@ -67,3 +67,4 @@ Remove-Item .opencode-session.json
 
 - [Daily Workflow](../04-usage/03-daily-workflow.md)
 - [Analyze Project](../04-usage/04-analyze-project.md)
+

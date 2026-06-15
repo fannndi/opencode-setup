@@ -13,8 +13,8 @@
 | `full-start.ps1` | Win | Start → code-analyze → ready |
 | `admin-update.ps1` | Win | Update ECC/9Router + doctor |
 | `analyze-project.ps1` / `.sh` | Both | Deteksi stack + load skills |
-| `code-analyze.ps1` / `.sh` | Both | Scan source → ai-notes.md |
-| `project-analyze.ps1` / `.sh` | Both | Analisa PRD → ai-notes.md |
+
+
 | `project-skills.ps1` | Win | Lihat skills yang cocok |
 | `research.ps1` / `.sh` | Both | Web search + AI ringkasan |
 | `generate-prd.ps1` | Win | Ide → PRD otomatis |
@@ -114,7 +114,7 @@ Deteksi stack project.
 
 ## code-analyze.ps1 / code-analyze.sh
 
-Scan source code → ai-notes.md.
+
 
 ```powershell
 .\scripts\code-analyze.ps1 -ProjectPath "C:\project"
@@ -140,3 +140,4 @@ Panduan interaktif untuk pemula. Tanya-jawab, auto setup.
 
 - [Commands](01-commands.md) — Referensi commands
 - [Daily Workflow](03-daily-workflow.md) — Rutinitas harian
+

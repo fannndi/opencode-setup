@@ -1,4 +1,4 @@
-# Code Analyze — Scan existing source code → ai-notes.md
+
 # Usage: .\code-analyze.ps1 [-ProjectPath "C:\path\to\project"]
 
 param(
@@ -38,7 +38,7 @@ if (-not (Test-Path $PROJECT_DIR)) {
 # Ensure session exists for this project
 Resolve-Project -Path $PROJECT_DIR | Out-Null
 
-$AI_NOTES = "$PROJECT_DIR\ai-notes.md"
+
 
 # Ignore folders
 $ignoreDirs = @(
@@ -93,7 +93,7 @@ function Get-FilesRecursive {
 
 Write-Host ""
 Write-Host "  ╔══════════════════════════════════════════════════╗" -ForegroundColor Magenta
-Write-Host "  ║         Code Analyze — Source → ai-notes.md      ║" -ForegroundColor Magenta
+
 Write-Host "  ╚══════════════════════════════════════════════════╝" -ForegroundColor Magenta
 Write-Host ""
 
@@ -436,8 +436,8 @@ foreach ($depName in $deps.Keys) {
 
 Write-OK "Matched $($matchedSkills.Count) skills ($($coreSkills.Count) core + $($matchedSkills.Count - $coreSkills.Count) project-specific)"
 
-# Build ai-notes.md content
-Write-Step "5/$totalSteps" "Generating ai-notes.md..."
+
+
 
 $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 $stackLines = @()
@@ -518,7 +518,7 @@ $($matchedSkills | Where-Object { $_ -notin $coreSkills } | ForEach-Object { "- 
 "@
 
 Set-Content -Path $AI_NOTES -Value $aiNotes -Encoding UTF8
-Write-OK "ai-notes.md generated: $AI_NOTES"
+
 
 # ============================================================
 # [6/6] Summary
@@ -539,3 +539,4 @@ Write-Host "  AI Notes:   $AI_NOTES" -ForegroundColor White
 Write-Host ""
 Write-Host "  Next: /analyze-project" -ForegroundColor Cyan
 Write-Host ""
+

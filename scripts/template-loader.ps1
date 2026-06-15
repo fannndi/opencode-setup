@@ -92,5 +92,6 @@ Write-Host ""
 Write-Host "  Project:  $PROJECT_DIR" -ForegroundColor White
 Write-Host "  Template: $Template" -ForegroundColor White
 Write-Host "  Docs:     $docsDir" -ForegroundColor White
-Write-Host "  Next: isi docs/ sesuai prd.md + ai-notes.md" -ForegroundColor Cyan
+
 Write-Host ""
+

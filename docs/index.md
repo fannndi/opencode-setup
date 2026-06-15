@@ -107,8 +107,8 @@ OpenCode Setup adalah **asisten coding AI** yang bisa kamu clone ke dalam projec
 ### Full Workflow
 
 ```
-/project-analyze → ai-notes.md (rekomendasi skills/commands)
-/code-analyze → ai-notes.md (analisa source code)
+
+
 /analyze-project → deteksi stack + load skills
 ```
 
@@ -122,7 +122,7 @@ my-project/
 ├── frontend/              # Source code frontend
 ├── backend/               # Source code backend
 ├── lib/                   # Source code library/shared
-├── ai-notes.md            # Rekomendasi dari AI
+
 ├── docs/                  # Rencana implementasi
 │   ├── frontend/          # Rencana frontend
 │   ├── backend/           # Rencana backend
@@ -139,3 +139,4 @@ my-project/
     ├── 9router/           # 9Router repo (auto-cloned)
     └── README.md          # Overview
 ```
+

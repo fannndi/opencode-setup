@@ -4,6 +4,36 @@ Semua perubahan penting di project ini.
 
 ---
 
+## [5.0.0] — 2026-06-16 — Universal Goal-Based Combo + Clean Slate
+
+### Changed — Combo System (10 files → 1)
+- **10 combo `.md` files removed** — morning-routine, start-project, quick-review, full-audit, prd-combo, maintenance, generate, bug-fix, security, deploy
+- **1 universal `/go` command** — goal-based, AI decompose, auto-recovery
+- AI sekarang tentukan step sendiri berdasarkan goal + constraints
+- Tidak ada hardcoded step chains — adaptif per request
+
+### Changed — Preprocessor Integration
+- **`/go`** terintegrasi penuh dengan preprocessor:
+  - Skill index (270) — match by stack/domain
+  - Feature index (600+) — reuse before create
+  - Memory — session logs per project
+  - Knowledge — patterns per project
+  - Intent compiler — structured spec
+  - Skill router — 5-10 relevant skills
+
+### Removed — ai-notes.md (Outdated)
+- **`ai-notes.md`** dihapus — sudah digantikan oleh LLM pipeline
+- References dihapus dari: code-analyze.ps1, project-analyze.ps1, template-loader.ps1
+- References dihapus dari: docs/index.md, 01-overview.md, 02-scripts.md, 04-analyze-project.md, 03-session-persistence.md
+- `.gitignore` entry removed
+
+### Cleanup
+- 10 command entries removed from `profiles/gratis/opencode.jsonc`
+- 10 command entries removed from `profiles/go/opencode.jsonc`
+- Added `/go` to both profiles as universal entry point
+
+---
+
 ## [4.3.0] — 2026-06-16 — Self-Improvement Loop v3: Closed
 
 ### Fixed — Telemetry Channels (4/4 Alive)

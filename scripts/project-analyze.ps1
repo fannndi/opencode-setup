@@ -1,4 +1,4 @@
-# Project Analyze — Analisa PRD dan buat ai-notes.md
+
 # Usage: .\project-analyze.ps1 [-ProjectPath "C:\path\to\project"]
 
 param(
@@ -40,7 +40,7 @@ if (-not (Test-Path $PROJECT_DIR)) {
 Resolve-Project -Path $PROJECT_DIR | Out-Null
 
 $PRD_FILE = "$PROJECT_DIR\prd.md"
-$AI_NOTES = "$PROJECT_DIR\ai-notes.md"
+
 
 # ============================================================
 # Helpers
@@ -78,7 +78,7 @@ function Write-Info {
 
 Write-Host ""
 Write-Host "  ╔══════════════════════════════════════════════════╗" -ForegroundColor Magenta
-Write-Host "  ║         Project Analyze — PRD → ai-notes.md     ║" -ForegroundColor Magenta
+
 Write-Host "  ╚══════════════════════════════════════════════════╝" -ForegroundColor Magenta
 Write-Host ""
 
@@ -92,7 +92,7 @@ Write-Step "1/$totalSteps" "Locating project root..."
 
 $PROJECT_DIR = Split-Path -Parent $ROOT_DIR
 $PRD_FILE = "$PROJECT_DIR\prd.md"
-$AI_NOTES = "$PROJECT_DIR\ai-notes.md"
+
 
 Write-Host "  Project: $PROJECT_DIR" -ForegroundColor White
 
@@ -269,10 +269,10 @@ foreach ($stack in $detectedStack) {
 Write-OK "Matched $($matchedSkills.Count) skills, $($matchedRules.Count) rules"
 
 # ============================================================
-# [5/5] Generate ai-notes.md
+
 # ============================================================
 
-Write-Step "5/$totalSteps" "Generating ai-notes.md..."
+
 
 $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 
@@ -343,7 +343,7 @@ Rules: $($matchedRules -join ', ')
 
 ## Next Steps
 
-1. Review ai-notes.md ini
+
 2. Sesuaikan rekomendasi jika perlu
 3. Jalankan: ``/make-docs``
 4. Review docs/ yang dihasilkan
@@ -356,7 +356,7 @@ Rules: $($matchedRules -join ', ')
 "@
 
 Set-Content -Path $AI_NOTES -Value $aiNotes -Encoding UTF8
-Write-OK "ai-notes.md generated: $AI_NOTES"
+
 
 # ============================================================
 # Summary
@@ -373,5 +373,6 @@ Write-Host "  Stack:     $($detectedStack -join ', ')" -ForegroundColor White
 Write-Host "  Skills:    $($matchedSkills.Count) matched" -ForegroundColor White
 Write-Host "  Rules:     $($matchedRules -join ', ')" -ForegroundColor White
 Write-Host ""
-Write-Host "  Next: review ai-notes.md, lalu /make-docs" -ForegroundColor Cyan
+
 Write-Host ""
+

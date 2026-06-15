@@ -23,9 +23,9 @@ Analisa PRD dan buat rekomendasi skills/commands.
 1. Baca prd.md
 2. Deteksi stack dari keywords
 3. Match skills dari Skill/skill-list.md
-4. Generate ai-notes.md
 
-**Output:** `ai-notes.md` di project root
+
+
 
 ## /analyze-project
 
@@ -145,3 +145,4 @@ Config already exists:
 
 - [Skill Selection](../05-skills/01-skill-selection.md) — Cara memilih skills
 - [Skills Catalog](../06-catalogs/02-skills.md) — Katalog lengkap
+

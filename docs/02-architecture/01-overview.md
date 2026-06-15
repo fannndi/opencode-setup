@@ -8,7 +8,7 @@ my-project/
 ├── frontend/              # Source code frontend
 ├── backend/               # Source code backend
 ├── lib/                   # Source code library/shared
-├── ai-notes.md            # Rekomendasi dari AI
+
 ├── docs/                  # Rencana implementasi
 │   ├── frontend/          # Rencana frontend
 │   ├── backend/           # Rencana backend
@@ -94,3 +94,4 @@ gratis-small: deepseek-v4-flash-free → glm-5 → north-mini-code-free
 - [9Router](02-9router.md) — Detail AI gateway
 - [ECC](03-ecc.md) — Detail skills/agents
 - [Combos](04-combos.md) — Detail auto-fallback
+
