@@ -91,17 +91,48 @@ Lihat `Project/service-hub/TODO.md` untuk detail final.
 **Goal:** Ollama + Qwen 2.5 3B berjalan local
 
 ### Hardware
-- GPU: NVIDIA MX150 2GB VRAM → Qwen 2.5 3B Q4_K_M (~2GB)
-- RAM: 16GB → model ~3GB + system ~4GB ✅
-- Storage: Qwen 3B Q4 ~2GB
+- GPU: NVIDIA MX150 2GB VRAM
+- RAM: 16GB
+- Storage: ~4GB free for models
 - OS: Windows 10 LTSC (Ollama supports Windows)
 
+### Model Candidates
+
+| Model | VRAM Q4 | Headroom | Code Quality | Kelebihan |
+|-------|---------|----------|-------------|-----------|
+| **qwen2.5-coder:3b** | ~2.0 GB | 🔴 Minimal | ✅ Proven | Code-specialized, instruction following bagus |
+| **qwen3:1.7b** | ~1.4 GB | 🟢 0.6GB spare | ⚠️ Baru | Dual-mode thinking, arsitektur 2025 |
+
+**Primary:** `qwen2.5-coder:3b` — more capable untuk code tasks
+**Fallback:** `qwen3:1.7b` — kalo 3B terlalu berat atau sering OOM
+
+### Benchmark Plan (executed after install)
+
+**4 test scenarios** mewakili use case utama:
+
+| # | Test | Prompt | Weight |
+|---|------|--------|--------|
+| 1 | Intent Compiler | 50 words → JSON 10 fields | 40% |
+| 2 | Skill Router | Intent → 5-10 skill names | 25% |
+| 3 | Error Classifier | Stack trace → structured error | 20% |
+| 4 | Pattern Mining | Session log → markdown | 15% |
+
+**Metrics:** latency, tokens/sec, VRAM usage, JSON validity pass rate, content quality score
+
+**Go/No-Go:**
+- ✅ Coder 3B latency < 3s + JSON > 95% → **Primary**
+- ⚠️ Coder 3B OOM atau > 5s → **Fallback ke Qwen3 1.7B**
+- ❌ Keduanya gagal → **Fallback ke regex intent detection (existing)**
+
+**File:** `scripts/llm-benchmark.ps1` — akan dibuat di Phase 0
+
 ### Tasks
-1. Install Ollama for Windows
-2. Pull Qwen 2.5 3B: `ollama pull qwen2.5:3b`
+1. Install Ollama for Windows: `winget install Ollama.Ollama`
+2. Pull kedua model: `ollama pull qwen2.5-coder:3b && ollama pull qwen3:1.7b`
 3. Create `scripts/llm-adapter.ps1` — wrapper API call ke local LLM
-4. Test: `curl http://localhost:11434/api/generate`
-5. Verify response time < 5s per prompt
+4. Create `scripts/llm-benchmark.ps1` — benchmark harness (4 scenarios, 10 iterations each)
+5. Run benchmark → tentukan primary model
+6. Test endpoint: `curl http://localhost:11434/api/generate`
 
 ---
 
