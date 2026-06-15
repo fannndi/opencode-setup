@@ -144,10 +144,15 @@ Sistem agent yang bisa autonomous: detect stack → load skills → decompose go
 
 | Command | Fungsi | Contoh |
 |---------|--------|--------|
+| `/go <query>` | **Preprocess → enriched context** (universal) | `/go "bikin CRUD penduduk"` |
 | `/detect <path>` | Deteksi stack project | `/detect C:\project` |
 | `/auto-load <path>` | Auto-load skill sesuai stack | `/auto-load C:\project` |
 | `/resume` | Resume session terakhir | `/resume` |
-| `/llm on\|off\|status` | Toggle local LLM mode | `/llm status` |
+| `/llm eco\|balanced\|performance` | Set operating mode | `/llm balanced` |
+| `/intent <query>` | Natural language → structured JSON spec | `/intent "buat CRUD"` |
+| `/route <query>` | Intent → skill list | `/route "PHP MySQL"` |
+| `/audit <path>` | LLM code audit | `/audit scripts\` |
+| `/learn <note>` | Save to memory + knowledge | `/learn "fixed login bug"` |
 | `/dashboard` | Tampilkan sistem overview | `/dashboard` |
 | `/task-queue <goal>` | Autonomous goal → subtasks | `/task-queue "bikin login page"` |
 | `/tool-create <template>` | Generate script/command | `/tool-create script=deploy` |
@@ -435,12 +440,22 @@ opencode-setup/
 │   ├── service-hub/           # Project source code (cloned)
 │   ├── Session/               # Session state per project
 │   └── Memory/                # Memory per project (logs, patterns, errors)
-├── scripts/                   # Automation scripts (40 file)
-│   ├── agent-core.ps1         # AI Agent: intent, skill-loader, decompose
-│   ├── agent-dashboard.ps1    # System overview dashboard
-│   ├── task-queue.ps1         # Autonomous task DAG execution
-│   ├── tool-creator.ps1       # Template-based script/command generator
-│   └── hooks/                 # Agent hooks (self-heal, instinct, eval)
+├── scripts/                   # Automation scripts (50 file)
+│   ├── llm-mode.ps1            # 3-mode OS toggle (eco/balanced/performance)
+│   ├── llm-adapter.ps1         # Ollama API wrapper with auto-fallback
+│   ├── llm-preprocess.ps1      # Universal input preprocessor (pipeline)
+│   ├── llm-feedback.ps1        # Analyze LLM failures → recommendations
+│   ├── llm-evolve.ps1          # Auto-adjust config from usage stats
+│   ├── llm-audit.ps1           # LLM-powered code audit with loop mode
+│   ├── llm-benchmark.ps1       # Benchmark harness (5 scenarios)
+│   ├── knowledge.ps1           # Structured, searchable knowledge base
+│   ├── knowledge-miner.ps1     # Session → LLM extract → knowledge
+│   ├── profile-optimizer.ps1   # Skill usage tracking → load/unload
+│   ├── agent-core.ps1          # AI Agent: intent, skill-loader, decompose
+│   ├── agent-dashboard.ps1     # System overview dashboard
+│   ├── task-queue.ps1          # Autonomous task DAG execution
+│   ├── tool-creator.ps1        # Template-based script/command generator
+│   └── hooks/                  # Agent hooks (self-heal, instinct, eval)
 ├── commands/                  # OpenCode command templates
 ├── profiles/                  # Config profiles (gratis / go)
 ├── templates/                 # Project templates (4)

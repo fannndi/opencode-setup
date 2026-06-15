@@ -4,6 +4,81 @@ Semua perubahan penting di project ini.
 
 ---
 
+## [4.3.0] — 2026-06-16 — Self-Improvement Loop v3: Closed
+
+### Fixed — Telemetry Channels (4/4 Alive)
+- **llm-usage.jsonl** — `Invoke-LLM` success path now logs: timestamp, script, model, duration, tokens/sec
+- **llm-failures.jsonl** — Already alive, auto-trimmed to 100 entries
+- **llm-evolve.jsonl** — Now written on every evolve run
+- **llm-mode.json** — Updated per mode switch
+
+### Fixed — Actuation
+- **llm-evolve.ps1 -Apply** — Now actually adjusts config:
+  - Timeout > 30% → auto-increase (60→180s)
+  - JSON fail > 30% → auto-decrease temperature
+  - Failure rate > 50% → auto-switch to ECO
+  - Auto-trim failure log to 100 entries
+- **profile-optimizer.ps1** — Saves recommendations to `.opencode/recommended-skills.json`
+- **start.ps1** — Auto-runs `evolve -Apply` + `feedback` on session start
+- **instinct-extract.ps1** — Auto-runs `knowledge-miner` in PERFORMANCE mode on session end
+- **llm-adapter.ps1** — Auto-ECO on connect failure (was switching to balanced)
+
+### Fixed — Bugs
+- **profile-optimizer.ps1** — Removed orphaned closing brace (syntax error)
+
+### Seed Data
+- Telemetry files populated: 1 LLM success, 31 failures logged
+- Evolve detected: 77.4% timeout rate → auto-fix applied
+
+### Loop Status
+```
+Session Start → evolve -Apply → adjust config
+  → LLM call → success? → llm-usage.jsonl ✅
+             → fail? → llm-failures.jsonl ✅
+Session End → instinct-extract → patterns → knowledge
+           → knowledge-miner → extract → knowledge
+Next Start → feedback analysis → evolve adjust → better config
+```
+
+---
+
+## [4.2.0] — 2026-06-16 — Preprocess-Execute-Learn Pipeline
+
+### Added — LLM Preprocessor Layer
+- **llm-preprocess.ps1** — Universal orchestrator: stack → skill → feature → memory → knowledge → intent → route
+- **Skill index** — Parses 270 skills from `Skill/skill-list.md`, matches by stack/domain/module
+- **Feature index** — Parses 600+ features from `Feature/list.md`, recommends reuse before create
+- **Memory search** — Searches session logs by domain/module
+- **Knowledge search** — Searches knowledge base for patterns
+- **String fix** — Fixed foreach syntax errors + `.Skip(0)` calls
+
+### Added — Commands
+- **`/go`** — Universal: query → preprocess → enriched context
+- **`/learn`** — Save session results to memory + knowledge
+
+### Added — ECC Instructions
+- **`ecc/.opencode/instructions/llm-preprocess.md`** — AI instruction: "always check preprocessor first"
+
+### Reworked — 10 Combos
+All combos now include preprocess (step 1) + learn (final step):
+| Combo | Steps |
+|-------|-------|
+| morning-routine | preprocess → start-free → admin → quality-gate → token-stats → learn |
+| start-project | preprocess → start-free → set-project → code-analyze → analyze-project → learn |
+| quick-review | preprocess → code-review → security-scan → verify → learn |
+| full-audit | preprocess → code-analyze → analyze-project → project-skills → memory → learn |
+| prd-combo | preprocess → generate-prd → project-analyze → learn |
+| maintenance | preprocess → admin → quality-gate → reset-session → learn |
+| generate | preprocess → template → create → learn |
+| bug-fix | preprocess → build-fix → quality-gate → memory → learn |
+| security | preprocess → security-scan → quality-gate → research → learn |
+| deploy | preprocess → verify → quality-gate → update-docs → learn |
+
+### Fixed
+- **Duplicate command** — Removed duplicate `intent` entry in opencode.jsonc
+
+---
+
 ## [4.1.0] — 2026-06-15 — Self-Improvement Loop v2
 
 ### Added — Feedback Analysis
