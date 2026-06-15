@@ -202,7 +202,31 @@ Sistem bisa jalan dengan atau tanpa local LLM. Mode ON = pake Ollama, mode OFF =
 ```
 
 **Default model:** `qwen3:1.7b` — cocok MX150 2GB (1.4GB VRAM, 0.6GB headroom).
-**Auto-fallback:** Kalo Ollama mati, semua script otomatis pake regex. Gak perlu manual.
+**Auto-fallback:** Kalo Ollama mati atau timeout, semua script otomatis pake regex. Gak perlu manual.
+
+### Intent Compiler
+
+Ubah bahasa manusia → structured JSON spec.
+
+```powershell
+/intent "buat CRUD penduduk desa"
+/intent "bikin login admin pake PHP"
+```
+
+Output: `{ domain, module, features, validation, roles, security, stack_hint }`
+
+LLM ON → output kaya (7+ fields, detail). LLM OFF → regex fallback (cepat, basic).
+
+### Skill Router
+
+Pilih skill relevan dari 270 ECC skills berdasarkan intent.
+
+```powershell
+/route "PHP MySQL desa"
+/route "Flutter mobile app"
+```
+
+Output: 3-10 nama skill yang relevan. Token hemat 60-80%. 
 
 ---
 

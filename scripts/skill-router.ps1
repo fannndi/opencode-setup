@@ -96,7 +96,7 @@ $($SKILL_NAMES -join ', ')
 Output ONLY a JSON array of skill names. Example: ["tdd-workflow", "security-review", ...]
 "@
 
-    $result = Invoke-LLM -Prompt $prompt -System "Output ONLY a JSON array of skill names. No explanation." -MaxTokens 256 -Temperature 0.2
+    $result = Invoke-LLM -Prompt $prompt -System "Output ONLY a JSON array of skill names. No explanation." -MaxTokens 1024 -Temperature 0.2 -TimeoutSec 60
 
     if (-not $result) { return $null }
 

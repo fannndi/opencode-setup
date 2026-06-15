@@ -43,8 +43,8 @@ Schema:
 function CompileWithLLM {
     param([string]$Query)
 
-    $prompt = "Request: $Query`n`nOutput the JSON specification only."
-    $result = Invoke-LLM -Prompt $prompt -System $SYSTEM_PROMPT -MaxTokens 512 -Temperature 0.1
+    $prompt = "Convert this request to the specified JSON format.`nRequest: $Query`n`nOutput ONLY the JSON specification. No explanation."
+    $result = Invoke-LLM -Prompt $prompt -System $SYSTEM_PROMPT -MaxTokens 2048 -Temperature 0.1 -TimeoutSec 60
 
     if (-not $result) { return $null }
 

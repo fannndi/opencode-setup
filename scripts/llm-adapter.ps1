@@ -7,9 +7,9 @@ param(
 
     [string]$Model,
     [string]$System,
-    [int]$MaxTokens = 512,
+    [int]$MaxTokens = 1024,
     [double]$Temperature = 0.3,
-    [int]$TimeoutSec = 30
+    [int]$TimeoutSec = 60
 )
 
 $SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -84,7 +84,8 @@ function Invoke-LLM {
             -ErrorAction Stop
 
         return [PSCustomObject]@{
-            response = $response.response
+            response = if ($response.response -ne '') { $response.response } else { $response.thinking }
+            thinking = $response.thinking
             model = $response.model
             total_duration = $response.total_duration
             tokens_per_second = if ($response.total_duration -and $response.total_duration -gt 0) {
