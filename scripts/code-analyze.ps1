@@ -16,6 +16,9 @@ $ECC_DIR = "$ROOT_DIR\ecc"
 # Source project-resolve
 . "$SETUP_DIR\project-resolve.ps1"
 
+# Source llm-adapter
+. "$SETUP_DIR\llm-adapter.ps1"
+
 # ============================================================
 # Resolve Project Path
 # ============================================================
@@ -129,29 +132,6 @@ foreach ($file in $allReadableDocs) {
 
 $allReadableDocs = $targetDocs | Sort-Object Name -Unique
 
-$foundKeywords = @{}
-$keywordMap = @{
-    "rest api" = "rest-api"; "graphql" = "graphql"; "grpc" = "grpc"
-    "microservice" = "microservice"; "monolith" = "monolith"
-    "postgres" = "postgres"; "mysql" = "mysql"; "mongodb" = "mongodb"
-    "redis" = "redis"; "firebase" = "firebase"; "supabase" = "supabase"
-    "docker" = "docker"; "kubernetes" = "kubernetes"; "aws" = "aws"
-    "react" = "react"; "vue" = "vue"; "angular" = "angular"
-    "flutter" = "flutter"; "dart" = "dart"; "swift" = "swift"
-    "go" = "golang"; "golang" = "golang"; "rust" = "rust"
-    "python" = "python"; "java" = "java"; "kotlin" = "kotlin"
-    "ci/cd" = "ci-cd"; "github actions" = "github-actions"
-    "unit test" = "testing"; "integration test" = "testing"
-    "tdd" = "tdd"; "jwt" = "jwt"; "oauth" = "oauth"
-    "next.js" = "nextjs"; "nextjs" = "nextjs"
-    "django" = "django"; "fastapi" = "fastapi"; "laravel" = "laravel"
-    "express" = "express"; "nestjs" = "nestjs"
-    "prisma" = "prisma"; "typeorm" = "typeorm"
-    "sqlite" = "sqlite"; "sql server" = "mssql"
-    "rabbitmq" = "rabbitmq"; "kafka" = "kafka"
-    "serverless" = "serverless"; "lambda" = "aws-lambda"
-}
-
 $allText = ""
 foreach ($doc in $allReadableDocs) {
     try {
@@ -165,11 +145,45 @@ foreach ($doc in $allReadableDocs) {
     } catch {}
 }
 
-# Extract keywords from docs
-$docLower = $allText.ToLower()
-foreach ($kw in $keywordMap.Keys) {
-    if ($docLower -match [regex]::Escape($kw)) {
-        $foundKeywords[$keywordMap[$kw]] = $true
+# Extract keywords — LLM semantic analysis with regex fallback
+$foundKeywords = @{}
+$semanticResult = Invoke-LLMEnrich -Text $allText -Context "Extract tech stack from project docs" -System "Extract technology and framework keywords from project documentation. Return comma-separated list of relevant tech stack tags: e.g. react, postgres, docker, redis, python, flutter." -MaxTokens 256
+
+if ($semanticResult -and $semanticResult -ne $allText) {
+    $semanticKeywords = ($semanticResult -split '[,;\s]+') | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne '' }
+    foreach ($kw in $semanticKeywords) {
+        if (-not $foundKeywords.ContainsKey($kw)) {
+            $foundKeywords[$kw.ToLower()] = $true
+        }
+    }
+} else {
+    # Fallback to regex keyword matching
+    $keywordMap = @{
+        "rest api" = "rest-api"; "graphql" = "graphql"; "grpc" = "grpc"
+        "microservice" = "microservice"; "monolith" = "monolith"
+        "postgres" = "postgres"; "mysql" = "mysql"; "mongodb" = "mongodb"
+        "redis" = "redis"; "firebase" = "firebase"; "supabase" = "supabase"
+        "docker" = "docker"; "kubernetes" = "kubernetes"; "aws" = "aws"
+        "react" = "react"; "vue" = "vue"; "angular" = "angular"
+        "flutter" = "flutter"; "dart" = "dart"; "swift" = "swift"
+        "go" = "golang"; "golang" = "golang"; "rust" = "rust"
+        "python" = "python"; "java" = "java"; "kotlin" = "kotlin"
+        "ci/cd" = "ci-cd"; "github actions" = "github-actions"
+        "unit test" = "testing"; "integration test" = "testing"
+        "tdd" = "tdd"; "jwt" = "jwt"; "oauth" = "oauth"
+        "next.js" = "nextjs"; "nextjs" = "nextjs"
+        "django" = "django"; "fastapi" = "fastapi"; "laravel" = "laravel"
+        "express" = "express"; "nestjs" = "nestjs"
+        "prisma" = "prisma"; "typeorm" = "typeorm"
+        "sqlite" = "sqlite"; "sql server" = "mssql"
+        "rabbitmq" = "rabbitmq"; "kafka" = "kafka"
+        "serverless" = "serverless"; "lambda" = "aws-lambda"
+    }
+    $docLower = $allText.ToLower()
+    foreach ($kw in $keywordMap.Keys) {
+        if ($docLower -match [regex]::Escape($kw)) {
+            $foundKeywords[$keywordMap[$kw]] = $true
+        }
     }
 }
 

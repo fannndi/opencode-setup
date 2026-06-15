@@ -15,6 +15,7 @@ if (-not $ProjectPath -and $env:ECC_PROJECT_PATH) {
 }
 if (-not $ProjectPath) {
     . "$SETUP_DIR\project-resolve.ps1"
+    . "$ROOT_DIR\scripts\llm-adapter.ps1"
     $ProjectPath = Get-ActiveProject
 }
 if (-not $ProjectPath) { exit 0 }
@@ -47,10 +48,14 @@ Pop-Location
 
 if ($passed) {
     Write-Host "  [GATE] ✅ Tests passed" -ForegroundColor Green
+    $analysis = Invoke-LLMEnrich -Text "Test $result" -Context "Test gate result"
+    Write-Host "  [GATE] LLM analysis: $analysis" -ForegroundColor Cyan
     [Environment]::SetEnvironmentVariable('ECC_GATE_RESULT', 'PASS', 'Process')
 } else {
     Write-Host "  [GATE] ❌ Tests failed" -ForegroundColor Red
     Write-Host "  $result" -ForegroundColor Gray
+    $analysis = Invoke-LLMEnrich -Text "Test $result" -Context "Test gate result"
+    Write-Host "  [GATE] LLM analysis: $analysis" -ForegroundColor Cyan
     [Environment]::SetEnvironmentVariable('ECC_GATE_RESULT', 'FAIL', 'Process')
 }
 

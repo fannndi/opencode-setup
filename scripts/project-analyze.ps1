@@ -17,6 +17,9 @@ $FEATURE_LIST = "$ROOT_DIR\Feature\list.md"
 # Source project-resolve
 . "$SETUP_DIR\project-resolve.ps1"
 
+# Source llm-adapter
+. "$SETUP_DIR\llm-adapter.ps1"
+
 # ============================================================
 # Resolve Project Path
 # ============================================================
@@ -125,62 +128,46 @@ Write-Step "3/$totalSteps" "Detecting stack from PRD..."
 $detectedStack = @()
 $detectedFeatures = @()
 
-# Detect keywords in PRD
-$keywords = @{
-    "flutter" = "dart-flutter"
-    "dart" = "dart-flutter"
-    "react" = "react"
-    "next.js" = "nextjs"
-    "nextjs" = "nextjs"
-    "vue" = "vue"
-    "angular" = "angular"
-    "svelte" = "svelte"
-    "python" = "python"
-    "django" = "django"
-    "fastapi" = "python"
-    "flask" = "python"
-    "golang" = "golang"
-    "go" = "golang"
-    "rust" = "rust"
-    "java" = "java"
-    "spring" = "springboot"
-    "kotlin" = "kotlin"
-    "swift" = "swift"
-    "ios" = "swift"
-    "android" = "android"
-    "php" = "php"
-    "laravel" = "php-laravel"
-    "ruby" = "ruby"
-    "rails" = "ruby"
-    "c++" = "cpp"
-    "docker" = "docker"
-    "kubernetes" = "kubernetes"
-    "postgresql" = "postgres"
-    "mysql" = "mysql"
-    "redis" = "redis"
-    "mongodb" = "mongodb"
-    "supabase" = "supabase"
-    "firebase" = "firebase"
-    "rest api" = "api"
-    "graphql" = "graphql"
-    "websocket" = "websocket"
-    "jwt" = "authentication"
-    "auth" = "authentication"
-    "payment" = "payment"
-    "stripe" = "payment"
-    "ml" = "machine-learning"
-    "machine learning" = "machine-learning"
-    "ai" = "ai"
-    "llm" = "ai"
-}
+# Detect stack from PRD — LLM semantic analysis with regex fallback
+$semanticResult = Invoke-LLMEnrich -Text $prdContent -Context "Extract tech stack from product requirement document" -System "Extract technology stack and features from this PRD. Return comma-separated list of relevant stack tags only. Example: react, postgres, docker, authentication, payment." -MaxTokens 256
 
-$prdLower = $prdContent.ToLower()
-
-foreach ($kw in $keywords.Keys) {
-    if ($prdLower -match [regex]::Escape($kw)) {
-        $stack = $keywords[$kw]
+if ($semanticResult -and $semanticResult -ne $prdContent) {
+    $semanticKeywords = ($semanticResult -split '[,;\s]+') | ForEach-Object { $_.Trim() } | Where-Object { $_ -ne '' }
+    foreach ($kw in $semanticKeywords) {
+        $stack = $kw.ToLower()
         if ($stack -notin $detectedStack) {
             $detectedStack += $stack
+        }
+    }
+} else {
+    # Fallback to regex keyword matching
+    $keywords = @{
+        "flutter" = "dart-flutter"; "dart" = "dart-flutter"
+        "react" = "react"; "next.js" = "nextjs"; "nextjs" = "nextjs"
+        "vue" = "vue"; "angular" = "angular"; "svelte" = "svelte"
+        "python" = "python"; "django" = "django"
+        "fastapi" = "python"; "flask" = "python"
+        "golang" = "golang"; "go" = "golang"
+        "rust" = "rust"; "java" = "java"; "spring" = "springboot"
+        "kotlin" = "kotlin"; "swift" = "swift"; "ios" = "swift"
+        "android" = "android"; "php" = "php"; "laravel" = "php-laravel"
+        "ruby" = "ruby"; "rails" = "ruby"; "c++" = "cpp"
+        "docker" = "docker"; "kubernetes" = "kubernetes"
+        "postgresql" = "postgres"; "mysql" = "mysql"; "redis" = "redis"
+        "mongodb" = "mongodb"; "supabase" = "supabase"; "firebase" = "firebase"
+        "rest api" = "api"; "graphql" = "graphql"; "websocket" = "websocket"
+        "jwt" = "authentication"; "auth" = "authentication"
+        "payment" = "payment"; "stripe" = "payment"
+        "ml" = "machine-learning"; "machine learning" = "machine-learning"
+        "ai" = "ai"; "llm" = "ai"
+    }
+    $prdLower = $prdContent.ToLower()
+    foreach ($kw in $keywords.Keys) {
+        if ($prdLower -match [regex]::Escape($kw)) {
+            $stack = $keywords[$kw]
+            if ($stack -notin $detectedStack) {
+                $detectedStack += $stack
+            }
         }
     }
 }

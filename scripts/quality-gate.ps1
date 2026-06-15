@@ -11,6 +11,7 @@ $ROOT_DIR = Split-Path -Parent $SETUP_DIR
 
 # Source project-resolve
 . "$SETUP_DIR\project-resolve.ps1"
+. "$SETUP_DIR\llm-adapter.ps1"
 
 # ============================================================
 # Resolve Project
@@ -51,6 +52,11 @@ if (Test-Path $gitDir) {
     } else {
         Write-Host "  [INFO] No uncommitted changes" -ForegroundColor Yellow
     }
+
+    $llmAnalysis = Invoke-LLMEnrich -Text "Git status: $modifiedFiles modified, $stagedFiles staged files in $ProjectPath" -Context "Quality gate"
+    if ($llmAnalysis) {
+        Write-Host "  [LLM] $llmAnalysis" -ForegroundColor Magenta
+    }
 } else {
     Write-Host "  [SKIP] Not a git repo" -ForegroundColor Yellow
 }
@@ -62,32 +68,42 @@ if (Test-Path $gitDir) {
 Write-Host "[2/5] Build check..." -ForegroundColor Cyan
 $pubspec = "$ProjectPath\pubspec.yaml"
 $package = "$ProjectPath\package.json"
+$buildResult = ""
 
 if (Test-Path $pubspec) {
-    # Flutter
     $result = flutter analyze --no-pub --quiet 2>$null
     if ($LASTEXITCODE -eq 0) {
         Write-Host "  [OK] flutter analyze: clean ✅" -ForegroundColor Green
+        $buildResult = "Flutter analyze passed"
     } else {
         Write-Host "  [WARN] flutter analyze: issues found" -ForegroundColor Yellow
         $remainingIssues++
+        $buildResult = "Flutter analyze found issues"
     }
 } elseif (Test-Path $package) {
-    # JS/TS
     $hasTsc = (Get-Command "tsc" -ErrorAction SilentlyContinue) -ne $null
     if ($hasTsc) {
         $result = & npx --yes tsc --noEmit 2>&1 | Out-String
         if ($LASTEXITCODE -eq 0) {
             Write-Host "  [OK] tsc --noEmit: clean ✅" -ForegroundColor Green
+            $buildResult = "TypeScript type check passed"
         } else {
             Write-Host "  [WARN] TypeScript errors found" -ForegroundColor Yellow
             $remainingIssues++
+            $buildResult = "TypeScript type check found errors"
         }
     } else {
         Write-Host "  [SKIP] No TypeScript config found" -ForegroundColor Gray
+        $buildResult = "No TS config, skipped"
     }
 } else {
     Write-Host "  [SKIP] No known project type detected" -ForegroundColor Gray
+    $buildResult = "No known project type, skipped"
+}
+
+$llmAnalysis = Invoke-LLMEnrich -Text "Build check result: $buildResult in $ProjectPath" -Context "Quality gate"
+if ($llmAnalysis) {
+    Write-Host "  [LLM] $llmAnalysis" -ForegroundColor Magenta
 }
 
 # ============================================================
@@ -95,25 +111,36 @@ if (Test-Path $pubspec) {
 # ============================================================
 
 Write-Host "[3/5] Test check..." -ForegroundColor Cyan
+$testResult = ""
 if (Test-Path $pubspec) {
     $result = flutter test --no-pub --quiet 2>$null
     if ($LASTEXITCODE -eq 0) {
         Write-Host "  [OK] Tests passed ✅" -ForegroundColor Green
         $fixedIssues++
+        $testResult = "Flutter tests passed"
     } else {
         Write-Host "  [WARN] Tests failed" -ForegroundColor Yellow
         $remainingIssues++
+        $testResult = "Flutter tests failed"
     }
 } elseif (Test-Path $package) {
     $npmTest = npm test 2>&1 | Out-String
     if ($LASTEXITCODE -eq 0) {
         Write-Host "  [OK] Tests passed ✅" -ForegroundColor Green
+        $testResult = "npm tests passed"
     } else {
         Write-Host "  [WARN] Tests failed" -ForegroundColor Yellow
         $remainingIssues++
+        $testResult = "npm tests failed"
     }
 } else {
     Write-Host "  [SKIP] No test framework detected" -ForegroundColor Gray
+    $testResult = "No test framework, skipped"
+}
+
+$llmAnalysis = Invoke-LLMEnrich -Text "Test check result: $testResult in $ProjectPath" -Context "Quality gate"
+if ($llmAnalysis) {
+    Write-Host "  [LLM] $llmAnalysis" -ForegroundColor Magenta
 }
 
 # ============================================================

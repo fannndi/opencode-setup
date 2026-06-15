@@ -25,8 +25,9 @@ $PROFILE_CONFIG = "$ROOT_DIR\profiles\$Profile\opencode.jsonc"
 $API_URL = "http://localhost:20128"
 $API_PASS = "123456"
 
-# Source project-resolve
+# Source project-resolve and llm-adapter
 . "$SETUP_DIR\project-resolve.ps1"
+. "$SETUP_DIR\llm-adapter.ps1"
 
 # ============================================================
 # Resolve Project Path (Master Control)
@@ -79,6 +80,13 @@ Write-Host "  ║         OpenCode Daily Workflow                  ║" -Foregro
 Write-Host "  ║         Profile: $profileLabel$( ' ' * (25 - $profileLabel.Length))║" -ForegroundColor Magenta
 Write-Host "  ╚══════════════════════════════════════════════════╝" -ForegroundColor Magenta
 Write-Host ""
+
+# LLM welcome message
+$llmWelcome = Invoke-LLMEnrich -Text "Session start. Profile: $Profile. Project: $ProjectPath." -Context "startup-welcome"
+if ($llmWelcome) {
+    Write-Host "  $llmWelcome" -ForegroundColor Cyan
+    Write-Host ""
+}
 
 # ============================================================
 # Load Session State
@@ -497,6 +505,13 @@ Write-OK "ECC_HOOK_PROFILE=standard"
 # ============================================================
 
 Write-Step "7/$totalSteps" "Status summary"
+
+# LLM session advice
+$llmAdvice = Invoke-LLMEnrich -Text "Session end. Profile: $Profile. Project: $ProjectPath." -Context "session-advice"
+if ($llmAdvice) {
+    Write-Host ""
+    Write-Host "  [LLM] $llmAdvice" -ForegroundColor Cyan
+}
 
 # ============================================================
 # Save Session

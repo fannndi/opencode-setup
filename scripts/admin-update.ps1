@@ -18,6 +18,9 @@ $API_PASS = "123456"
 # Source project-resolve
 . "$SETUP_DIR\project-resolve.ps1"
 
+# Source LLM adapter
+. "$SETUP_DIR\llm-adapter.ps1"
+
 # ============================================================
 # Helpers
 # ============================================================
@@ -116,6 +119,15 @@ if (Test-Path "$ECC_DIR\.git") {
         }
 
         Write-OK "$eccNewCommits new commits ($opencodeChanges opencode-related)"
+
+        # LLM changelog summary
+        if ($commitLines) {
+            $eccLlmSummary = Invoke-LLMEnrich -Text $commitLines -Context "Summarize changelog" -System "You are a changelog summarizer. Given commit data, produce a concise bullet-point summary of key changes."
+            if ($eccLlmSummary -and $eccLlmSummary -ne $commitLines) {
+                Write-Host "  [LLM] ECC Changelog summary:" -ForegroundColor Cyan
+                $eccLlmSummary -split "`n" | ForEach-Object { if ($_.Trim()) { Write-Host "    $_" -ForegroundColor Gray } }
+            }
+        }
     } else {
         Write-OK "Already up to date"
     }
@@ -165,6 +177,15 @@ if (Test-Path "$ROUTER_DIR\.git") {
         }
 
         Write-OK "$routerNewCommits new commits"
+
+        # LLM changelog summary
+        if ($commitLines) {
+            $routerLlmSummary = Invoke-LLMEnrich -Text $commitLines -Context "Summarize changelog" -System "You are a changelog summarizer. Given commit data, produce a concise bullet-point summary of key changes."
+            if ($routerLlmSummary -and $routerLlmSummary -ne $commitLines) {
+                Write-Host "  [LLM] 9Router Changelog summary:" -ForegroundColor Cyan
+                $routerLlmSummary -split "`n" | ForEach-Object { if ($_.Trim()) { Write-Host "    $_" -ForegroundColor Gray } }
+            }
+        }
     } else {
         Write-OK "Already up to date"
     }

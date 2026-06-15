@@ -11,6 +11,7 @@ $SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ROOT_DIR = Split-Path -Parent $SETUP_DIR
 
 . "$SETUP_DIR\project-resolve.ps1"
+. "$ROOT_DIR\scripts\llm-adapter.ps1"
 
 if (-not $ProjectPath -and $env:ECC_PROJECT_PATH) {
     $ProjectPath = $env:ECC_PROJECT_PATH
@@ -52,6 +53,10 @@ if ($FilePath -and (Test-Path $FilePath)) {
                 $entry = "- $pkgName: first seen $(Get-Date -Format 'yyyy-MM-dd')"
                 Add-Content -Path $knownLibsFile -Value $entry -Encoding UTF8 -ErrorAction SilentlyContinue
                 Write-Host "  [RESEARCH] New library detected: $pkgName" -ForegroundColor Yellow
+                $research = Invoke-LLMEnrich -Text $pkgName -Context "Research this library" -System "You are a library researcher. Return a JSON: {\"purpose\":\"...\",\"docs_url\":\"...\",\"alternatives\":[...]}"
+                Write-Host "  [RESEARCH] LLM research output: $research" -ForegroundColor Cyan
+                $enrichedEntry = "- $pkgName: first seen $(Get-Date -Format 'yyyy-MM-dd') | research: $research"
+                Add-Content -Path $knownLibsFile -Value $enrichedEntry -Encoding UTF8 -ErrorAction SilentlyContinue
             }
         }
     } catch {}

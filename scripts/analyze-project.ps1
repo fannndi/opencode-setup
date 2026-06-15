@@ -15,8 +15,9 @@ $OPENCODE_DIR = "$env:USERPROFILE\.config\opencode"
 $OPENCODE_CONFIG = "$OPENCODE_DIR\opencode.jsonc"
 $STACK_MAPPINGS = "$ECC_DIR\config\project-stack-mappings.json"
 
-# Source project-resolve
+# Source project-resolve and llm-adapter
 . "$SETUP_DIR\project-resolve.ps1"
+. "$SETUP_DIR\llm-adapter.ps1"
 
 # ============================================================
 # Resolve Project Path
@@ -151,6 +152,12 @@ foreach ($file in $indicators.Keys) {
             $detectedStack = $stack
         }
     }
+    }
+
+# LLM enrichment of stack detection
+$llmEnrich = Invoke-LLMEnrich -Text "Stack: $detectedStack Project: $PROJECT_DIR" -Context "stack-detection"
+if ($llmEnrich) {
+    Write-Info "LLM: $llmEnrich"
 }
 
 if ($detectedStack) {

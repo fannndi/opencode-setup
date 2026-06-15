@@ -18,6 +18,7 @@ $SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ROOT_DIR = Split-Path -Parent $SETUP_DIR
 
 . "$SETUP_DIR\project-resolve.ps1"
+. "$SETUP_DIR\llm-adapter.ps1"
 
 $activeProject = Get-ActiveProject
 if (-not $activeProject -and -not $ProjectPath) {
@@ -36,6 +37,11 @@ New-Item -ItemType Directory -Path $knowledgeDir -Force | Out-Null
 
 function Save-Knowledge {
     param([string]$Title, [string]$Content, [string]$Category)
+
+    if (-not $Category -and $Content) {
+        $Category = Invoke-LLMEnrich -Text "Auto-categorize this knowledge content into ONE category word: $Content"
+        Write-Host "  [LLM] Auto-categorized as: $Category" -ForegroundColor Cyan
+    }
 
     $date = Get-Date -Format "yyyy-MM-dd"
     $safeName = $Title -replace '[^\w\-]', '_'
@@ -62,6 +68,9 @@ created: $date
 
 function Search-Knowledge {
     param([string]$Query)
+
+    $Query = Invoke-LLMEnrich -Text "Expand this knowledge search query into better search terms: $Query"
+    Write-Host "  [LLM] Expanded query: $Query" -ForegroundColor Cyan
 
     $results = @()
     $files = Get-ChildItem -Path $knowledgeDir -Filter "*.md" -Recurse -ErrorAction SilentlyContinue

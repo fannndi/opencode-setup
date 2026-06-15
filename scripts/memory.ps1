@@ -18,6 +18,7 @@ $PROJECT_ROOT = "$ROOT_DIR\Project"
 
 # Source project-resolve
 . "$SETUP_DIR\project-resolve.ps1"
+. "$SETUP_DIR\llm-adapter.ps1"
 
 # ============================================================
 # Resolve Memory Directory
@@ -124,6 +125,8 @@ function Read-Memory {
 
 function Add-Pattern {
     param([string]$Name, [string]$Description)
+    $Description = Invoke-LLMEnrich -Text "Extract and enrich this pattern description for a development knowledge base: $Description"
+    Write-Host "  [LLM] Pattern enriched" -ForegroundColor Cyan
     $memDir = Get-CurrentMemoryDir
     if (-not $memDir) { Write-Host "  No project active." -ForegroundColor Yellow; return }
     $safeName = $Name -replace '[^\w\-]', '_'
@@ -167,6 +170,7 @@ switch ($Action) {
     "status" { Read-Memory }
     "search" {
         if (-not $Key) { Write-Host "[ERROR] -Key (search term) required" -ForegroundColor Red; exit 1 }
+        $Key = Invoke-LLMEnrich -Text "Expand this memory search query into better search terms: $Key"
         $memDir = Get-CurrentMemoryDir
         if (-not $memDir) { Write-Host "  No active project." -ForegroundColor Yellow; exit 0 }
         Write-Host ""

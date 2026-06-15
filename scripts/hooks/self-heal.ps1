@@ -17,6 +17,7 @@ if (-not $ProjectPath -and $env:ECC_PROJECT_PATH) {
 if (-not $ProjectPath) {
     # Try from registry
     . "$SETUP_DIR\project-resolve.ps1"
+    . "$ROOT_DIR\scripts\llm-adapter.ps1"
     $ProjectPath = Get-ActiveProject
 }
 if (-not $ProjectPath) { exit 0 }
@@ -48,6 +49,8 @@ if ($isNode) {
                 $errorCount = ($result | Measure-Object).Count
                 if ($errorCount -gt 0) {
                     Write-Host "  [HEAL] $errorCount TS errors detected" -ForegroundColor Yellow
+                    $suggestion = Invoke-LLMEnrich -Text "$errorCount TS errors" -Context "Analyze and suggest fixes"
+                    Write-Host "  [HEAL] LLM suggestion: $suggestion" -ForegroundColor Cyan
                 }
             }
             break
@@ -65,6 +68,8 @@ if ($isFlutter) {
     if ($hasError) {
         $errorCount = ($hasError | Measure-Object).Count
         Write-Host "  [HEAL] $errorCount Dart errors detected" -ForegroundColor Yellow
+        $suggestion = Invoke-LLMEnrich -Text "$errorCount Dart errors" -Context "Analyze and suggest fixes"
+        Write-Host "  [HEAL] LLM suggestion: $suggestion" -ForegroundColor Cyan
     }
 }
 

@@ -18,6 +18,7 @@ $API_PASS = "123456"
 
 # Source project-resolve
 . "$SETUP_DIR\project-resolve.ps1"
+. "$SETUP_DIR\llm-adapter.ps1"
 
 # ============================================================
 # Resolve project path
@@ -41,27 +42,34 @@ Write-Host "  [INFO] AI menganalisa ide Anda..." -ForegroundColor Cyan
 Write-Host "  [INFO] Ide: $Idea" -ForegroundColor White
 Write-Host ""
 
-# Detect potential stack from keywords
-$stackKeywords = @{
-    "mobile" = "Flutter"
-    "android" = "Flutter"
-    "ios" = "Flutter"
-    "web" = "Next.js"
-    "website" = "Next.js"
-    "api" = "Go API"
-    "backend" = "Go API"
-    "toko" = "Flutter"
-    "kasir" = "Flutter"
-    "laporan" = "Flutter"
-    "stok" = "Flutter"
-}
-
-$detectedStack = "Flutter (Mobile)"
 $ideaLower = $Idea.ToLower()
-foreach ($kw in $stackKeywords.Keys) {
-    if ($ideaLower -match $kw) {
-        $detectedStack = $stackKeywords[$kw]
-        break
+
+# Try LLM-based stack detection
+$llmStack = Invoke-LLMEnrich -Text $Idea -Context "Detect best tech stack for this project idea. Return one line with just the stack name."
+
+if ($llmStack) {
+    $detectedStack = $llmStack.Trim()
+} else {
+    Write-Host "  [INFO] LLM unavailable, using keyword detection" -ForegroundColor Yellow
+    $stackKeywords = @{
+        "mobile" = "Flutter"
+        "android" = "Flutter"
+        "ios" = "Flutter"
+        "web" = "Next.js"
+        "website" = "Next.js"
+        "api" = "Go API"
+        "backend" = "Go API"
+        "toko" = "Flutter"
+        "kasir" = "Flutter"
+        "laporan" = "Flutter"
+        "stok" = "Flutter"
+    }
+    $detectedStack = "Flutter (Mobile)"
+    foreach ($kw in $stackKeywords.Keys) {
+        if ($ideaLower -match $kw) {
+            $detectedStack = $stackKeywords[$kw]
+            break
+        }
     }
 }
 
@@ -70,18 +78,42 @@ Write-Host "  [INFO] Detected stack: $detectedStack" -ForegroundColor Green
 # Build PRD
 $date = Get-Date -Format "yyyy-MM-dd"
 $projectName = Split-Path $ProjectPath -Leaf
-$featureList = @()
-$ideaWords = $Idea -split '\s+|[,;.]'
-$featureCandidates = @("login", "register", "dashboard", "laporan", "notifikasi","pencarian","export pdf","import excel","crud","autentikasi","manajemen user","role permission")
 
-foreach ($word in $featureCandidates) {
-    if ($ideaLower -match $word.Replace(" ","|")) {
-        $featureList += $word
+# Try LLM-based PRD generation
+$llmPrd = Invoke-LLMEnrich -Text $Idea -Context @"
+Generate Product Requirements Document for a software project.
+Project name: $projectName
+Tech stack: $detectedStack
+Return markdown with sections: Ringkasan (summary), Fitur Utama (features as bullet list), Tech Stack (table), Skills, Estimasi Timeline (3 phases).
+"@
+
+if ($llmPrd) {
+    $prdContent = @"
+# PRD — $projectName
+
+**Generated:** $date
+**Source:** AI-generated dari ide Anda
+
+---
+
+$($llmPrd.Trim())
+
+---
+
+*PRD ini di-generate otomatis oleh AI. Edit jika perlu.*
+"@
+    $featureCount = "..."
+} else {
+    Write-Host "  [INFO] LLM unavailable, using template" -ForegroundColor Yellow
+    $featureList = @()
+    $featureCandidates = @("login", "register", "dashboard", "laporan", "notifikasi","pencarian","export pdf","import excel","crud","autentikasi","manajemen user","role permission")
+    foreach ($word in $featureCandidates) {
+        if ($ideaLower -match $word.Replace(" ","|")) {
+            $featureList += $word
+        }
     }
-}
-$featureCount = [Math]::Max(3, $featureList.Count)
-
-$prdContent = @"
+    $featureCount = [Math]::Max(3, $featureList.Count)
+    $prdContent = @"
 # PRD — $projectName
 
 **Generated:** $date
@@ -122,6 +154,7 @@ $($featureList | ForEach-Object { "- $_" } | Out-String)
 
 *PRD ini di-generate otomatis oleh AI. Edit jika perlu.*
 "@
+}
 
 $prdFile = "$ProjectPath\prd.md"
 Set-Content -Path $prdFile -Value $prdContent -Encoding UTF8

@@ -46,12 +46,47 @@ function Get-LLMModel {
 }
 
 function Get-ModeForLLM {
-    # Returns "eco", "balanced", or "performance"
     return Get-OperatingMode
 }
 
 # ============================================================
-# Failure logging — append to .opencode/llm-failures.jsonl
+# Universal enrichment — single entry for all scripts
+# Even "Hi" passes through LLM in balanced/performance mode.
+# ECO mode: pass-through. Force: bypass ECO check.
+# ============================================================
+
+function Invoke-LLMEnrich {
+    param(
+        [string]$Text,
+        [string]$Context,
+        [string]$System,
+        [int]$MaxTokens = 256,
+        [switch]$Force
+    )
+
+    $mode = Get-OperatingMode
+    if ($mode -eq "eco" -and -not $Force) { return $Text }
+
+    if (-not $System) {
+        if ($Context) { $System = "You are a universal input preprocessor. Given input and context, return enriched output." }
+        else { $System = "You are a universal input preprocessor. Return enriched version of the input." }
+    }
+
+    $prompt = if ($Context) { "Context: $Context`n`nInput: $Text" } else { $Text }
+    $callerInfo = Get-PSCallStack | Select-Object -Skip 1 -First 1
+    $callerScript = if ($callerInfo) { Split-Path $callerInfo.ScriptName -Leaf } else { "unknown" }
+    $tokens = if ($mode -eq "performance") { 512 } else { $MaxTokens }
+    $timeout = if ($mode -eq "performance") { 60 } else { 30 }
+
+    $result = Invoke-LLM -Prompt $prompt -System $System -MaxTokens $tokens -Temperature 0.3 -TimeoutSec $timeout
+    if (-not $result) { return $Input }
+
+    $text = $result.response.Trim()
+    return $text
+}
+
+# ============================================================
+# Failure logging
 # ============================================================
 
 $FAILURE_LOG = "$ROOT_DIR\.opencode\llm-failures.jsonl"

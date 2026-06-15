@@ -12,6 +12,9 @@ $ECC_DIR = "$ROOT_DIR\ecc"
 # Source project-resolve
 . "$SETUP_DIR\project-resolve.ps1"
 
+# Source LLM adapter
+. "$SETUP_DIR\llm-adapter.ps1"
+
 # ============================================================
 # Stack Detection — auto-detect project stack from files
 # ============================================================
@@ -163,6 +166,20 @@ function Detect-Intent {
     $lower = $Input.ToLower()
     $scores = @{}
 
+    # Try LLM enrichment first
+    try {
+        $llmRaw = Invoke-LLMEnrich -Text $Input -Context "Detect user intent from: prompt" -System "You are an intent classifier. Return JSON with keys: type (one of: bug_fix, feature, refactor, research, review, security, deploy, test, plan, general) and action (short description)."
+        if ($llmRaw -and $llmRaw -ne $Input) {
+            try {
+                $parsed = $llmRaw | ConvertFrom-Json
+                if ($parsed.type) {
+                    return @{intent = $parsed.type; confidence = 1.0; method = "llm"; action = $parsed.action}
+                }
+            } catch {}
+        }
+    } catch {}
+
+    # Fallback: regex pattern matching
     foreach ($intent in $INTENT_PATTERNS.Keys) {
         $score = 0
         foreach ($keyword in $INTENT_PATTERNS[$intent]) {
@@ -173,7 +190,6 @@ function Detect-Intent {
 
     if ($scores.Count -eq 0) { return @{intent = "general"; confidence = 0.0} }
 
-    # Return highest scoring intent with normalized confidence
     $top = $scores.GetEnumerator() | Sort-Object Value -Descending | Select-Object -First 1
     $maxPossible = $INTENT_PATTERNS[$top.Key].Count
     $confidence = if ($maxPossible -gt 0) { [math]::Round($top.Value / $maxPossible, 2) } else { 0.5 }

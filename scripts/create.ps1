@@ -15,6 +15,7 @@ $ROOT_DIR = Split-Path -Parent $SETUP_DIR
 
 # Source project-resolve
 . "$SETUP_DIR\project-resolve.ps1"
+. "$SETUP_DIR\llm-adapter.ps1"
 
 # ============================================================
 # Resolve project
@@ -30,6 +31,8 @@ if (-not $Name) { $Name = Read-Host "Nama component" }
 $namePascal = ($Name -replace '(^\w|_\w)', { $_.Value.Replace('_','').ToUpper() }).Substring(0,1).ToUpper() + ($Name -replace '(^\w|_\w)', { $_.Value.Replace('_','').ToUpper() }).Substring(1)
 $nameCamel = $namePascal.Substring(0,1).ToLower() + $namePascal.Substring(1)
 
+$enrichedContext = Invoke-LLMEnrich -Text "Enhance this component for code generation. Name: $namePascal, Type: $Type, Project: $ProjectPath"
+Write-Host "  [LLM] Context enriched for $Type generation" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "  ╔══════════════════════════════════════════════════╗" -ForegroundColor Magenta
 Write-Host "  ║         Generate - $namePascal $Type" -ForegroundColor Magenta

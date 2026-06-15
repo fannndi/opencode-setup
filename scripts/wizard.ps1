@@ -9,6 +9,7 @@ $ROOT_DIR = Split-Path -Parent $SETUP_DIR
 
 # Source project-resolve
 . "$SETUP_DIR\project-resolve.ps1"
+. "$SETUP_DIR\llm-adapter.ps1"
 
 function Write-Header {
     param([string]$Title)
@@ -65,6 +66,9 @@ do {
     $mode = Read-Host "  Pilih (1/2)"
 } while ($mode -notmatch '^[12]$')
 
+$llmResponse = Invoke-LLMEnrich -Text "User chose mode '$mode' (1=new project, 2=improve existing). Give a brief encouraging adaptive follow-up in Indonesian: $mode"
+Write-Host "  [LLM] $llmResponse" -ForegroundColor Cyan
+
 # ============================================================
 # Step 2: Project name/path
 # ============================================================
@@ -88,6 +92,9 @@ if ($mode -eq "1") {
     $projectName = Split-Path $projectPath -Leaf
     Write-Host "  [OK] Project ditemukan: $projectName" -ForegroundColor Green
 }
+
+$llmResponse = Invoke-LLMEnrich -Text "User created/selected project '$projectName' at '$projectPath' in mode '$mode'. Give a brief relevant follow-up question in Indonesian about what they want to build."
+Write-Host "  [LLM] $llmResponse" -ForegroundColor Cyan
 
 # Save to session
 try {
@@ -114,6 +121,9 @@ if ($mode -eq "1") {
     Write-Host ""
     Write-Host "  [INFO] AI sedang memproses ide Anda..." -ForegroundColor Cyan
     
+    $llmResponse = Invoke-LLMEnrich -Text "User described this app idea: $idea. Give brief helpful refinement advice in Indonesian (2-3 sentences)."
+    Write-Host "  [LLM] $llmResponse" -ForegroundColor Cyan
+
     # Generate PRD otomatis
     & "$SETUP_DIR\generate-prd.ps1" -Idea $idea -ProjectPath $projectPath
     
@@ -121,6 +131,10 @@ if ($mode -eq "1") {
 } else {
     Write-Header "Langkah 3: Analisa Project"
     Write-Host "  [INFO] AI sedang menganalisa project Anda..." -ForegroundColor Cyan
+    
+    $llmResponse = Invoke-LLMEnrich -Text "User is analyzing existing project at '$projectPath'. Give brief relevant advice in Indonesian for improving existing code."
+    Write-Host "  [LLM] $llmResponse" -ForegroundColor Cyan
+
     & "$SETUP_DIR\code-analyze.ps1" -ProjectPath $projectPath
     Wait-Key
 }
