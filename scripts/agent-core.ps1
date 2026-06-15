@@ -56,6 +56,17 @@ $STACK_ECC_SKILLS = @{
     "nextjs"     = @("frontend-patterns", "react-patterns", "react-performance", "backend-patterns", "api-design", "tdd-workflow")
     "react"      = @("frontend-patterns", "react-patterns", "react-performance", "react-testing", "tdd-workflow")
     "docker"     = @("docker-patterns", "deployment-patterns", "production-audit")
+    "django"     = @("django-patterns", "django-tdd", "django-security", "django-verification", "python-patterns")
+    "fastapi"    = @("fastapi-patterns", "python-patterns", "python-testing", "api-design", "security-review")
+    "laravel"    = @("laravel-patterns", "laravel-tdd", "laravel-security", "laravel-verification", "mysql-patterns")
+    "springboot" = @("springboot-patterns", "springboot-tdd", "springboot-security", "springboot-verification", "jpa-patterns")
+    "golang"     = @("golang-patterns", "golang-testing", "error-handling", "api-design")
+    "rust"       = @("rust-patterns", "rust-testing", "error-handling")
+    "python"     = @("python-patterns", "python-testing", "error-handling")
+    "android"    = @("android-clean-architecture", "kotlin-patterns", "compose-multiplatform-patterns")
+    "express"    = @("backend-patterns", "api-design", "security-review", "error-handling")
+    "dotnet"     = @("dotnet-patterns", "csharp-testing", "api-design")
+    "prisma"     = @("prisma-patterns", "postgres-patterns", "backend-patterns")
 }
 
 # ============================================================

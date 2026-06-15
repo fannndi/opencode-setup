@@ -1,28 +1,76 @@
 # Instinct Extract — StopHook: auto-extract patterns from session
-# Trigger: session end (Stop hook)
-# Extracts: error-solutions, code-patterns, user-preferences
+# Extracts: error-solutions, code-patterns, preferences
+# LLM mode: richer extraction. Regex mode: basic line pairing.
 
 $ErrorActionPreference = "Continue"
-$SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
+$SETUP_DIR = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 $ROOT_DIR = Split-Path -Parent $SETUP_DIR
 
 . "$SETUP_DIR\project-resolve.ps1"
 . "$SETUP_DIR\agent-core.ps1"
+. "$SETUP_DIR\llm-adapter.ps1"
 
 $activeProject = Get-ActiveProject
 if (-not $activeProject) { exit 0 }
 
 $memDir = Get-MemoryDir -ProjectPath $activeProject
 $slug = Get-ProjectSlug -Path $activeProject
+$sessionLog = "$memDir\sessions\$(Get-Date -Format 'yyyy-MM-dd').md"
+$patternsDir = "$memDir\patterns"
+$errorsDir = "$memDir\errors"
+New-Item -ItemType Directory -Path $patternsDir -Force | Out-Null
+New-Item -ItemType Directory -Path $errorsDir -Force | Out-Null
+
+$llmMode = Get-LLMMode
 
 # ============================================================
-# Extract 1: Error solutions from session history
+# Extract 1: Session Summary + Error Patterns (LLM when ON)
 # ============================================================
-$sessionLog = "$memDir\sessions\$(Get-Date -Format 'yyyy-MM-dd').md"
 if (Test-Path $sessionLog) {
     $content = Get-Content $sessionLog -Raw
 
-    # Look for error→solution patterns
+    if ($llmMode -eq "on" -and $content.Length -gt 50) {
+        # LLM extraction — richer analysis
+        $prompt = @"
+Analyze this development session log and extract:
+1. What problems occurred (max 3)
+2. What solutions were found
+3. Any reusable patterns
+
+Output ONLY JSON array:
+[{"problem": "...", "solution": "...", "pattern": "..."}]
+
+Session log:
+$content
+"@
+        $result = Invoke-LLM -Prompt $prompt -System "Output ONLY a JSON array. No explanation." -MaxTokens 1024 -Temperature 0.2 -TimeoutSec 30
+
+        if ($result) {
+            try {
+                $patterns = $result.response | ConvertFrom-Json
+                $i = 0
+                foreach ($p in $patterns) {
+                    $i++
+                    if ($p.problem -and $p.solution) {
+                        $safeName = ($p.problem -replace '[^\w\-]', '_').Substring(0, [Math]::Min(40, $p.problem.Length))
+                        $pf = "$errorsDir\$safeName.md"
+                        if (-not (Test-Path $pf)) {
+@"
+# $($p.problem)
+- Solution: $($p.solution)
+- Pattern: $($p.pattern)
+- Date: $(Get-Date -Format "yyyy-MM-dd")
+- Extracted by: LLM
+"@ | Set-Content -Path $pf -Encoding UTF8
+                            Write-Host "  [INSTINCT] LLM extracted: $($p.problem)" -ForegroundColor Green
+                        }
+                    }
+                }
+            } catch {}
+        }
+    }
+
+    # Regex fallback — also runs alongside LLM for coverage
     $errorPatterns = [regex]::Matches($content, '(?:error|bug|fail|gagal|salah)[^:]*:\s*([^\n]+)', 'IgnoreCase')
     $solutionPatterns = [regex]::Matches($content, '(?:fix|solusi|resolve|fixed|fixed by)\s*:?\s*([^\n]+)', 'IgnoreCase')
 
@@ -33,28 +81,23 @@ if (Test-Path $sessionLog) {
             $solDesc = $solutionPatterns[$i].Groups[1].Value.Trim()
             $safeName = $errName -replace '[^\w\-]', '_'
 
-            $patternFile = "$memDir\errors\$safeName.md"
-            if (-not (Test-Path $patternFile)) {
-@" 
+            $pf = "$errorsDir\$safeName.md"
+            if (-not (Test-Path $pf)) {
+@"
 # $errName
 - Solution: $solDesc
 - Date: $(Get-Date -Format "yyyy-MM-dd")
-- Auto-extracted from session
-"@ | Set-Content -Path $patternFile -Encoding UTF8
-                Write-Host "  [INSTINCT] Extracted error fix: $errName" -ForegroundColor Green
+- Extracted by: regex
+"@ | Set-Content -Path $pf -Encoding UTF8
+                Write-Host "  [INSTINCT] Regex extracted: $errName" -ForegroundColor Gray
             }
         }
     }
 }
 
 # ============================================================
-# Extract 2: Framework patterns from error files
+# Extract 2: Project framework detection
 # ============================================================
-$contextLog = "$memDir\sessions\context.md"
-$patternsDir = "$memDir\patterns"
-New-Item -ItemType Directory -Path $patternsDir -Force | Out-Null
-
-# Detect patterns from project structure
 $projectPath = $activeProject
 if (Test-Path "$projectPath\package.json") {
     try {
@@ -63,15 +106,14 @@ if (Test-Path "$projectPath\package.json") {
         if ($pkg.dependencies) { $allDeps += $pkg.dependencies.PSObject.Properties.Name }
         if ($pkg.devDependencies) { $allDeps += $pkg.devDependencies.PSObject.Properties.Name }
 
-        # Save framework pattern
-        $frameworkFile = "$patternsDir\project-framework.md"
-        if (-not (Test-Path $frameworkFile)) {
+        $ff = "$patternsDir\project-framework.md"
+        if (-not (Test-Path $ff)) {
             $coreDeps = $allDeps | Select-Object -First 20
-@" 
+@"
 # Project Framework Dependencies
-- Stack: $( -join $allDeps)
+- Stack: $($allDeps -join ', ')
 - Auto-detected: $(Get-Date -Format "yyyy-MM-dd")
-"@ | Set-Content -Path $frameworkFile -Encoding UTF8
+"@ | Set-Content -Path $ff -Encoding UTF8
         }
     } catch {}
 }
@@ -83,8 +125,8 @@ $sf = Get-SessionFile -ProjectPath $activeProject
 if (Test-Path $sf) {
     try {
         $session = Get-Content $sf -Raw | ConvertFrom-Json
-        $errorCount = (Get-ChildItem "$memDir\errors\*.md" -ErrorAction SilentlyContinue | Measure-Object).Count
-        $patternCount = (Get-ChildItem "$memDir\patterns\*.md" -ErrorAction SilentlyContinue | Measure-Object).Count
+        $errorCount = (Get-ChildItem "$errorsDir\*.md" -ErrorAction SilentlyContinue | Measure-Object).Count
+        $patternCount = (Get-ChildItem "$patternsDir\*.md" -ErrorAction SilentlyContinue | Measure-Object).Count
         $session.updated_at = Get-Date -Format "yyyy-MM-ddTHH:mm:sszzz"
         $session | Add-Member -NotePropertyName "error_count" -NotePropertyValue $errorCount -Force -ErrorAction SilentlyContinue
         $session | Add-Member -NotePropertyName "pattern_count" -NotePropertyValue $patternCount -Force -ErrorAction SilentlyContinue

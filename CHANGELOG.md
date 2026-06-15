@@ -4,6 +4,35 @@ Semua perubahan penting di project ini.
 
 ---
 
+## [3.1.0] — 2026-06-15 — Self-Improvement Round 2
+
+### Improved — Intent Compiler
+- **New schema fields** — `estimated_hours`, `confidence`, `language`, `dependencies`, `_compiler` tracking
+- **LLM vs regex tracking** — tiap output tagged `llm` atau `regex`
+
+### Improved — LLM Adapter
+- **Chat API** — `/api/generate` → `/api/chat` (quality lebih baik buat instruction-tuned models)
+- **Response handling** — Qwen3 dual-mode thinking field handled properly
+
+### Improved — Profile
+- **Removed 5 niche skills** — `frontend-slides`, `9router-image`, `9router-tts`, `9router-stt`, `9router-embeddings`
+- **21 → 16 instructions** — hemat token ~25% baseline
+
+### Improved — Skill Router
+- **Category grouping** — 284 flat names → grouped by category (max 100)
+- **Timeout fix** — prompt size turun drastis, LLM bisa process dalam 60s
+
+### Improved — Instinct Extract
+- **LLM pattern mining** — session end → LLM extract problem+solusi+pattern
+- **Dual path** — LLM kaya (ON) + regex coverage (OFF)
+- **Path fix** — sourcing dari hooks/ ke scripts/ parent dir
+
+### Improved — Stack Detection
+- **11 new stack mappings** — django, fastapi, laravel, springboot, golang, rust, python, android, express, dotnet, prisma
+- **16 stacks total** — dari sebelumnya 5
+
+---
+
 ## [3.0.0] — 2026-06-15 — Personal Knowledge Operating System
 
 ### Added — Local LLM Foundation

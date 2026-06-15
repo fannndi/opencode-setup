@@ -79,21 +79,38 @@ function Get-Intent {
 function RouteWithLLM {
     param($Intent)
 
+    # Filter relevant categories based on intent
+    $domain = $Intent.domain
+    $stack = $Intent.stack_hint
+    $features = $Intent.features
+
+    $relevantCategories = @("Workflow", "Language", "Framework")
+    if ($features -contains "auth" -or $features -contains "security") { $relevantCategories += "Security" }
+    if ($features -contains "docker" -or $domain -eq "deployment") { $relevantCategories += "DevOps" }
+    if ($features -contains "test" -or $features -contains "tdd") { $relevantCategories += "Testing" }
+
+    # Filter skills by category + stack
+    $filtered = $SKILL_INDEX | Where-Object {
+        $catMatch = $_.category -match ($relevantCategories -join '|')
+        $stackMatch = -not $_.stack -or $_.stack -eq "all" -or ($stack | Where-Object { $_.stack -match $_ })
+        $catMatch -or $stackMatch
+    } | Select-Object -First 100
+
+    if ($filtered.Count -eq 0) { $filtered = $SKILL_INDEX | Select-Object -First 80 }
+
+    # Group by category for the prompt
+    $grouped = $filtered | Group-Object category
+    $skillText = ($grouped | ForEach-Object { "$($_.Name): $($_.Group.name -join ', ')" }) -join "`n"
+
     $prompt = @"
-Select the top 10 most relevant skills for this project from the list below.
+Select the 8-12 most relevant skills for this project. Output ONLY a JSON array.
 
-Project:
-- Domain: $($Intent.domain)
-- Module: $($Intent.module)
-- Features: $($Intent.features -join ', ')
-- Security: $($Intent.security -join ', ')
-- Stack: $($Intent.stack_hint -join ', ')
+Project: $($Intent.domain)/$($Intent.module)
+Stack: $($Intent.stack_hint -join ', ')
+Features: $($Intent.features -join ', ')
 
-Available skills (270 total). Select only the most relevant ones:
-
-$($SKILL_NAMES -join ', ')
-
-Output ONLY a JSON array of skill names. Example: ["tdd-workflow", "security-review", ...]
+Available skills by category:
+$skillText
 "@
 
     $result = Invoke-LLM -Prompt $prompt -System "Output ONLY a JSON array of skill names. No explanation." -MaxTokens 1024 -Temperature 0.2 -TimeoutSec 60

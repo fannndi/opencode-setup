@@ -40,7 +40,7 @@ function Get-LLMModel {
 }
 
 # ============================================================
-# Invoke LLM
+# Invoke LLM — uses /api/chat for instruction-tuned models
 # ============================================================
 
 function Invoke-LLM {
@@ -61,22 +61,25 @@ function Invoke-LLM {
 
     if (-not $Model) { $Model = Get-LLMModel }
 
-    # Build request body
+    # Build messages array (chat format)
+    $messages = @()
+    if ($System) {
+        $messages += @{ role = "system"; content = $System }
+    }
+    $messages += @{ role = "user"; content = $Prompt }
+
     $body = @{
         model = $Model
-        prompt = $Prompt
+        messages = $messages
         stream = $false
         options = @{
             num_predict = $MaxTokens
             temperature = $Temperature
         }
     }
-    if ($System) {
-        $body.prompt = "$System`n`n$Prompt"
-    }
 
     try {
-        $response = Invoke-RestMethod -Uri "$OLLAMA_URL/api/generate" `
+        $response = Invoke-RestMethod -Uri "$OLLAMA_URL/api/chat" `
             -Method POST `
             -Body ($body | ConvertTo-Json -Depth 5) `
             -ContentType "application/json" `
@@ -84,8 +87,7 @@ function Invoke-LLM {
             -ErrorAction Stop
 
         return [PSCustomObject]@{
-            response = if ($response.response -ne '') { $response.response } else { $response.thinking }
-            thinking = $response.thinking
+            response = $response.message.content
             model = $response.model
             total_duration = $response.total_duration
             tokens_per_second = if ($response.total_duration -and $response.total_duration -gt 0) {
@@ -95,7 +97,6 @@ function Invoke-LLM {
         }
     } catch {
         Write-Warning "LLM call failed: $($_.Exception.Message)"
-        # Auto-disable mode on connection error
         if ($_.Exception.Message -match "ConnectFailure|connection refused|No connection") {
             Write-Warning "Ollama not reachable. Auto-disabling LLM mode."
             $null = & "$SETUP_DIR\llm-mode.ps1" off

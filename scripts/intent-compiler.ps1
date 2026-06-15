@@ -26,17 +26,24 @@ You are an intent compiler. Convert user requests into a structured JSON specifi
 Rules:
 - Output ONLY valid JSON. No explanation, no markdown, no code block.
 - If you cannot parse the request, output: {"error": "description of what's missing"}
+- Estimate confidence (1.0 = certain, 0.5 = guessing, 0.0 = cannot parse)
+- Estimate effort in hours (story-points relative scale)
+- Set language: "id" if mostly Indonesian, "en" if English, "mixed" if both
 
 Schema:
 {
-  "domain": "project domain (web_desa, ecommerce, api, etc)",
+  "domain": "project domain (web_desa, ecommerce, api, auth, etc)",
   "module": "specific module name",
-  "features": ["array of features: crud, auth, audit_log, report, search, export, import, notification, etc"],
+  "features": ["array of features: crud, auth, audit_log, report, search, export, import, notification, dashboard, etc"],
   "validation": ["array of validation needs: email, phone, nik, unique, required, etc"],
   "roles": ["array of roles: admin, user, guest, superadmin, etc"],
   "security": ["array of security: prepared_statement, xss_protection, csrf, rate_limit, auth, encryption, etc"],
   "stack_hint": ["detected technology hints from request"],
-  "crud_entities": ["entities mentioned that need CRUD"]
+  "crud_entities": ["entities mentioned that need CRUD"],
+  "dependencies": ["modules this depends on"],
+  "estimated_hours": 0,
+  "confidence": 1.0,
+  "language": "id"
 }
 "@
 
@@ -61,6 +68,20 @@ function CompileWithLLM {
         if ($spec.error) {
             Write-Warning "LLM returned error: $($spec.error)"
             return $null
+        }
+        # Add metadata
+        $spec | Add-Member -NotePropertyName "_compiler" -NotePropertyValue "llm" -Force
+        if (-not $spec.PSObject.Properties.Name.Contains("confidence")) {
+            $spec | Add-Member -NotePropertyName "confidence" -NotePropertyValue 0.8 -Force
+        }
+        if (-not $spec.PSObject.Properties.Name.Contains("estimated_hours")) {
+            $spec | Add-Member -NotePropertyName "estimated_hours" -NotePropertyValue 0 -Force
+        }
+        if (-not $spec.PSObject.Properties.Name.Contains("language")) {
+            $spec | Add-Member -NotePropertyName "language" -NotePropertyValue "id" -Force
+        }
+        if (-not $spec.PSObject.Properties.Name.Contains("dependencies")) {
+            $spec | Add-Member -NotePropertyName "dependencies" -NotePropertyValue @() -Force
         }
         return $spec
     } catch {
@@ -158,6 +179,10 @@ function CompileWithRegex {
         security = $security
         stack_hint = $stack
         crud_entities = if ($module -ne "general") { @($module) } else { @() }
+        dependencies = @()
+        estimated_hours = 0
+        confidence = 0.3
+        language = "id"
         _compiler = "regex"
     }
 }
