@@ -1,0 +1,13 @@
+{
+  "9router": {
+    "last_sha": "23da7b1fe3bb8edd2bdbdb63fbbb15a476b02c56",
+    "repo": "fannndi/9router",
+    "last_sync": "2026-06-16T11:27:07+07:00"
+  },
+  "ecc": {
+    "version": "2.0.0",
+    "last_sha": "7b39012aa413b01af967a5c37a27e12d49b041bc",
+    "repo": "fannndi/ECC",
+    "last_sync": "2026-06-16T11:27:07+07:00"
+  }
+}

@@ -18,8 +18,9 @@ Terinspirasi dari Bu Rina, sistem ini berevolusi jadi **Personal Knowledge Opera
 
 ### End User (2 langkah)
 ```
-1. Download folder + double-click install.bat
-2. Buka terminal → opencode → /start gratis → /go "bikin aplikasi kasir"
+1. Clone repo → cd opencode-setup
+2. .\scripts\setup.ps1 → isi api-key.txt → .\scripts\setup.ps1 --apply
+3. opencode → /go "bikin aplikasi kasir"
 ```
 
 ### Developer
@@ -27,8 +28,15 @@ Terinspirasi dari Bu Rina, sistem ini berevolusi jadi **Personal Knowledge Opera
 git clone https://github.com/fannndi/opencode-setup.git
 cd opencode-setup
 .\scripts\setup.ps1
+# Fill api-key.txt, then:
+.\scripts\setup.ps1 --apply
 opencode
-/start gratis
+```
+
+### Via OpenCode Command
+```
+/setup           # Install everything
+/setup --apply   # Apply api-key, verify, done
 ```
 
 ---
@@ -154,8 +162,7 @@ Generator: .\create-function.ps1 -Name "Func" -Module "mod"
 | Script | Fungsi |
 |--------|--------|
 | `start.ps1` | Boot sequence: health check, auto-update, profile apply, model test |
-| `setup.ps1` | One-time install: prereq check, clone, build, config |
-| `install.ps1` | Quick installer: copy config + rules + build plugin |
+| `setup.ps1` | Smart setup: detect 9Router, clone ECC, build plugin, apply profile |
 | `admin-update.ps1` | Update ECC + 9Router + rebuild plugin + LLM changelog summary |
 | `generate-prd.ps1` | Idea → LLM-enriched PRD document |
 | `project-analyze.ps1` | PRD → semantic stack + feature detection |
@@ -205,8 +212,7 @@ opencode-setup/
 ├── .opencode/                 # Telemetry, usage logs (gitignored)
 ├── README.md
 ├── DEV-PLAN.md                # Self-improvement roadmap
-├── CHANGELOG.md               # Release history
-└── install.bat                # One-click installer
+└── CHANGELOG.md               # Release history
 ```
 
 ---
