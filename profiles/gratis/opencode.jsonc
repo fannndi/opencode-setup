@@ -1,7 +1,7 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "9router/gratis",
-  "small_model": "9router/emergency",
+  "model": "9router/mmf/mimo-auto",
+  "small_model": "9router/oc/nemotron-3-ultra-free",
   "default_agent": "build",
 
   "provider": {
@@ -63,7 +63,7 @@
     "build": {
       "description": "Primary coding agent",
       "mode": "primary",
-      "model": "9router/gratis",
+      "model": "9router/mmf/mimo-auto",
       "tools": {
         "write": true,
         "edit": true,
@@ -75,175 +75,175 @@
     "planner": {
       "description": "Expert planning specialist.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/oc/nemotron-3-ultra-free",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/planner.txt}",
       "tools": { "read": true, "bash": true, "write": false, "edit": false }
     },
     "architect": {
       "description": "Software architecture specialist.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/oc/nemotron-3-ultra-free",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/architect.txt}",
       "tools": { "read": true, "bash": true, "write": false, "edit": false }
     },
     "code-reviewer": {
       "description": "Expert code review specialist.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/oc/nemotron-3-ultra-free",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/code-reviewer.txt}",
       "tools": { "read": true, "bash": true, "write": false, "edit": false }
     },
     "security-reviewer": {
       "description": "Security vulnerability detection specialist.",
       "mode": "subagent",
-      "model": "9router/gratis",
+      "model": "9router/mmf/mimo-auto",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/security-reviewer.txt}",
       "tools": { "read": true, "bash": true, "write": true, "edit": true }
     },
     "tdd-guide": {
       "description": "Test-Driven Development specialist.",
       "mode": "subagent",
-      "model": "9router/gratis",
+      "model": "9router/mmf/mimo-auto",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/tdd-guide.txt}",
       "tools": { "read": true, "write": true, "edit": true, "bash": true }
     },
     "build-error-resolver": {
       "description": "Build error resolution specialist.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/oc/nemotron-3-ultra-free",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/build-error-resolver.txt}",
       "tools": { "read": true, "write": true, "edit": true, "bash": true }
     },
     "e2e-runner": {
       "description": "End-to-end testing specialist.",
       "mode": "subagent",
-      "model": "9router/gratis",
+      "model": "9router/mmf/mimo-auto",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/e2e-runner.txt}",
       "tools": { "read": true, "write": true, "edit": true, "bash": true }
     },
     "doc-updater": {
       "description": "Documentation specialist.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/oc/nemotron-3-ultra-free",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/doc-updater.txt}",
       "tools": { "read": true, "write": true, "edit": true, "bash": true }
     },
     "refactor-cleaner": {
       "description": "Dead code cleanup specialist.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/oc/nemotron-3-ultra-free",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/refactor-cleaner.txt}",
       "tools": { "read": true, "write": true, "edit": true, "bash": true }
     },
     "go-reviewer": {
       "description": "Expert Go code reviewer.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/oc/nemotron-3-ultra-free",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/go-reviewer.txt}",
       "tools": { "read": true, "bash": true, "write": false, "edit": false }
     },
     "go-build-resolver": {
       "description": "Go build resolution.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/oc/nemotron-3-ultra-free",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/go-build-resolver.txt}",
       "tools": { "read": true, "write": true, "edit": true, "bash": true }
     },
     "database-reviewer": {
       "description": "PostgreSQL database specialist.",
       "mode": "subagent",
-      "model": "9router/gratis",
+      "model": "9router/mmf/mimo-auto",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/database-reviewer.txt}",
       "tools": { "read": true, "write": true, "edit": true, "bash": true }
     },
     "cpp-reviewer": {
       "description": "Expert C++ code reviewer.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/oc/nemotron-3-ultra-free",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/cpp-reviewer.txt}",
       "tools": { "read": true, "bash": true, "write": false, "edit": false }
     },
     "cpp-build-resolver": {
       "description": "C++ build resolution.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/oc/nemotron-3-ultra-free",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/cpp-build-resolver.txt}",
       "tools": { "read": true, "write": true, "edit": true, "bash": true }
     },
     "docs-lookup": {
       "description": "Documentation specialist.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/oc/nemotron-3-ultra-free",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/docs-lookup.txt}",
       "tools": { "read": true, "bash": true, "write": false, "edit": false }
     },
     "harness-optimizer": {
       "description": "Analyze and improve local agent harness.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/oc/nemotron-3-ultra-free",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/harness-optimizer.txt}",
       "tools": { "read": true, "bash": true, "edit": true }
     },
     "java-reviewer": {
       "description": "Expert Java reviewer.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/oc/nemotron-3-ultra-free",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/java-reviewer.txt}",
       "tools": { "read": true, "bash": true, "write": false, "edit": false }
     },
     "java-build-resolver": {
       "description": "Java build resolution.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/oc/nemotron-3-ultra-free",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/java-build-resolver.txt}",
       "tools": { "read": true, "write": true, "edit": true, "bash": true }
     },
     "kotlin-reviewer": {
       "description": "Kotlin reviewer.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/oc/nemotron-3-ultra-free",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/kotlin-reviewer.txt}",
       "tools": { "read": true, "bash": true, "write": false, "edit": false }
     },
     "kotlin-build-resolver": {
       "description": "Kotlin build resolution.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/oc/nemotron-3-ultra-free",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/kotlin-build-resolver.txt}",
       "tools": { "read": true, "write": true, "edit": true, "bash": true }
     },
     "loop-operator": {
       "description": "Operate autonomous agent loops.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/oc/nemotron-3-ultra-free",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/loop-operator.txt}",
       "tools": { "read": true, "bash": true, "edit": true }
     },
     "php-reviewer": {
       "description": "Expert PHP reviewer.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/oc/nemotron-3-ultra-free",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/php-reviewer.txt}",
       "tools": { "read": true, "bash": true, "write": false, "edit": false }
     },
     "python-reviewer": {
       "description": "Expert Python reviewer.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/oc/nemotron-3-ultra-free",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/python-reviewer.txt}",
       "tools": { "read": true, "bash": true, "write": false, "edit": false }
     },
     "rust-reviewer": {
       "description": "Expert Rust reviewer.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/oc/nemotron-3-ultra-free",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/rust-reviewer.txt}",
       "tools": { "read": true, "bash": true, "write": false, "edit": false }
     },
     "rust-build-resolver": {
       "description": "Rust build resolution.",
       "mode": "subagent",
-      "model": "9router/gratis-small",
+      "model": "9router/oc/nemotron-3-ultra-free",
       "prompt": "{file:C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/prompts/agents/rust-build-resolver.txt}",
       "tools": { "read": true, "write": true, "edit": true, "bash": true }
     }
