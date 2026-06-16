@@ -18,7 +18,8 @@
         "oc/deepseek-v4-flash-free": { "name": "DeepSeek V4 Flash Free" },
         "oc/nemotron-3-ultra-free": { "name": "Nemotron 3 Ultra Free" },
         "oc/big-pickle": { "name": "Big Pickle" },
-        "oc/north-mini-code-free": { "name": "North Mini Code Free" }
+        "oc/north-mini-code-free": { "name": "North Mini Code Free" },
+        "kr/glm-5": { "name": "Kiro GLM-5 Free" }
       }
     }
   },
@@ -41,7 +42,11 @@
     "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/verification-loop/SKILL.md",
     "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/api-design/SKILL.md",
     "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/strategic-compact/SKILL.md",
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/eval-harness/SKILL.md"
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/eval-harness/SKILL.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router/SKILL.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-chat/SKILL.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-web-search/SKILL.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-web-fetch/SKILL.md"
   ],
 
   "plugin": [
@@ -307,5 +312,66 @@
 
   "permission": {
     "mcp_*": "ask"
+  },
+
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"C:\\Users\\FANNNDI\\Documents\\opencode-setup\\scripts\\hooks\\self-heal.ps1\" -FilePath \"$FILE_PATH\"",
+            "timeout": 15,
+            "async": true
+          }
+        ],
+        "description": "Self-heal: check types after file edits",
+        "id": "pre:edit-write:self-heal"
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"C:\\Users\\FANNNDI\\Documents\\opencode-setup\\scripts\\hooks\\eval-gate.ps1\" -FilePath \"$FILE_PATH\"",
+            "timeout": 30,
+            "async": true
+          }
+        ],
+        "description": "Eval gate: run tests on spec file changes",
+        "id": "pre:edit-write:eval-gate"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"C:\\Users\\FANNNDI\\Documents\\opencode-setup\\scripts\\hooks\\proactive-research.ps1\" -FilePath \"$FILE_PATH\"",
+            "timeout": 5,
+            "async": true
+          }
+        ],
+        "description": "Research: track unknown libraries",
+        "id": "post:edit-write:proactive-research"
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -ExecutionPolicy Bypass -File \"C:\\Users\\FANNNDI\\Documents\\opencode-setup\\scripts\\hooks\\instinct-extract.ps1\"",
+            "timeout": 10,
+            "async": true
+          }
+        ],
+        "description": "Extract patterns from session on end",
+        "id": "stop:instinct-extract"
+      }
+    ]
   }
 }
