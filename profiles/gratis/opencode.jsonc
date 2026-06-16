@@ -22,7 +22,6 @@
   "instructions": [
     "C:/Users/FANNNDI/Documents/opencode-setup/.opencode/context.md",
     "C:/Users/FANNNDI/Documents/opencode-setup/.opencode/llm-mode.json",
-    "C:/Users/FANNNDI/Documents/opencode-setup/instructions/llm-status-footer.md",
     "C:/Users/FANNNDI/Documents/opencode-setup/instructions/dev-mode-rules.md",
     "C:/Users/FANNNDI/Documents/opencode-setup/instructions/user-mode-rules.md",
     "C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/instructions/llm-preprocess.md",
@@ -41,7 +40,8 @@
     "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router/SKILL.md",
     "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-chat/SKILL.md",
     "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-web-search/SKILL.md",
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-web-fetch/SKILL.md"
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-web-fetch/SKILL.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/instructions/llm-status-footer.md"
   ],
 
   "plugin": [
