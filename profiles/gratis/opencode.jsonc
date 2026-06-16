@@ -24,10 +24,14 @@
   },
 
   "instructions": [
+    "C:/Users/FANNNDI/Documents/opencode-setup/.opencode/context.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/.opencode/llm-mode.json",
     "C:/Users/FANNNDI/Documents/opencode-setup/instructions/llm-status-footer.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/instructions/dev-mode-rules.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/instructions/user-mode-rules.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/instructions/llm-preprocess.md",
     "C:/Users/FANNNDI/Documents/opencode-setup/ecc/AGENTS.md",
     "C:/Users/FANNNDI/Documents/opencode-setup/ecc/CONTRIBUTING.md",
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/instructions/llm-preprocess.md",
     "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/tdd-workflow/SKILL.md",
     "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/security-review/SKILL.md",
     "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/coding-standards/SKILL.md",
@@ -37,9 +41,7 @@
     "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/verification-loop/SKILL.md",
     "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/api-design/SKILL.md",
     "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/strategic-compact/SKILL.md",
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/eval-harness/SKILL.md",
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router/SKILL.md",
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-chat/SKILL.md"
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/eval-harness/SKILL.md"
   ],
 
   "plugin": [

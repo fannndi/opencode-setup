@@ -119,6 +119,35 @@ Like a car transmission: three gears for different driving conditions.
 
 ---
 
+## Execution Rules
+
+### User Mode (Default)
+```
+1. Input presisi → eksekusi langsung
+2. Max 1-2 pertanyaan → lalu eksekusi
+3. NEW task → HOLD → PLAN → eksekusi
+4. Fix/bug → langsung eksekusi
+5. Jika ambigu → pilih opsi terbaik → eksekusi → user koreksi kalo salah
+```
+
+### Admin Mode (`/admin`, `/setup`, `/llm`)
+```
+1. Goal-oriented → langsung eksekusi
+2. Boleh tanya untuk clarify
+3. Eksplorasi boleh
+4. No planning hold
+```
+
+### Session Start (Morning Routine)
+```
+1. Read .opencode/context.md → state terkini
+2. Read .opencode/llm-mode.json → mode info
+3. Detect mode: User atau Admin
+4. Write status → append footer
+```
+
+---
+
 ## How It Works — Step by Step
 
 ### With Analogy
@@ -129,49 +158,61 @@ Like a car transmission: three gears for different driving conditions.
 
 ### The Behavioral Contract
 
-Every user message triggers this exact sequence:
+Every user message triggers this sequence:
 
 ```
-1.  ENVIRONMENT CHECK
-    ├── Read .opencode/llm-mode.json → determine mode
-    └── If ECO → skip preprocessing, use raw input
+STEP 0: Session Init (first message)
+├── Read .opencode/context.md → state terkini
+├── Read .opencode/llm-mode.json → mode (ECO/BALANCED/PERFORMANCE)
+├── Detect User/Admin mode
+└── Write .opencode/llm-status.json + footer
 
-2.  LOCAL ENRICHMENT (if not ECO)
-    ├── Invoke-LLMEnrich("<user_input>", "universal preprocess")
-    │   └── GPU utilization spikes 25-60%
-    │   └── Model produces enriched context
-    └── Store enriched context internally (user never sees it)
+STEP 1: Enrich
+├── Read .opencode/llm-mode.json
+├── IF mode != eco → Invoke-LLMEnrich() → GPU spike >0%
+├── IF mode == eco → skip, raw input
+└── Save enriched context (internal)
 
-3.  CLOUD AI RESPONSE
-    ├── Takes enriched context
-    ├── Runs through ECC skills/agents/commands
-    ├── Routes via 9Router to free provider model
-    └── Returns answer
+STEP 2: Execute
+├── User mode: presisi, max 2 tanya, plan untuk NEW task
+├── Admin mode: goal-oriented, boleh clarify
+└── Apply mode rules
 
-4.  STATUS REPORTING
-    ├── Write .opencode/llm-status.json
-    └── Append footer:
-        LLM : [ PERFORMANCE ] - Tokens : [ 18 ] - Profile : [ Gratis ] - Model : [ DS V4 Flash ]
+STEP 3: Footer (COMPLIANCE HOOK)
+├── Write .opencode/llm-status.json
+└── Append footer: Mode : [User/Admin] | LLMEnrich : [On/Off] | ...
 ```
 
 ---
 
-## The Footer System
+## The Footer System (Enforcement Hook)
 
-Every response includes a status bar showing what happened:
+Every response includes a footer that acts as a **compliance enforcement hook**:
 
 ```
-LLM : [ PERFORMANCE ] - Tokens : [ 18 ] - Profile : [ Gratis ] - Model : [ DS V4 Flash ]
+Mode : [ User ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - Tokens : [ 18 ] - Profile : [ Gratis ] - Model : [ DS V4 Flash ]
 ```
 
-| Field | Meaning | Source |
-|-------|---------|--------|
-| `PERFORMANCE` | Local preprocessing mode | `.opencode/llm-mode.json` |
-| `18` | Estimated output tokens | ~1 token per 4 characters |
-| `Gratis` | Active OpenCode profile | Profile detection via config matching |
-| `DS V4 Flash` | Cloud AI model | Alias for `oc/deepseek-v4-flash-free` |
+| Field | Meaning | Enforcement |
+|-------|---------|-------------|
+| `Mode: [User]` | Input presisi, max 2 tanya, eksekusi cepat | Default chat mode |
+| `Mode: [Admin]` | Goal-oriented, boleh clarify | `/admin`, `/setup`, `/llm` |
+| `LLMEnrich: [On]` | Local GPU preprocessing berjalan | |
+| `LLMEnrich: [Off]` | **AI GAGAL COMPLY** | User langsung lihat kegagalan |
+| `Profile` | Gratis / Go | |
+| `Model` | Cloud AI alias | |
 
-Think of it like a car dashboard — you always know which gear you're in, how much fuel you're using, and what engine is running.
+**Footer bukan dekorasi** — ini enforcement hook. LLMEnrich [Off] berarti enrichment tidak berjalan.
+
+### User Mode vs Admin Mode
+
+| Aspect | User Mode | Admin Mode |
+|--------|-----------|------------|
+| Input style | Presisi, coding task | Goal-oriented, setup/maintenance |
+| Pertanyaan | Max 1-2 lalu eksekusi | Boleh clarify dulu |
+| Planning | NEW task → HOLD → PLAN → BUILD | No hold, langsung eksekusi |
+| Commands | Coding task, bug fix | `/admin`, `/setup`, `/llm`, `/audit` |
+| Default | Yes | Only when admin commands used |
 
 ---
 

@@ -4,6 +4,49 @@ Semua perubahan penting di project ini.
 
 ---
 
+## [6.0.0] — 2026-06-16 — Footer as Enforcement Hook + User/Admin Mode + Session Init
+
+### Added — User/Admin Mode System
+- `instructions/dev-mode-rules.md` — Admin mode: goal-oriented, boleh clarify, no hold
+- `instructions/user-mode-rules.md` — User mode: input presisi, max 2 tanya, plan→build
+- Footer sekarang tampilkan `Mode : [ User/Admin ]` sebelum LLM info
+- Mode detection: `/admin`, `/setup`, `/llm`, `/audit` → Admin. Default → User
+
+### Added — Execution Rules
+- **User mode:** Input presisi → eksekusi langsung. Max 1-2 pertanyaan lalu eksekusi.
+- **User mode:** NEW task → HOLD → PLAN → APPROVE → BUILD
+- **User mode:** Fix/bug → langsung eksekusi
+- **Admin mode:** Goal-oriented, boleh clarify, no planning hold
+- Footer = enforcement hook, bukan dekorasi
+
+### Added — Session Init (Morning Routine)
+- AI WAJIB read `.opencode/context.md` + `.opencode/llm-mode.json` saat session baru
+- Detect mode: User atau Admin
+- Write status + append footer sebagai langkah pertama
+
+### Changed — Instruction Loading
+- Profiles (+2): tambah `context.md`, `llm-mode.json` ke instructions array
+- Profiles (-2): hapus broken refs `9router/SKILL.md`, `9router-chat/SKILL.md`
+- AI sekarang LIHAT state dan mode di session baru, bukan cuma di-instruct
+
+### Changed — Footer Format
+- Sebelum: `LLM : [ PERFORMANCE ] - LLMEnrich [ On ] - Tokens : [ X ]`
+- Sesudah: `Mode : [ User ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - Tokens : [ X ]`
+- Footer = compliance hook: LLMEnrich [Off] = AI gagal comply
+
+### Changed — Preprocess Instruction (Simplified)
+- Dari 59 lines → 42 lines (lebih readable)
+- Dari step-by-step panjang → Pipeline 7-step sederhana
+- Rules: Invoke-LLMEnrich WAJIB, footer = compliance hook
+
+### Changed — Project Structure
+- `Project/Knowledge/<slug>/` — baru dibuat, script referensi
+- `scripts/project-resolve.ps1` — auto-clone via Resolve-Project, +Knowledge/
+- Remove redundant `Project/opencode-setup/` clone
+- Add `registry.json` — project index
+
+---
+
 ## [5.5.0] — 2026-06-16 — Balanced Mode 1GB VRAM + Real GPU Enrichment Pipeline
 
 ### Added — qwen2.5:1.5b-s for Balanced Mode

@@ -1,13 +1,13 @@
 # LLM Status Footer
 
-You MUST include a status footer at end of EVERY response.
+**Footer = ENFORCEMENT HOOK, bukan dekorasi.**
+**Footer menunjukkan compliance AI. Jika LLMEnrich [Off] = AI gagal comply.**
 
-## Core Rule
+## Core Rules
 
-**WAJIB: Setiap user input → Invoke-LLMEnrich dulu, baru jawab.**
-**Footer WAJIB: cantumkan LLMEnrich [On/Off] biar user tau enrichment berjalan.**
-
-Tidak ada alasan untuk skip. User sudah terima latency. GPU harus kepakai.
+1. Footer WAJIB di SETIAP respons
+2. LLMEnrich WAJIB [On] di mode BALANCED/PERFORMANCE
+3. Mode harus sesuai: [User] untuk coding, [Admin] untuk setup/maintenance
 
 ## Architecture
 
@@ -29,56 +29,57 @@ Cloud AI responds + footer
 
 ```powershell
 $llmMode = "eco"
-$llmModel = ""
-$enrichSuccess = $false  # SET to $true if Invoke-LLMEnrich returned enriched text
+$enrichSuccess = $false
+$userMode = "User"  # "User" or "Admin"
+$profileName = "?"
+$cloudModel = "DS V4 Flash"
+
 if (Test-Path ".opencode/llm-mode.json") {
   $m = Get-Content ".opencode/llm-mode.json" -Raw | ConvertFrom-Json
   $llmMode = $m.mode
-  $llmModel = $m.model
 }
 
-$profileName = "?"
 $gratisCfg = Get-Content "profiles/gratis/opencode.jsonc" -Raw 2>$null
 $goCfg = Get-Content "profiles/go/opencode.jsonc" -Raw 2>$null
 if ($gratisCfg -match '"9router/gratis"') { $profileName = "Gratis" }
 elseif ($goCfg -match '"9router/go"') { $profileName = "Go" }
-
-$cloudModel = "DS V4 Flash"
 ```
 
 Mode mapping: `eco` → ECO, `balanced` → BALANCED, `performance` → PERFORMANCE.
+User mode: `/admin`, `/setup`, `/llm`, `/audit` → Admin. Default → User.
 
 ## Step 2: Write Status File
 
 ```powershell
 $status = @{
   mode = $llmMode.ToUpper()
+  user_mode = $userMode
   enrich = if ($enrichSuccess) { "On" } else { "Off" }
   profile = $profileName
   model = $cloudModel
   last_tokens = <TOKEN_COUNT>
-  session_tokens = <TOKEN_COUNT>
   last_updated = (Get-Date).ToString("yyyy-MM-ddTHH:mm:ss")
 } | ConvertTo-Json -Depth 3
 $status | Set-Content -Path ".opencode\llm-status.json" -Encoding UTF8
 ```
 
-Replace `<TOKEN_COUNT>` with estimated output token count (1 token ≈ 4 chars).
-
 ## Step 3: Append Footer
 
 ```
-LLM : [ MODE ] - LLMEnrich [ On/Off ] - Tokens : [ X ] - Profile : [ NAME ] - Model : [ ALIAS ]
+Mode : [ User ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - Tokens : [ X ] - Profile : [ Gratis ] - Model : [ DS V4 Flash ]
 ```
 
-- `MODE` = ECO / BALANCED / PERFORMANCE
-- `LLMEnrich [On]` = enrichment berhasil, GPU kepake
-- `LLMEnrich [Off]` = ECO mode atau enrichment gagal
-- `ALIAS` = cloud AI model (DS V4 Flash, MiMo V2.5, etc)
+| Field | Arti | Enforcement |
+|-------|------|-------------|
+| `Mode: [User]` | Presisi, max 2 tanya, eksekusi cepat | |
+| `Mode: [Admin]` | Goal-oriented, boleh clarify | |
+| `LLMEnrich: [On]` | Enrichment berjalan | |
+| `LLMEnrich: [Off]` | **AI GAGAL COMPLY** | User langsung lihat |
+| `Profile` | Gratis / Go | |
+| `Model` | Cloud AI alias | |
 
-## Examples
+## Enforcement
 
-```
-LLM : [ PERFORMANCE ] - LLMEnrich [ On ] - Tokens : [ 245 ] - Profile : [ Gratis ] - Model : [ DS V4 Flash ]
-LLM : [ ECO ] - LLMEnrich [ Off ] - Tokens : [ 0 ] - Profile : [ Go ] - Model : [ MiMo V2.5 ]
-```
+- LLMEnrich [Off] di BALANCED/PERFORMANCE = AI tidak comply → koreksi
+- Mode: [Admin] dengan input User = mode salah → AI harus deteksi otomatis
+- Footer tidak boleh skip atau di-simplify
