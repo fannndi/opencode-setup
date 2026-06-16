@@ -1,53 +1,53 @@
 # LLM Status Footer
 
-You MUST include a status footer at the end of EVERY response.
+You MUST include a status footer at the end of EVERY response AND write the status file.
 
-## Format
+## Step 1: Write Status File
+
+Before appending the footer, run this PowerShell command to write `.opencode/llm-status.json`:
+
+```powershell
+$status = @{
+  mode = "9ROUTER"
+  model = "mimo-v2.5-free"
+  last_tokens = <YOUR_OUTPUT_TOKEN_COUNT>
+  session_tokens = <YOUR_OUTPUT_TOKEN_COUNT>
+  tokens_per_second = 0
+  latency_ms = 0
+  gpu_available = $false
+  last_updated = (Get-Date).ToString("yyyy-MM-ddTHH:mm:ss")
+} | ConvertTo-Json -Depth 3
+$status | Set-Content -Path ".opencode\llm-status.json" -Encoding UTF8
+```
+
+Replace `<YOUR_OUTPUT_TOKEN_COUNT>` with your estimated output token count (roughly 1 token per 4 characters of your response).
+
+## Step 2: Append Footer
+
+After writing the file, append this footer:
 
 ```
 ---
-LLM [MODE] Tokens [X] | model | latency
+LLM [9ROUTER] Tokens [X] | model
 ```
 
-## How to Get Values
+Where:
+- `Tokens [X]` = your estimated output token count
+- `model` = the model you are using (e.g., mimo-v2.5-free)
 
-Read the file `.opencode/llm-status.json` and display it exactly as formatted:
+## Example
 
-- `mode` -> `[MODE]` (e.g., 9ROUTER, BALANCED, PERFORMANCE, ECO)
-- `last_tokens` -> `Tokens [X]`
-- `model` -> model name (e.g., oc/mimo-v2.5-free)
-- `latency_ms` -> latency in milliseconds (e.g., `3200ms`)
+```
+Here is the answer to your question about React hooks...
 
-## Token Calculation
-
-- `last_tokens` = completion_tokens (output tokens)
-- `session_tokens` = prompt_tokens + completion_tokens (total tokens in this response)
-
-## GPU Fields
-
-GPU fields are always `N/A` for remote APIs (9Router, OpenAI, etc.). Only show GPU when `gpu_available` is true.
+---
+LLM [9ROUTER] Tokens [245] | mimo-v2.5-free
+```
 
 ## ECO Mode
 
 When in ECO mode, show:
 ```
 ---
-LLM [ECO] Tokens [0] | passthrough | N/A
-```
-
-## File Not Found
-
-If `.opencode/llm-status.json` does not exist, show:
-```
----
-LLM [INIT] Tokens [0] | waiting for first response...
-```
-
-## Example Output
-
-```
-Here is the answer to your question about React hooks...
-
----
-LLM [9ROUTER] Tokens [245] | oc/mimo-v2.5-free | 3200ms
+LLM [ECO] Tokens [0] | passthrough
 ```
