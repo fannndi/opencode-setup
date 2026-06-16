@@ -55,9 +55,9 @@ $status = @{
   mode = $llmMode.ToUpper()
   user_mode = $userMode
   enrich = if ($enrichSuccess) { "On" } else { "Off" }
+  enrich_time = <ENRICH_TIME_SEC>
   profile = $profileName
-  model = $cloudModel
-  last_tokens = <TOKEN_COUNT>
+  cloud = $cloudModel
   last_updated = (Get-Date).ToString("yyyy-MM-ddTHH:mm:ss")
 } | ConvertTo-Json -Depth 3
 $status | Set-Content -Path ".opencode\llm-status.json" -Encoding UTF8
@@ -66,7 +66,7 @@ $status | Set-Content -Path ".opencode\llm-status.json" -Encoding UTF8
 ## Step 3: Append Footer
 
 ```
-Mode : [ User ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - Tokens : [ X ] - Profile : [ Gratis ] - Model : [ DS V4 Flash ]
+Mode : [ User ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - EnrichTime : [ 4.2s ] - Profile : [ Gratis ] - Cloud : [ DS V4 Flash ]
 ```
 
 | Field | Arti | Enforcement |
@@ -75,8 +75,9 @@ Mode : [ User ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - Tokens : [ X ] - 
 | `Mode: [Admin]` | Goal-oriented, boleh clarify | |
 | `LLMEnrich: [On]` | Enrichment berjalan | |
 | `LLMEnrich: [Off]` | **AI GAGAL COMPLY** | User langsung lihat |
+| `EnrichTime` | Waktu GPU enrichment (0ms=ECO, 4s=warm, 10s=cold) | |
 | `Profile` | Gratis / Go | |
-| `Model` | Cloud AI alias | |
+| `Cloud` | Cloud AI model alias | |
 
 ## Enforcement
 

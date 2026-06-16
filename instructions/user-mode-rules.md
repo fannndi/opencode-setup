@@ -23,7 +23,7 @@ Mode: **User** — input presisi, eksekusi cepat, max 2 tanya.
 ## Footer
 
 ```
-Mode : [ User ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - Tokens : [ X ] - Profile : [ Gratis ] - Model : [ DS V4 Flash ]
+Mode : [ User ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - EnrichTime : [ 4.2s ] - Profile : [ Gratis ] - Cloud : [ DS V4 Flash ]
 ```
 
 ## Execution Flow

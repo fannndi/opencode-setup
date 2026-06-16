@@ -169,7 +169,7 @@ STEP 2: Execute
 
 STEP 3: Footer (COMPLIANCE HOOK)
 ├── Write .opencode/llm-status.json
-└── Append footer: Mode : [User/Admin] | LLMEnrich : [On/Off] | ...
+└── Append footer: Mode : [User/Admin] | LLMEnrich : [On/Off] - EnrichTime : [Xs] - Cloud : [Y]
 ```
 
 ---
@@ -179,7 +179,7 @@ STEP 3: Footer (COMPLIANCE HOOK)
 Every response includes a footer that acts as a **compliance enforcement hook**:
 
 ```
-Mode : [ User ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - Tokens : [ 18 ] - Profile : [ Gratis ] - Model : [ DS V4 Flash ]
+Mode : [ User ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - EnrichTime : [ 4.2s ] - Profile : [ Gratis ] - Cloud : [ DS V4 Flash ]
 ```
 
 | Field | Meaning | Enforcement |
@@ -188,8 +188,9 @@ Mode : [ User ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - Tokens : [ 18 ] -
 | `Mode: [Admin]` | Goal-oriented, boleh clarify | `/admin`, `/setup`, `/llm` |
 | `LLMEnrich: [On]` | Local GPU preprocessing berjalan | |
 | `LLMEnrich: [Off]` | **AI GAGAL COMPLY** | User langsung lihat kegagalan |
+| `EnrichTime` | Waktu GPU enrichment (0ms=ECO, 4s=warm, 10s=cold) | |
 | `Profile` | Gratis / Go | |
-| `Model` | Cloud AI alias | |
+| `Cloud` | Cloud AI model alias | |
 
 **Footer bukan dekorasi** — ini enforcement hook. LLMEnrich [Off] berarti enrichment tidak berjalan.
 

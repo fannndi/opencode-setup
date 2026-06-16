@@ -87,7 +87,6 @@ switch ($Action) {
 
     "balanced" {
         $model = $MODEL_MAP["balanced"]
-        # Free VRAM by unloading other model first
         $running = Test-OllamaRunning
         if (-not $running) {
             Write-Host "  [MODE] Ollama not running. Starting..." -ForegroundColor Yellow
@@ -105,8 +104,6 @@ switch ($Action) {
 
     "performance" {
         $model = $MODEL_MAP["performance"]
-        # Free VRAM by unloading other model first
-        ollama stop qwen3:1.7b-s 2>$null
         $running = Test-OllamaRunning
         if (-not $running) {
             Write-Host "  [MODE] Ollama not running. Starting..." -ForegroundColor Yellow
@@ -150,7 +147,7 @@ switch ($Action) {
         Write-Host ""
         Write-Host "  Mode behaviors:" -ForegroundColor Cyan
         Write-Host "    ECO:         regex fallback, no LLM calls" -ForegroundColor Gray
-        Write-Host "    BALANCED:    qwen2.5:1.5b-s (GPU), enrich 250 tok, ~1GB VRAM" -ForegroundColor Gray
+        Write-Host "    BALANCED:    qwen2.5:1.5b-s (GPU), enrich 100 tok, ~1GB VRAM" -ForegroundColor Gray
         Write-Host "    PERFORMANCE: qwen2.5:1.5b-s (GPU), enrich 200 tok, deep analysis" -ForegroundColor Gray
         Write-Host ""
     }
