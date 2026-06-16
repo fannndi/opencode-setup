@@ -18,9 +18,9 @@ Terinspirasi dari Bu Rina, sistem ini berevolusi jadi **Personal Knowledge Opera
 
 ### End User (2 langkah)
 ```
-1. Clone repo → cd opencode-setup
-2. .\scripts\setup.ps1 → isi api-key.txt → .\scripts\setup.ps1 --apply
-3. opencode → /go "bikin aplikasi kasir"
+1. Clone repo -> cd opencode-setup
+2. .\scripts\setup.ps1 -> isi api-key.txt -> .\scripts\setup.ps1 --apply
+3. opencode -> /go "bikin aplikasi kasir"
 ```
 
 ### Developer
@@ -38,6 +38,69 @@ opencode
 /setup           # Install everything
 /setup --apply   # Apply api-key, verify, done
 ```
+
+---
+
+## 3 Main Workflows
+
+### 1. Setup (Install dari 0)
+```
+/setup              # Install: 9Router, ECC, config, api-key
+/setup --apply      # Apply api-key, verify, done
+```
+
+| Step | Action | Auto-fix? |
+|------|--------|-----------|
+| 1 | Pre-flight (node, git, opencode) | fail if missing |
+| 2 | Detect 9Router (install if missing) | yes |
+| 3 | Clone/pull ECC | yes |
+| 4 | Install deps + build plugin | yes |
+| 5 | Apply profile config | yes |
+| 6 | Generate api-key.txt | yes |
+| 7 | STOP - user fills api-key | - |
+
+### 2. Start (Morning Routine - Auto-heal)
+```
+/start-free         # Free models
+/start-go           # Go models
+```
+
+| Step | Action | Auto-fix? |
+|------|--------|-----------|
+| 1 | LLM: 9Router health + combos | yes |
+| 2 | Pre-flight (node, git, opencode) | no |
+| 3 | ECC: clone/pull | yes |
+| 4 | Plugin: build | yes |
+| 5 | Config: apply profile | yes |
+| 6 | Model test (ping combos) | no |
+| 7 | Summary: GO / NO GO | - |
+
+### 3. Admin (Changelog + Update + Doctor)
+```
+/admin              # Pull repos, changelog, rebuild, doctor
+/admin --doctor     # Doctor check only
+```
+
+| Step | Action |
+|------|--------|
+| 1 | LLM: 9Router health + combos |
+| 2 | Pull ECC |
+| 3 | Pull 9Router |
+| 4 | ECC changelog (full, tagged) |
+| 5 | 9Router changelog (full, tagged) |
+| 6 | Analyze: rework needed? (keyword-based) |
+| 7 | Rebuild plugin if opencode changes |
+| 8 | Doctor check |
+| 9 | Save admin log |
+| 10 | Summary + recommendations |
+
+**Changelog Tags:**
+- `[setup]` - Setup rework needed -> re-run /setup
+- `[config]` - Config changes -> update config
+- `[plugin]` - Plugin changes -> auto-rebuild
+- `[skill]` - New/updated skills -> auto-load
+- `[breaking]` - Breaking changes -> manual review
+- `[info]` - No action needed
 
 ---
 
@@ -161,10 +224,10 @@ Generator: .\create-function.ps1 -Name "Func" -Module "mod"
 
 | Script | Fungsi |
 |--------|--------|
-| `start.ps1` | Boot sequence: health check, auto-update, profile apply, model test |
 | `setup.ps1` | Smart setup: detect 9Router, clone ECC, build plugin, apply profile |
-| `admin-update.ps1` | Update ECC + 9Router + rebuild plugin + LLM changelog summary |
-| `generate-prd.ps1` | Idea → LLM-enriched PRD document |
+| `start.ps1` | Auto-heal morning routine: LLM check, ECC, plugin, config, model test |
+| `admin-update.ps1` | Changelog + update + rebuild + doctor check |
+| `generate-prd.ps1` | Idea -> LLM-enriched PRD document |
 | `project-analyze.ps1` | PRD → semantic stack + feature detection |
 | `code-analyze.ps1` | Project directory → semantic tech stack extraction |
 | `analyze-project.ps1` | File indicator → stack detection → skill loading |

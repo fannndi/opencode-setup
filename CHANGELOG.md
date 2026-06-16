@@ -4,6 +4,43 @@ Semua perubahan penting di project ini.
 
 ---
 
+## [5.1.0] — 2026-06-16 — Workflow Rework: 3 Main Workflows
+
+### Reworked — Setup Workflow
+- **Deleted** `install.bat` — legacy batch installer
+- **Rewritten** `scripts/setup.ps1` — clean, smart detection, 2-mode (install/apply)
+- **New** `commands/setup.md` — `/setup` command for opencode
+- Flow: pre-flight -> detect 9Router -> clone ECC -> build -> apply profile -> generate api-key -> STOP
+
+### Reworked — Start Workflow (Morning Routine)
+- **Rewritten** `scripts/start.ps1` — auto-heal, LLM-first (593 -> 200 lines)
+- **Updated** `commands/start-free.md` — new workflow docs
+- **Updated** `commands/start-go.md` — new workflow docs
+- Flow: LLM check -> pre-flight -> ECC -> plugin -> config -> model test -> summary
+- Removed: project-resolve dependency, complex session management
+
+### Reworked — Admin Workflow
+- **Rewritten** `scripts/admin-update.ps1` — changelog + keyword rework detection
+- **Updated** `commands/admin.md` — changelog tags + recommendations
+- Flow: LLM check -> pull repos -> changelog (full, tagged) -> analyze -> rebuild -> doctor -> log
+- New: keyword-based rework detection from commit messages
+- New: recommendations (setup rework, breaking changes, plugin rebuild)
+
+### Updated — Profiles
+- Both profiles (gratis/go) updated with new `/setup`, `/start-free`, `/start-go`, `/admin` commands
+- Commands now use direct PowerShell script calls instead of markdown templates
+- Gratis profile: correct combo models (6 free models: mmf/mimo-auto, oc/deepseek-v4-flash-free, oc/mimo-v2.5-free, oc/nemotron-3-ultra-free, oc/big-pickle, oc/north-mini-code-free)
+
+### Updated — Documentation
+- README.md: new "3 Main Workflows" section with flow tables
+- CHANGELOG.md: this entry
+
+### Removed
+- `install.bat` — replaced by `/setup` command
+- LLM dependency in start.ps1 — graceful fallback (llm-adapter optional)
+
+---
+
 ## [5.0.0] — 2026-06-16 — Universal Goal-Based Combo + Clean Slate
 
 ### Changed — Combo System (10 files → 1)
