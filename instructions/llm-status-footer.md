@@ -1,53 +1,58 @@
 # LLM Status Footer
 
-You MUST include a status footer at the end of EVERY response AND write the status file.
+You MUST include a status footer at end of EVERY response.
 
-## Step 1: Write Status File
+## Step 1: Gather Info
 
-Before appending the footer, run this PowerShell command to write `.opencode/llm-status.json`:
+Read local Ollama mode + detect active profile:
+
+```powershell
+$llmMode = "eco"
+$llmModel = ""
+if (Test-Path ".opencode/llm-mode.json") {
+  $m = Get-Content ".opencode/llm-mode.json" -Raw | ConvertFrom-Json
+  $llmMode = $m.mode
+  $llmModel = $m.model
+}
+
+# Detect active profile by model name in config
+$profileName = "?"
+$gratisCfg = Get-Content "profiles/gratis/opencode.jsonc" -Raw 2>$null
+$goCfg = Get-Content "profiles/go/opencode.jsonc" -Raw 2>$null
+if ($gratisCfg -match '"9router/gratis"') { $profileName = "Gratis" }
+elseif ($goCfg -match '"9router/go"') { $profileName = "Go" }
+```
+
+Mode mapping: `eco` → ECO, `balanced` → BALANCED, `performance` → PERFORMANCE.
+
+## Step 2: Write Status File
+
+Write `.opencode/llm-status.json`:
 
 ```powershell
 $status = @{
-  mode = "9ROUTER"
-  model = "mimo-v2.5-free"
-  last_tokens = <YOUR_OUTPUT_TOKEN_COUNT>
-  session_tokens = <YOUR_OUTPUT_TOKEN_COUNT>
-  tokens_per_second = 0
-  latency_ms = 0
-  gpu_available = $false
+  mode = $llmMode.ToUpper()
+  profile = $profileName
+  model = "<MODEL_ALIAS>"
+  last_tokens = <TOKEN_COUNT>
+  session_tokens = <TOKEN_COUNT>
   last_updated = (Get-Date).ToString("yyyy-MM-ddTHH:mm:ss")
 } | ConvertTo-Json -Depth 3
 $status | Set-Content -Path ".opencode\llm-status.json" -Encoding UTF8
 ```
 
-Replace `<YOUR_OUTPUT_TOKEN_COUNT>` with your estimated output token count (roughly 1 token per 4 characters of your response).
+Replace `<TOKEN_COUNT>` with estimated output token count (1 token ≈ 4 chars).
+Replace `<MODEL_ALIAS>` with short alias (e.g., `DS V4 Flash`, `MiMo V2.5`, `Kimi K2.6`).
 
-## Step 2: Append Footer
-
-After writing the file, append this footer:
-
-```
----
-LLM [9ROUTER] Tokens [X] | model
-```
-
-Where:
-- `Tokens [X]` = your estimated output token count
-- `model` = the model you are using (e.g., mimo-v2.5-free)
-
-## Example
+## Step 3: Append Footer
 
 ```
-Here is the answer to your question about React hooks...
-
----
-LLM [9ROUTER] Tokens [245] | mimo-v2.5-free
+LLM : [ MODE ] - Tokens : [ X ] - Profile : [ NAME ] - Model : [ ALIAS ]
 ```
 
-## ECO Mode
+## Examples
 
-When in ECO mode, show:
 ```
----
-LLM [ECO] Tokens [0] | passthrough
+LLM : [ BALANCED ] - Tokens : [ 245 ] - Profile : [ Gratis ] - Model : [ DS V4 Flash ]
+LLM : [ ECO ] - Tokens : [ 0 ] - Profile : [ Go ] - Model : [ passthrough ]
 ```

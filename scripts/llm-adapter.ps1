@@ -318,8 +318,13 @@ function Invoke-LLM {
             Update-LLMStatus -Model $response.model -Tokens $response.eval_count -TokensPerSecond $tps
         } catch {}
 
+        $responseContent = $response.message.content
+        if ([string]::IsNullOrEmpty($responseContent) -and $response.message.thinking) {
+            $responseContent = $response.message.thinking
+        }
+
         return [PSCustomObject]@{
-            response = $response.message.content
+            response = $responseContent
             model = $response.model
             total_duration = $response.total_duration
             tokens_per_second = if ($response.total_duration -and $response.total_duration -gt 0) {

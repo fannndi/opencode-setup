@@ -212,7 +212,7 @@ Write-Host "  [ROUTER] Stack: $($intent.stack_hint -join ', ')" -ForegroundColor
 
 # Determine mode
 $operatingMode = if ($Mode -eq "auto") { Get-ModeForLLM } else { $Mode }
-$effectiveMode = if ($operatingMode -eq "eco") { "off" } else { "on" }
+$effectiveMode = if ($operatingMode -in @("eco", "off")) { "off" } else { "on" }
 
 Write-Host "  [ROUTER] System mode: $operatingMode" -ForegroundColor Gray
 

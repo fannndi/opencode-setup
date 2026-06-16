@@ -50,13 +50,13 @@ Schema:
 function CompileWithLLM {
     param([string]$Query)
 
-    $prompt = "Convert this request to the specified JSON format.`nRequest: $enrichedQuery`n`nOutput ONLY the JSON specification. No explanation."
-
     $MAX_RETRIES = 2
     $attempt = 0
     $spec = $null
     $enrichedQuery = Invoke-LLMEnrich -Text $Query -Context "intent compilation"
     if (-not $enrichedQuery) { $enrichedQuery = $Query }
+
+    $prompt = "Convert this request to the specified JSON format.`nRequest: $enrichedQuery`n`nOutput ONLY the JSON specification. No explanation."
 
     while (-not $spec -and $attempt -lt $MAX_RETRIES) {
         $attempt++
@@ -212,7 +212,7 @@ function CompileWithRegex {
 # Determine mode
 # ============================================================
 $operatingMode = if ($Mode -eq "auto") { Get-ModeForLLM } else { $Mode }
-$effectiveMode = if ($operatingMode -eq "eco") { "off" } else { "on" }
+$effectiveMode = if ($operatingMode -in @("eco", "off")) { "off" } else { "on" }
 
 Write-Host ""
 Write-Host "  [INTENT] Compiling: $Query" -ForegroundColor Cyan
