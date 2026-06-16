@@ -6,11 +6,13 @@
 ## Core Rules
 
 1. **SESSION INIT** (first input, SILENT — no footer) → baca config, setup mode/role
-2. **REGULAR** (every response, INCLUDING first) → enrich → respond → footer
+2. **REGULAR** (every response, INCLUDING first) → enrich → respond → update context → footer
 3. LLMEnrich WAJIB [On] di mode BALANCED/PERFORMANCE
 4. Mode harus sesuai: [User] untuk coding, [Admin] untuk setup/maintenance
 
 ## SESSION INIT (First Input Only — Silent, No Footer)
+
+**Ini fase WAJIB. Jangan skip.**
 
 Jalankan di INPUT PERTAMA saja, SEBELUM menjawab:
 
