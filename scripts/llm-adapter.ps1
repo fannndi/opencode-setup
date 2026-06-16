@@ -1,4 +1,4 @@
-# LLM Adapter — Wrapper for local Ollama API with auto-fallback
+# LLM Adapter - Wrapper for local Ollama API with auto-fallback
 # Usage: . .\llm-adapter.ps1  (source for functions)
 #        .\llm-adapter.ps1 -Prompt "your text" [-Model "qwen3:1.7b"] (direct execution)
 
@@ -14,7 +14,11 @@ param(
 $SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ROOT_DIR = Split-Path -Parent $SETUP_DIR
 $MODE_FILE = "$ROOT_DIR\.opencode\llm-mode.json"
+$STATUS_FILE = "$ROOT_DIR\.opencode\llm-status.json"
 $OLLAMA_URL = "http://localhost:11434"
+
+# Session token counter (resets on opencode restart)
+$script:SessionTokens = 0
 
 # ============================================================
 # Mode helpers (compatible with eco/balanced/performance)
@@ -29,7 +33,6 @@ function Get-OperatingMode {
 }
 
 function Get-LLMMode {
-    # Returns "on" if LLM available, "off" if eco
     $mode = Get-OperatingMode
     if ($mode -eq "eco") { return "off" }
     return "on"
@@ -50,7 +53,68 @@ function Get-ModeForLLM {
 }
 
 # ============================================================
-# Universal enrichment — single entry for all scripts
+# GPU info - nvidia-smi query, graceful fallback
+# ============================================================
+
+function Get-GPUInfo {
+    try {
+        $gpuRaw = nvidia-smi --query-gpu=utilization.gpu,memory.used,memory.total --format=csv,noheader 2>$null
+        if ($gpuRaw) {
+            $parts = $gpuRaw.Trim() -split ','
+            $util = [int]($parts[0].Trim().Replace(' %',''))
+            $memUsed = [int]($parts[1].Trim().Replace(' MiB',''))
+            $memTotal = [int]($parts[2].Trim().Replace(' MiB',''))
+            return @{
+                available = $true
+                utilization = $util
+                memory_used = $memUsed
+                memory_total = $memTotal
+            }
+        }
+    } catch {}
+    return @{
+        available = $false
+        utilization = 0
+        memory_used = 0
+        memory_total = 0
+    }
+}
+
+# ============================================================
+# Status file - write after every LLM call
+# ============================================================
+
+function Update-LLMStatus {
+    param(
+        [string]$Model,
+        [int]$Tokens,
+        [double]$TokensPerSecond
+    )
+
+    $mode = Get-OperatingMode
+    $gpu = Get-GPUInfo
+
+    $status = @{
+        mode = $mode.ToUpper()
+        model = $Model
+        last_tokens = $Tokens
+        session_tokens = $script:SessionTokens
+        tokens_per_second = $TokensPerSecond
+        gpu_available = $gpu.available
+        gpu_utilization = $gpu.utilization
+        gpu_memory_used = $gpu.memory_used
+        gpu_memory_total = $gpu.memory_total
+        last_updated = Get-Date -Format "yyyy-MM-ddTHH:mm:ss"
+    }
+
+    try {
+        New-Item -ItemType Directory -Path (Split-Path $STATUS_FILE -Parent) -Force | Out-Null
+        $status | ConvertTo-Json -Depth 3 | Set-Content -Path $STATUS_FILE -Encoding UTF8
+    } catch {}
+}
+
+# ============================================================
+# Universal enrichment - single entry for all scripts
 # Even "Hi" passes through LLM in balanced/performance mode.
 # ECO mode: pass-through. Force: bypass ECO check.
 # ============================================================
@@ -86,13 +150,7 @@ function Invoke-LLMEnrich {
 }
 
 # ============================================================
-# Chunk sizes per mode — GPU-aware (MX150 2GB)
-# Balanced: 1000 chars = ~250 tokens (16.7% of 1500 context)
-# Performance: 600 chars = ~150 tokens (18.7% of 800 context)
-# ============================================================
-
-# ============================================================
-# Chunk sizes per mode — GPU-aware (MX150 2GB)
+# Chunk sizes per mode - GPU-aware (MX150 2GB)
 # Balanced: 1000 chars = ~250 tokens (16.7% of 1500 context)
 # Performance: 600 chars = ~150 tokens (18.7% of 800 context)
 # ============================================================
@@ -186,7 +244,7 @@ function Write-LLMFailure {
 }
 
 # ============================================================
-# Invoke LLM — uses /api/chat for instruction-tuned models
+# Invoke LLM - uses /api/chat for instruction-tuned models
 # ============================================================
 
 function Invoke-LLM {
@@ -201,7 +259,7 @@ function Invoke-LLM {
 
     $mode = Get-OperatingMode
     if ($mode -eq "eco") {
-        Write-Warning "ECO mode — LLM calls disabled. Enable with: .\llm-mode.ps1 balanced"
+        Write-Warning "ECO mode - LLM calls disabled. Enable with: .\llm-mode.ps1 balanced"
         return $null
     }
 
@@ -232,10 +290,13 @@ function Invoke-LLM {
             -TimeoutSec $TimeoutSec `
             -ErrorAction Stop
 
-        # Log usage
+        # Log usage + update status
         try {
             $callerInfo = Get-PSCallStack | Select-Object -Skip 2 -First 1
             $callerScript = if ($callerInfo) { Split-Path $callerInfo.ScriptName -Leaf } else { "unknown" }
+            $tps = if ($response.total_duration -and $response.total_duration -gt 0) {
+                [math]::Round($response.eval_count / ($response.total_duration / 1e9), 2)
+            } else { 0 }
             $usageEntry = @{
                 timestamp = Get-Date -Format "yyyy-MM-ddTHH:mm:sszzz"
                 script = $callerScript
@@ -243,12 +304,18 @@ function Invoke-LLM {
                 prompt_hash = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($Prompt.Substring(0, [Math]::Min(100, $Prompt.Length))))
                 total_duration = $response.total_duration
                 eval_count = $response.eval_count
-                tokens_per_second = [math]::Round($response.eval_count / ($response.total_duration / 1e9), 2)
+                tokens_per_second = $tps
                 success = $true
             }
             $usageFile = "$ROOT_DIR\.opencode\llm-usage.jsonl"
             New-Item -ItemType Directory -Path (Split-Path $usageFile -Parent) -Force | Out-Null
             Add-Content -Path $usageFile -Value ($usageEntry | ConvertTo-Json -Compress) -Encoding UTF8
+
+            # Update session token counter
+            $script:SessionTokens += $response.eval_count
+
+            # Update status file
+            Update-LLMStatus -Model $response.model -Tokens $response.eval_count -TokensPerSecond $tps
         } catch {}
 
         return [PSCustomObject]@{
@@ -264,10 +331,6 @@ function Invoke-LLM {
         $errMsg = $_.Exception.Message
         Write-LLMFailure -Script "llm-adapter" -Model $Model -Prompt $Prompt -RawOutput "" -Error $errMsg
         Write-Warning "LLM call failed: $errMsg"
-        if ($errMsg -match "ConnectFailure|connection refused|No connection") {
-            Write-Warning "Ollama not reachable. Auto-disabling LLM mode."
-            $null = & "$SETUP_DIR\llm-mode.ps1" eco 2>$null
-        }
         return $null
     }
 }
