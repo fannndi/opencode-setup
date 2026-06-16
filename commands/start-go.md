@@ -1,41 +1,35 @@
 ---
-description: Daily workflow - go models (limited quota)
-agent: build
+description: Morning routine — auto-heal daily startup (go models)
 ---
 
 # Start Go
 
-Jalankan daily workflow untuk go models.
+Morning routine untuk go models. Auto-heal: check + fix otomatis.
 
-## Instructions
+## Usage
 
-1. Jalankan script berikut (dari mana saja):
-```powershell
-.\scripts\start.ps1 -Profile go
+```
+/start-go
 ```
 
-2. Review output workflow
+## Workflow
 
-3. Jika ada issues, troubleshoot
+| Step | Action | Auto-fix? |
+|------|--------|-----------|
+| 1 | LLM: 9Router install/start/health/combos | ✅ |
+| 2 | Pre-flight: node, git, opencode | ❌ |
+| 3 | ECC: clone/pull | ✅ |
+| 4 | Plugin: build | ✅ |
+| 5 | Config: apply go profile | ✅ |
+| 6 | Model test: ping combo models | ❌ |
+| 7 | Summary: GO / NO GO | — |
 
-4. Setelah workflow selesai, user bisa langsung mulai coding
+## Execution
 
-## Expected Output
-
-Workflow akan:
-- Check repos (clone/pull ECC + 9Router)
-- Sync changelog
-- Rebuild plugin jika ada opencode changes
-- Test 9Router (auto-start jika mati)
-- Test models (ocg/kimi-k2.6, ocg/qwen3.6-plus)
-- Apply profile go ke global config
-- Tampilkan status summary
+```powershell
+powershell -ExecutionPolicy Bypass -File "C:\Users\FANNNDI\Documents\opencode-setup\scripts\start.ps1" -Profile go
+```
 
 ## Warning
 
 Go models punya limited quota. Gunakan dengan bijak.
-
-## Task
-
-$ARGUMENTS
-

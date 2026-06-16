@@ -1,37 +1,35 @@
 ---
-description: Daily workflow - free models with auto-fallback
-agent: build
+description: Morning routine — auto-heal daily startup (free models)
 ---
 
 # Start Free
 
-Jalankan daily workflow untuk free models.
+Morning routine untuk free models. Auto-heal: check + fix otomatis.
 
-## Instructions
+## Usage
 
-1. Jalankan script berikut (dari mana saja):
-```powershell
-.\scripts\start.ps1 -Profile gratis
+```
+/start-free
 ```
 
-2. Review output workflow
+## Workflow
 
-3. Jika ada issues, troubleshoot
+| Step | Action | Auto-fix? |
+|------|--------|-----------|
+| 1 | LLM: 9Router install/start/health/combos | ✅ |
+| 2 | Pre-flight: node, git, opencode | ❌ |
+| 3 | ECC: clone/pull | ✅ |
+| 4 | Plugin: build | ✅ |
+| 5 | Config: apply gratis profile | ✅ |
+| 6 | Model test: ping combo models | ❌ |
+| 7 | Summary: GO / NO GO | — |
 
-4. Setelah workflow selesai, user bisa langsung mulai coding
+## Execution
 
-## Expected Output
+```powershell
+powershell -ExecutionPolicy Bypass -File "C:\Users\FANNNDI\Documents\opencode-setup\scripts\start.ps1" -Profile gratis
+```
 
-Workflow akan:
-- Check repos (clone/pull ECC + 9Router)
-- Sync changelog
-- Rebuild plugin jika ada opencode changes
-- Test 9Router (auto-start jika mati)
-- Test models (oc/mimo-v2.5-free, oc/deepseek-v4-flash-free)
-- Apply profile gratis ke global config
-- Tampilkan status summary
+## After
 
-## Task
-
-$ARGUMENTS
-
+Jika GO → `opencode` langsung mulai coding.
