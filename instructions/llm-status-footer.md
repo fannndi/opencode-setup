@@ -2,53 +2,58 @@
 
 You MUST include a status footer at end of EVERY response.
 
+## Core Rule
+
+**WAJIB: Setiap user input → Invoke-LLMEnrich dulu, baru jawab.**
+**Footer WAJIB: cantumkan LLMEnrich [On/Off] biar user tau enrichment berjalan.**
+
+Tidak ada alasan untuk skip. User sudah terima latency. GPU harus kepakai.
+
 ## Architecture
 
 ```
 User Input
    │
    ▼
-Local Ollama (Invoke-LLMEnrich) → enrich context → internal
+Invoke-LLMEnrich() ← WAJIB di SETIAP input
+   │
+   ├── SUCCESS → LLMEnrich [On], enriched context → Cloud AI
+   ├── FAIL    → LLMEnrich [Off], raw input → Cloud AI
+   └── ECO     → LLMEnrich [Off], raw input → Cloud AI
    │
    ▼
-Cloud AI (opencode model) → respond using enriched context
+Cloud AI responds + footer
 ```
 
-Footer = status of local Ollama preprocessing + cloud AI model identity.
-
 ## Step 1: Gather Info
-
-Read local Ollama mode + detect active profile + cloud AI model:
 
 ```powershell
 $llmMode = "eco"
 $llmModel = ""
+$enrichSuccess = $false  # SET to $true if Invoke-LLMEnrich returned enriched text
 if (Test-Path ".opencode/llm-mode.json") {
   $m = Get-Content ".opencode/llm-mode.json" -Raw | ConvertFrom-Json
   $llmMode = $m.mode
   $llmModel = $m.model
 }
 
-# Detect active profile by model name in config
 $profileName = "?"
 $gratisCfg = Get-Content "profiles/gratis/opencode.jsonc" -Raw 2>$null
 $goCfg = Get-Content "profiles/go/opencode.jsonc" -Raw 2>$null
 if ($gratisCfg -match '"9router/gratis"') { $profileName = "Gratis" }
 elseif ($goCfg -match '"9router/go"') { $profileName = "Go" }
 
-# Cloud AI model — the actual model responding to user
-$cloudModel = "DS V4 Flash"  # actual: oc/deepseek-v4-flash-free
+$cloudModel = "DS V4 Flash"
 ```
 
 Mode mapping: `eco` → ECO, `balanced` → BALANCED, `performance` → PERFORMANCE.
 
 ## Step 2: Write Status File
 
-Write `.opencode/llm-status.json`:
-
 ```powershell
 $status = @{
   mode = $llmMode.ToUpper()
+  enrich = if ($enrichSuccess) { "On" } else { "Off" }
   profile = $profileName
   model = $cloudModel
   last_tokens = <TOKEN_COUNT>
@@ -63,25 +68,17 @@ Replace `<TOKEN_COUNT>` with estimated output token count (1 token ≈ 4 chars).
 ## Step 3: Append Footer
 
 ```
-LLM : [ MODE ] - Tokens : [ X ] - Profile : [ NAME ] - Model : [ ALIAS ]
+LLM : [ MODE ] - LLMEnrich [ On/Off ] - Tokens : [ X ] - Profile : [ NAME ] - Model : [ ALIAS ]
 ```
 
-- `MODE` = local Ollama preprocessing mode (ECO / BALANCED / PERFORMANCE)
-- `ALIAS` = cloud AI model identity (DS V4 Flash, MiMo V2.5, etc)
+- `MODE` = ECO / BALANCED / PERFORMANCE
+- `LLMEnrich [On]` = enrichment berhasil, GPU kepake
+- `LLMEnrich [Off]` = ECO mode atau enrichment gagal
+- `ALIAS` = cloud AI model (DS V4 Flash, MiMo V2.5, etc)
 
 ## Examples
 
-**BALANCED mode — local Qwen3 enriches, cloud AI responds:**
 ```
-LLM : [ BALANCED ] - Tokens : [ 245 ] - Profile : [ Gratis ] - Model : [ DS V4 Flash ]
-```
-
-**ECO mode — no local LLM, cloud AI responds directly:**
-```
-LLM : [ ECO ] - Tokens : [ 0 ] - Profile : [ Go ] - Model : [ MiMo V2.5 ]
-```
-
-**PERFORMANCE mode — local coder enriches, cloud AI responds:**
-```
-LLM : [ PERFORMANCE ] - Tokens : [ 512 ] - Profile : [ Gratis ] - Model : [ DS V4 Flash ]
+LLM : [ PERFORMANCE ] - LLMEnrich [ On ] - Tokens : [ 245 ] - Profile : [ Gratis ] - Model : [ DS V4 Flash ]
+LLM : [ ECO ] - LLMEnrich [ Off ] - Tokens : [ 0 ] - Profile : [ Go ] - Model : [ MiMo V2.5 ]
 ```
