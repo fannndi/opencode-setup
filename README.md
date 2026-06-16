@@ -169,8 +169,10 @@ STEP 2: Execute
 
 STEP 3: Footer (COMPLIANCE HOOK)
 ├── Write .opencode/llm-status.json
-└── Append footer: Mode : [User/Admin] | LLMEnrich : [On/Off] - EnrichTime : [Xs] - Cloud : [Y]
+└── Append footer: Mode : [User/Admin] | LLMEnrich : [On/Off] - EnrichTime : [Xs] - Cloud : [Y] - Last: [YYYY-MM-DD HH:MM]
 ```
+
+**Setup Check:** Sebelum STEP 0, AI harus cek `.opencode/llm-status.json`. Jika file tidak ada atau `last_updated` > 1 jam → **BLOCKED**, suruh user run `/setup` atau `/start-free`.
 
 ---
 
@@ -179,7 +181,7 @@ STEP 3: Footer (COMPLIANCE HOOK)
 Every response includes a footer that acts as a **compliance enforcement hook**:
 
 ```
-Mode : [ User ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - EnrichTime : [ 4.2s ] - Profile : [ Gratis ] - Cloud : [ gratis ]
+Mode : [ User ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - EnrichTime : [ 4.2s ] - Profile : [ Gratis ] - Cloud : [ gratis ] - Last: [ 2026-06-17 14:32 ]
 ```
 
 | Field | Meaning | Enforcement |
@@ -191,8 +193,9 @@ Mode : [ User ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - EnrichTime : [ 4.
 | `EnrichTime` | Waktu GPU enrichment (0ms=ECO, 4s=warm, 10s=cold) | |
 | `Profile` | Gratis / Go | |
 | `Cloud` | Cloud AI model name (from profile config) | |
+| `Last` | Timestamp kapan last session di-init | Jika > 1 jam → force setup ulang |
 
-**Footer bukan dekorasi** — ini enforcement hook. LLMEnrich [Off] berarti enrichment tidak berjalan.
+**Footer bukan dekorasi** — ini enforcement hook. LLMEnrich [Off] berarti enrichment tidak berjalan. `Last: [ >1 jam ago ]` berarti session expired, harus run `/start-free` lagi.
 
 ### User Mode vs Admin Mode
 

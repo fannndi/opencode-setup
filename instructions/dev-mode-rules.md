@@ -35,8 +35,27 @@ Mode: **Admin** — goal-oriented, eksplorasi, boleh clarify.
 ```
 
 ```
-3. Ulangi pesan ini di SETIAP chat sampai setup benar-benar selesai.
-4. Jika file ADA dan mode TERISI (ECO/BALANCED/PERFORMANCE):
+3. Jika file ADA tapi last_updated LEBIH DARI 1 JAM yang lalu:
+   → Block juga! Balas:
+```
+
+```
+╔══════════════════════════════════════════╗
+║  ⚠️ Session expired — perlu refresh!     ║
+╠══════════════════════════════════════════╣
+║                                          ║
+║  Sesi terakhir sudah lewat 1 jam.       ║
+║  Jalankan ulang:                         ║
+║                                          ║
+║    /start-free  — morning routine        ║
+║    /setup       — install lengkap        ║
+║                                          ║
+╚══════════════════════════════════════════╝
+```
+
+```
+4. Ulangi pesan ini di SETIAP chat sampai setup benar-benar selesai.
+5. Jika file ADA, mode TERISI, dan last_updated < 1 jam:
    → Lanjut ke aturan mode Admin di bawah
 ```
 
@@ -56,8 +75,10 @@ Mode: **Admin** — goal-oriented, eksplorasi, boleh clarify.
 ## Footer
 
 ```
-Mode : [ Admin ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - EnrichTime : [ 4.2s ] - Profile : [ Gratis ] - Cloud : [ gratis ]
+Mode : [ Admin ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - EnrichTime : [ 4.2s ] - Profile : [ Gratis ] - Cloud : [ gratis ] - Last: [ 2026-06-17 14:32 ]
 ```
+
+Format `Last: [ YYYY-MM-DD HH:MM ]` — timestamp kapan last_updated di llm-status.json.
 
 ## Commands
 

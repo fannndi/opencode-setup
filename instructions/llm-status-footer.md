@@ -36,9 +36,28 @@
 ```
 
 ```
-3. Ulangi pesan ini di SETIAP chat sampai setup benar-benar selesai.
-4. Jika file ADA dan mode TERISI (ECO/BALANCED/PERFORMANCE):
-   → Lanjut ke aturan footer di bawah
+3. Jika file ADA tapi last_updated LEBIH DARI 1 JAM yang lalu:
+   → Block juga! Balas:
+```
+
+```
+╔══════════════════════════════════════════╗
+║  ⚠️ Session expired — perlu refresh!     ║
+╠══════════════════════════════════════════╣
+║                                          ║
+║  Sesi terakhir sudah lewat 1 jam.       ║
+║  Jalankan ulang:                         ║
+║                                          ║
+║    /start-free  — morning routine        ║
+║    /setup       — install lengkap        ║
+║                                          ║
+╚══════════════════════════════════════════╝
+```
+
+```
+4. Ulangi pesan ini di SETIAP chat sampai setup benar-benar selesai.
+5. Jika file ADA, mode TERISI, dan last_updated < 1 jam:
+   → Lanjut ke aturan mode di bawah
 ```
 
 ## Core Rules
@@ -87,12 +106,22 @@ else { $cloudModel = "?" }
 ### Write Status & Append Footer
 
 ```
-Mode : [ User/Admin ] | LLM : [ MODE ] - LLMEnrich : [ On/Off ] - EnrichTime : [ Xs ] - Profile : [ Y ] - Cloud : [ Z ]
+Mode : [ User/Admin ] | LLM : [ MODE ] - LLMEnrich : [ On/Off ] - EnrichTime : [ Xs ] - Profile : [ Y ] - Cloud : [ Z ] - Last: [ YYYY-MM-DD HH:MM ]
+```
+
+### Timestamp Logic
+
+```powershell
+$lastUpdate = [datetime]::Parse($status.last_updated)
+$timestamp = $lastUpdate.ToString("yyyy-MM-dd HH:mm")
+# Output: Last: [ 2026-06-17 14:32 ]
 ```
 
 ## Enforcement
 
 - ❌ Footer di respons pertama = GAGAL COMPLY
 - ❌ Tidak ada footer di respons kedua+ = GAGAL COMPLY
+- ❌ Setup belum jalan = GAGAL COMPLY (block sampai setup OK)
+- ❌ Session expired (last_updated > 1 jam) = GAGAL COMPLY (block sampai refresh)
 - LLMEnrich [Off] di BALANCED/PERFORMANCE = GAGAL
 - Footer tidak boleh di-skip atau di-simplify
