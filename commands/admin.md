@@ -42,7 +42,7 @@ Update ECC + 9Router, lihat changelog, rebuild plugin, doctor check.
 ## Execution
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File "C:\Users\FANNNDI\Documents\opencode-setup\scripts\admin-update.ps1" $ARGUMENTS
+.\scripts\admin-update.ps1 $ARGUMENTS
 ```
 
 ## After

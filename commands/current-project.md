@@ -23,21 +23,21 @@ Tampilkan project yang sedang aktif dan list semua project yang terdaftar.
 
 ```
   Session Status:
-    Project:        service-hub
-    Path:           C:\Users\FANNNDI\Documents\service-hub
-    GitHub:         https://github.com/fannndi/service-hub
+    Project:        my-project
+    Path:           C:\path\to\my-project
+    GitHub:         https://github.com/username/my-project
     Profile:        gratis
-    Stack:          flutter
+    Stack:          detected
     Last action:    /code-analyze
 
   Registered Projects:
   ─────────────────────────────────────────
-   * service-hub        (active)
-      Path:   C:\Users\FANNNDI\Documents\service-hub
-      GitHub: https://github.com/fannndi/service-hub
+   * my-project        (active)
+      Path:   C:\path\to\my-project
+      GitHub: https://github.com/username/my-project
 
-    expense-tracker
-      Path:   C:\Users\FANNNDI\Documents\expense-tracker
+    other-project
+      Path:   C:\path\to\other-project
 ```
 
 ## Task

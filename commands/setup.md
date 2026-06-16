@@ -33,7 +33,7 @@ Setup all-in-one: ECC skills, 9Router, config, profiles.
 Run the setup script:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File "C:\Users\FANNNDI\Documents\opencode-setup\scripts\setup.ps1" $ARGUMENTS
+.\scripts\setup.ps1 $ARGUMENTS
 ```
 
 ## After Setup

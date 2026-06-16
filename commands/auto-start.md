@@ -9,8 +9,8 @@ Chain semua workflow dalam 1 command: start → analyze → detect → ready.
 ## Instructions
 
 ```powershell
-cd C:\Users\FANNNDI\Documents\opencode-setup
-.\scripts\auto-start.ps1 -Profile gratis -Mode existing -ProjectPath "C:\path"
+cd C:\path\to\opencode-setup
+.\scripts\auto-start.ps1 -Profile gratis -Mode existing -ProjectPath "C:\path\to\project"
 ```
 
 Atau pakai session:

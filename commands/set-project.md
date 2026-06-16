@@ -28,8 +28,8 @@ Set project path, clone dari GitHub, dan buat session.
 ## Contoh
 
 ```
-/set-project C:\Users\FANNNDI\Documents\service-hub
-GitHub URL: https://github.com/fannndi/service-hub
+/set-project C:\path\to\your-project
+GitHub URL: https://github.com/username/repo
 → Cloning...
 → Session created
 → Ready!

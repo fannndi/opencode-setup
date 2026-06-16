@@ -27,7 +27,7 @@ Morning routine untuk go models. Auto-heal: check + fix otomatis.
 ## Execution
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File "C:\Users\FANNNDI\Documents\opencode-setup\scripts\start.ps1" -Profile go
+.\scripts\start.ps1 -Profile go
 ```
 
 ## Warning
