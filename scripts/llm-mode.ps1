@@ -17,7 +17,7 @@ $OLLAMA_URL = "http://localhost:11434"
 $MODEL_MAP = @{
     "eco"         = $null
     "balanced"    = "qwen3:1.7b"
-    "performance" = "qwen2.5-coder:3b"
+    "performance" = "qwen2.5-coder:3b-s"
 }
 
 function Get-Mode {
@@ -128,7 +128,7 @@ switch ($Action) {
         Write-Host "  Mode behaviors:" -ForegroundColor Cyan
         Write-Host "    ECO:         regex fallback, no LLM calls" -ForegroundColor Gray
         Write-Host "    BALANCED:    qwen3:1.7b, search before generate" -ForegroundColor Gray
-        Write-Host "    PERFORMANCE: qwen2.5-coder:3b, deep analysis" -ForegroundColor Gray
+        Write-Host "    PERFORMANCE: qwen2.5-coder:3b-s (Q4_K_S, GPU), deep analysis" -ForegroundColor Gray
         Write-Host ""
     }
 }

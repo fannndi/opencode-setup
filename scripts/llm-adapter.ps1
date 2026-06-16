@@ -279,6 +279,7 @@ function Invoke-LLM {
         options = @{
             num_predict = $MaxTokens
             temperature = $Temperature
+            num_gpu = 99
         }
     }
 
