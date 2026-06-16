@@ -3,38 +3,60 @@
 ## Bagaimana Semuanya Terhubung
 
 ```
-my-project/
-├── prd.md                 # Product Requirements Document
-├── frontend/              # Source code frontend
-├── backend/               # Source code backend
-├── lib/                   # Source code library/shared
-
-├── docs/                  # Rencana implementasi
-│   ├── frontend/          # Rencana frontend
-│   ├── backend/           # Rencana backend
-│   └── database/          # Rencana database
-└── opencode-setup/        # Clone ini di sini
-    ├── ecc/               # 270+ skills, 64 agents
-    ├── 9router/           # AI gateway
-    ├── scripts/            # Automation scripts
-    ├── profiles/           # Config profiles
-    ├── commands/           # Command templates
-    ├── Feature/            # Feature inventory
-    └── Skill/              # Skill catalog
+opencode-setup/
+├── scripts/                    # Automation + LLM pipeline scripts
+├── commands/                   # OpenCode command templates
+├── profiles/                   # Config profiles (gratis/go)
+├── instructions/               # AI behavioral instructions
+├── templates/                  # Project templates
+├── ecc/                        # 270+ skills, 64 agents (auto-cloned)
+├── 9router/                    # AI gateway (auto-cloned)
+├── Modelfile / Modelfile.qwen3 # GPU-optimized model configs
+├── .opencode/                  # Mode state, telemetry (gitignored)
+├── Feature/                    # Feature inventory
+├── Skill/                      # Skill catalog
+└── docs/                       # Documentation
 ```
 
-## Alur Data
+## Alur Data (2-Stage Pipeline)
 
 ```
-[User] → [OpenCode] → [9Router] → [Provider Model]
-                   │
-                   ├── ECC Skills (270+)
-                   ├── ECC Agents (64)
-                   ├── ECC Commands (84)
-                   └── ECC Rules (20 bahasa)
+┌─────────────────────────────────────────────────────┐
+│ USER INPUT                                          │
+└──────────────────────┬──────────────────────────────┘
+                       │
+                       ▼
+┌─────────────────────────────────────────────────────┐
+│ STAGE 1: LOCAL OLLAMA (GPU)                         │
+│                                                     │
+│  Invoke-LLMEnrich()                                 │
+│    ECO      → pass-through                          │
+│    BALANCED → qwen3:1.7b-s (GPU) ~250 tok          │
+│    PERFORM  → qwen2.5-coder:3b-s (GPU) ~512 tok    │
+│                                                     │
+│  Output: enriched context (internal)                │
+└──────────────────────┬──────────────────────────────┘
+                       │
+                       ▼
+┌─────────────────────────────────────────────────────┐
+│ STAGE 2: CLOUD AI (OpenCode + 9Router)              │
+│                                                     │
+│  OpenCode → ECC Skills/Agents → 9Router → AI Model  │
+│                                                     │
+│  Output: jawaban + LLM Status Footer                │
+└─────────────────────────────────────────────────────┘
 ```
 
-## 3 Komponen Utama
+## 4 Komponen Utama
+
+### 0. LLM Pipeline (NEW)
+
+Local Ollama preprocessing di GPU sebelum input diteruskan ke Cloud AI:
+
+- **3 mode**: ECO (0 VRAM), BALANCED (~1.5 GB), PERFORMANCE (~2 GB)
+- **Invoke-LLMEnrich** — wajib di tiap input user
+- **Footer system** — status mode + token + profile tiap respons
+- **[Detail →](05-llm-pipeline.md)**
 
 ### 1. ECC (Everything Claude Code)
 
@@ -86,11 +108,13 @@ gratis-small: deepseek-v4-flash-free → glm-5 → north-mini-code-free
 4. /analyze-project      ← deteksi stack
 5. restart opencode
 6. /start-free           ← mulai dengan model gratis
-7. Mulai coding!
+7. /llm performance      ← aktifkan local GPU preprocessing
+8. Mulai coding!         ← tiap input via Invoke-LLMEnrich dulu
 ```
 
 ## Lihat Juga
 
+- [LLM Pipeline](05-llm-pipeline.md) — Detail local preprocessing + 3 mode
 - [9Router](02-9router.md) — Detail AI gateway
 - [ECC](03-ecc.md) — Detail skills/agents
 - [Combos](04-combos.md) — Detail auto-fallback

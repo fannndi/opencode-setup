@@ -1,14 +1,15 @@
 # OpenCode Setup — Dokumentasi
 
-**Versi:** 2.0.0
-**Terakhir diperbarui:** 2026-06-14
+**Versi:** 5.3.0
+**Terakhir diperbarui:** 2026-06-16
 
 ---
 
 ## Apa Ini?
 
-OpenCode Setup adalah **asisten coding AI** yang bisa kamu clone ke dalam project manapun. Terdiri dari 3 komponen utama:
+OpenCode Setup adalah **asisten coding AI** yang bisa kamu clone ke dalam project manapun. Terdiri dari 4 komponen utama:
 
+- **LLM Pipeline** — Local Ollama preprocessing (GPU) → enriched context → Cloud AI respond
 - **ECC** — 270+ skills, 64 agents, 84 commands untuk berbagai bahasa/framework
 - **9Router** — AI gateway yang menghubungkan ke berbagai provider model
 - **Combo System** — Auto-fallback chain agar selalu ada model yang tersedia
@@ -30,6 +31,7 @@ OpenCode Setup adalah **asisten coding AI** yang bisa kamu clone ke dalam projec
 | Dokumen | Isi |
 |---------|-----|
 | [Overview](02-architecture/01-overview.md) | Bagaimana semuanya saling terhubung |
+| [LLM Pipeline](02-architecture/05-llm-pipeline.md) | Local GPU preprocessing + 3 mode |
 | [9Router](02-architecture/02-9router.md) | AI gateway dan provider |
 | [ECC](02-architecture/03-ecc.md) | Skills, agents, commands |
 | [Combos](02-architecture/04-combos.md) | Auto-fallback chain |
