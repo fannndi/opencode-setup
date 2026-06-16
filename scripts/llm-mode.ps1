@@ -58,20 +58,6 @@ function Test-OllamaRunning {
     } catch { return $false }
 }
 
-function Set-KeepAlivePersistent {
-    try {
-        [Environment]::SetEnvironmentVariable("OLLAMA_KEEP_ALIVE", "-1", "User")
-        # Restart Ollama to pick up new env var
-        $running = Test-OllamaRunning
-        if ($running) {
-            Stop-Process -Name ollama -Force -ErrorAction SilentlyContinue
-            Start-Sleep -Seconds 2
-        }
-        Start-Process -FilePath "ollama" -ArgumentList "serve" -WindowStyle Minimized
-        Start-Sleep -Seconds 3
-    } catch {}
-}
-
 function Invoke-Warmup {
     param([string]$ModelName)
     try {
@@ -79,7 +65,7 @@ function Invoke-Warmup {
             model = $ModelName
             messages = @(@{ role = "user"; content = "ok" })
             stream = $false
-            keep_alive = -1
+            keep_alive = "5m"
             options = @{ num_predict = 2; num_gpu = 99 }
         } | ConvertTo-Json -Depth 5 -Compress
         $null = Invoke-RestMethod -Uri "$OLLAMA_URL/api/chat" -Method POST -Body $body -ContentType "application/json" -TimeoutSec 120 -ErrorAction SilentlyContinue
@@ -94,8 +80,7 @@ switch ($Action) {
     "eco" {
         Set-Mode -Mode "eco" -Model $null
         # Unload models from VRAM — free GPU memory
-        ollama stop qwen2.5-coder:3b-s 2>$null
-        ollama stop qwen3:1.7b-s 2>$null
+        ollama stop qwen2.5:1.5b-s 2>$null
         Write-Host "  [MODE] ECO — no LLM, regex fallback only" -ForegroundColor Green
         Write-Host "  [MODE] VRAM freed. Battery optimized, zero GPU usage" -ForegroundColor Gray
     }
@@ -103,7 +88,6 @@ switch ($Action) {
     "balanced" {
         $model = $MODEL_MAP["balanced"]
         # Free VRAM by unloading other model first
-        ollama stop qwen2.5-coder:3b-s 2>$null
         $running = Test-OllamaRunning
         if (-not $running) {
             Write-Host "  [MODE] Ollama not running. Starting..." -ForegroundColor Yellow
@@ -113,7 +97,6 @@ switch ($Action) {
             } catch {}
         }
         Set-Mode -Mode "balanced" -Model $model
-        Set-KeepAlivePersistent
         Write-Host "  [MODE] Loading $model to GPU..." -ForegroundColor Gray
         Invoke-Warmup -ModelName $model
         Write-Host "  [MODE] BALANCED — $model" -ForegroundColor Cyan
@@ -133,7 +116,6 @@ switch ($Action) {
             } catch {}
         }
         Set-Mode -Mode "performance" -Model $model
-        Set-KeepAlivePersistent
         Write-Host "  [MODE] Loading $model to GPU..." -ForegroundColor Gray
         Invoke-Warmup -ModelName $model
         Write-Host "  [MODE] PERFORMANCE — $model" -ForegroundColor Magenta

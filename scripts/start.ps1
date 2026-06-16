@@ -1,5 +1,4 @@
 # OpenCode Morning Routine - Auto-heal daily startup
-$env:OLLAMA_KEEP_ALIVE = "-1"
 # Usage:
 #   .\start.ps1 -Profile gratis    # Free models
 #   .\start.ps1 -Profile go         # Go models

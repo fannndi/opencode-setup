@@ -274,7 +274,6 @@ function Invoke-LLM {
         model = $Model
         messages = $messages
         stream = $false
-        keep_alive = -1
         options = @{
             num_predict = $MaxTokens
             temperature = $Temperature
