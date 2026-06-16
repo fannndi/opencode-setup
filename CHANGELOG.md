@@ -4,6 +4,48 @@ Semua perubahan penting di project ini.
 
 ---
 
+## [5.4.0] — 2026-06-16 — Forever VRAM: keep_alive=-1 + Auto-Warmup + Self-Improvement Audit
+
+### Added — `keep_alive = -1` di Semua API Call
+- `llm-adapter.ps1` — Setiap `Invoke-LLM` request menyertakan `keep_alive = -1`
+- `llm-mode.ps1` — Warmup function juga pake `keep_alive = -1`
+- **Efek: model Forever di VRAM.** `ollama ps` menunjukkan `UNTIL: Forever`
+- Tidak ada cold start lagi selama mode balanced/performance aktif
+
+### Added — Persistent Environment Variable
+- `llm-mode.ps1` — `Set-KeepAlivePersistent()` function
+- `[Environment]::SetEnvironmentVariable("OLLAMA_KEEP_ALIVE", "-1", "User")`
+- Persistent across PowerShell restarts
+- Ollama process otomatis direstart setelah set env var — apply instant
+
+### Added — Auto-Warmup pada Mode Switch
+- `llm-mode.ps1` — `Invoke-Warmup()` function: 1x inference dummy setelah switch mode
+- Dilakukan setelah `Set-Mode` dan `Set-KeepAlivePersistent`
+- **Flow:** `/llm performance` → unload model lain → set mode → warmup → VRAM langsung 1951 MB
+- Switch time termasuk warmup: ~10-16s (cold load + inference)
+
+### Added — 4-Phase Self-Improvement Audit
+- **C1:** Fix go profile JSON structure collapsed (lines 299-309)
+- **C2-C3:** Fix `$AI_NOTES` orphan variable in project-analyze.ps1, code-analyze.ps1
+- **H1:** Fix sync.ps1 path bug (`$SETUP_DIR/ecc` → `$ROOT_DIR/ecc`)
+- **H2-H3:** Fix parameter mismatch auto-start.ps1/wizard.ps1 passing `-ProjectPath` to start.ps1
+- **H4:** Add `llm-preprocess.md` to go profile instructions list
+- **H5:** Deduplicate duplicate `go`/`learn` command keys in gratis profile
+- **M1:** Fix skill-router.ps1 `$enrichedQuery` referenced before assignment
+- **LLM Integration:** Source adapter in project-skills.ps1, profile-optimizer.ps1, tool-creator.ps1
+- **Profile cleanup:** Remove 6-8 missing `9router-*` skill references from both profiles
+- **API_PASS:** All 5 scripts now read from `$env:NINEROUTER_PASSWORD` → `.env` file → `"admin"` fallback
+- **Hook paths:** Harmonize all 3 hooks to use `$SETUP_DIR` instead of `$ROOT_DIR\scripts`
+- **tool-creator.ps1:** Fix `[string]$$ProjectPath` double `$` typo
+- **generate-prd.ps1:** Fix `$featureCount = "..."` placeholder → real estimate
+
+### Behavioral Contract Enforced
+- AI (opencode model) WAJIB menjalankan Invoke-LLMEnrich pada SETIAP user input
+- Footer WAJIB muncul di SETIAP respons
+- VRAM lifecycle terverifikasi: ECO → 0 MB, PERFORMANCE → 1951 MB Forever
+
+---
+
 ## [5.3.0] — 2026-06-16 — GPU Pipeline: Local Enrich → Cloud Respond
 
 ### Added — Q4_K_S Quantized Models for 100% GPU
