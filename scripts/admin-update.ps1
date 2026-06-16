@@ -16,7 +16,8 @@ $ROUTER_DIR = "$ROOT_DIR\9router"
 $SYNC_STATE = "$ROOT_DIR\.sync-state.json"
 $ADMIN_LOG = "$ROOT_DIR\log-admin.md"
 $API_URL = "http://localhost:20128"
-$API_PASS = "123456"
+$ROUTER_ENV = "$ROOT_DIR\9router\.env"
+$API_PASS = if ($env:NINEROUTER_PASSWORD) { $env:NINEROUTER_PASSWORD } elseif (Test-Path $ROUTER_ENV) { (Select-String 'INITIAL_PASSWORD=(.+)' (Get-Content $ROUTER_ENV)).Matches.Groups[1].Value } else { "admin" }
 
 # Source LLM adapter (optional, graceful fallback)
 try { . "$PSScriptRoot\llm-adapter.ps1" } catch {}

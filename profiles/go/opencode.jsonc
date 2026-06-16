@@ -27,6 +27,7 @@
 
   "instructions": [
     "C:/Users/FANNNDI/Documents/opencode-setup/instructions/llm-status-footer.md",
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/.opencode/instructions/llm-preprocess.md",
     "C:/Users/FANNNDI/Documents/opencode-setup/ecc/AGENTS.md",
     "C:/Users/FANNNDI/Documents/opencode-setup/ecc/CONTRIBUTING.md",
     "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/tdd-workflow/SKILL.md",
@@ -41,13 +42,7 @@
     "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/strategic-compact/SKILL.md",
     "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/eval-harness/SKILL.md",
     "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router/SKILL.md",
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-chat/SKILL.md",
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-image/SKILL.md",
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-web-search/SKILL.md",
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-web-fetch/SKILL.md",
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-tts/SKILL.md",
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-stt/SKILL.md",
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-embeddings/SKILL.md"
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-chat/SKILL.md"
   ],
 
   "plugin": [
@@ -296,17 +291,8 @@
     "create": { "description": "Generate boilerplate widget/api/test/model", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/create.md}\n\n$ARGUMENTS" },
     "memory": { "description": "Simpan/baca memori session", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/memory.md}\n\n$ARGUMENTS" },
     "wizard": { "description": "Panduan interaktif bikin project (tanpa coding)", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/wizard.md}\n\n$ARGUMENTS" },
-    "generate-prd": { "description": "Generate PRD dari ide via AI","go": { "description": "[UNIVERSAL] Goal-based combo", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/go.md}\n\n$ARGUMENTS" }, "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/generate-prd.md}\n\n$ARGUMENTS" },
-     "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/start-project.md}\n\n$ARGUMENTS" },
-     "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/quick-review.md}\n\n$ARGUMENTS" },
-     "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/full-audit.md}\n\n$ARGUMENTS" },
-     "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/morning-routine.md}\n\n$ARGUMENTS" },
-     "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/prd-combo.md}\n\n$ARGUMENTS" },
-     "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/maintenance.md}\n\n$ARGUMENTS" },
-     "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/generate.md}\n\n$ARGUMENTS" },
-     "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/bug-fix.md}\n\n$ARGUMENTS" },
-     "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/security.md}\n\n$ARGUMENTS" },
-     "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/deploy.md}\n\n$ARGUMENTS" }
+    "go": { "description": "[UNIVERSAL] Goal-based combo", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/go.md}\n\n$ARGUMENTS" },
+    "generate-prd": { "description": "Generate PRD dari ide via AI", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/generate-prd.md}\n\n$ARGUMENTS" }
   },
 
   "permission": {

@@ -152,7 +152,7 @@ if ($mode -eq "1") { Write-Host "  • PRD     : prd.md (sudah dibuat AI)" -Fore
 Write-Host "  • Skills  : siap di-load" -ForegroundColor White
 Write-Host ""
 Write-Host "  Mulai workflow:" -ForegroundColor Yellow
-& "$SETUP_DIR\start.ps1" -Profile gratis -ProjectPath $projectPath
+& "$SETUP_DIR\start.ps1" -Profile gratis
 
 # ============================================================
 # Step 5: Done

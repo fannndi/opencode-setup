@@ -14,6 +14,8 @@ $SKILL_LIST = "$ROOT_DIR\Skill\skill-list.md"
 
 # Source project-resolve
 . "$SETUP_DIR\project-resolve.ps1"
+# Source LLM adapter
+. "$SETUP_DIR\llm-adapter.ps1"
 
 # ============================================================
 # Resolve Project Path

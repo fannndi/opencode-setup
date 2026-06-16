@@ -39,9 +39,7 @@
     "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/strategic-compact/SKILL.md",
     "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/eval-harness/SKILL.md",
     "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router/SKILL.md",
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-chat/SKILL.md",
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-web-search/SKILL.md",
-    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-web-fetch/SKILL.md"
+    "C:/Users/FANNNDI/Documents/opencode-setup/ecc/skills/9router-chat/SKILL.md"
   ],
 
   "plugin": [
@@ -290,8 +288,8 @@
     "create": { "description": "Generate boilerplate widget/api/test/model", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/create.md}\n\n$ARGUMENTS" },
     "memory": { "description": "Simpan/baca memori session", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/memory.md}\n\n$ARGUMENTS" },
     "wizard": { "description": "Panduan interaktif bikin project (tanpa coding)", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/wizard.md}\n\n$ARGUMENTS" },
-    "generate-prd": { "description": "Generate PRD dari ide via AI", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/generate-prd.md}\n\n$ARGUMENTS" },
     "go": { "description": "[UNIVERSAL] Goal-based: preprocess → execute → learn", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/go.md}\n\n$ARGUMENTS" },
+    "generate-prd": { "description": "Generate PRD dari ide via AI", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/generate-prd.md}\n\n$ARGUMENTS" },
     "agent-core": { "description": "AI Agent: intent detection, auto-load skills, session resume", "template": "Jalankan agent-core.ps1 dengan argumen:\n  detect <path>   — deteksi stack project\n  resume <path>   — resume session\n  auto-load <path> — auto-load skill sesuai stack\n  decompose <goal> — decompose goal jadi subtasks\n\n$ARGUMENTS" },
     "dashboard": { "description": "Tampilkan agent dashboard", "template": "powershell -ExecutionPolicy Bypass -File \"C:\\Users\\FANNNDI\\Documents\\opencode-setup\\scripts\\agent-dashboard.ps1\"\n\n$ARGUMENTS" },
     "task-queue": { "description": "[AUTO] Autonomous task queue — goal → decompose → execute", "template": ".\\scripts\\task-queue.ps1 -Goal \"$ARGUMENTS\"", "agent": "architect", "subtask": true },
@@ -302,9 +300,7 @@
     "llm": { "description": "Set operating mode: eco, balanced, or performance", "template": "powershell -ExecutionPolicy Bypass -File \"C:\\Users\\FANNNDI\\Documents\\opencode-setup\\scripts\\llm-mode.ps1\" $ARGUMENTS\n\n$ARGUMENTS" },
     "audit": { "description": "LLM-powered code audit with loop mode", "template": "powershell -ExecutionPolicy Bypass -File \"C:\\Users\\FANNNDI\\Documents\\opencode-setup\\scripts\\llm-audit.ps1\" -Path \"$ARGUMENTS\" -Loop`n\n$ARGUMENTS" },
     "intent": { "description": "Compile natural language to structured spec", "template": "powershell -ExecutionPolicy Bypass -File \"C:\\Users\\FANNNDI\\Documents\\opencode-setup\\scripts\\intent-compiler.ps1\" -Query \"$ARGUMENTS\"\n\n$ARGUMENTS" },
-    "route": { "description": "Route intent to relevant ECC skills", "template": "powershell -ExecutionPolicy Bypass -File \"C:\\Users\\FANNNDI\\Documents\\opencode-setup\\scripts\\skill-router.ps1\" -Query \"$ARGUMENTS\"\n\n$ARGUMENTS" },
-    "go": { "description": "[COMBO] Universal: preprocess input → enriched context", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/go.md}\n\n$ARGUMENTS" },
-    "learn": { "description": "[COMBO] Save results to memory + knowledge", "template": "{file:C:/Users/FANNNDI/Documents/opencode-setup/commands/learn.md}\n\n$ARGUMENTS" }
+    "route": { "description": "Route intent to relevant ECC skills", "template": "powershell -ExecutionPolicy Bypass -File \"C:\\Users\\FANNNDI\\Documents\\opencode-setup\\scripts\\skill-router.ps1\" -Query \"$ARGUMENTS\"\n\n$ARGUMENTS" }
   },
 
   "permission": {

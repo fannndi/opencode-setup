@@ -8,9 +8,9 @@ param(
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"
 
-$SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
-$ECC_DIR = "$SETUP_DIR\ecc"
-$ROUTER_DIR = "$SETUP_DIR\9router"
+$ROOT_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
+$ECC_DIR = "$ROOT_DIR\ecc"
+$ROUTER_DIR = "$ROOT_DIR\9router"
 $SYNC_STATE = "$SETUP_DIR\.sync-state.json"
 
 # ============================================================

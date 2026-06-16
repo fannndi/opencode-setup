@@ -9,6 +9,8 @@ param(
 $ErrorActionPreference = "Continue"
 $SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ROOT_DIR = Split-Path -Parent $SETUP_DIR
+# Source LLM adapter
+. "$SETUP_DIR\llm-adapter.ps1"
 $USAGE_LOG = "$ROOT_DIR\.opencode\skill-usage.jsonl"
 $PROFILE_FILE = "$ROOT_DIR\profiles\gratis\opencode.jsonc"
 

@@ -17,7 +17,7 @@ if (-not $ProjectPath -and $env:ECC_PROJECT_PATH) {
 if (-not $ProjectPath) {
     # Try from registry
     . "$SETUP_DIR\project-resolve.ps1"
-    . "$ROOT_DIR\scripts\llm-adapter.ps1"
+    . "$SETUP_DIR\llm-adapter.ps1"
     $ProjectPath = Get-ActiveProject
 }
 if (-not $ProjectPath) { exit 0 }

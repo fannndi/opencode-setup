@@ -51,7 +51,7 @@ Write-Host ""
 # ============================================================
 
 Write-Host "  [1/4] Starting workflow..." -ForegroundColor Cyan
-& "$SETUP_DIR\start.ps1" -Profile $Profile -ProjectPath $ProjectPath
+& "$SETUP_DIR\start.ps1" -Profile $Profile
 if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) {
     Write-Host "  [FAIL] Start failed. Check 9Router." -ForegroundColor Red
     exit 1

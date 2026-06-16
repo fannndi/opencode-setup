@@ -11,7 +11,7 @@ $SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ROOT_DIR = Split-Path -Parent $SETUP_DIR
 
 . "$SETUP_DIR\project-resolve.ps1"
-. "$ROOT_DIR\scripts\llm-adapter.ps1"
+. "$SETUP_DIR\llm-adapter.ps1"
 
 if (-not $ProjectPath -and $env:ECC_PROJECT_PATH) {
     $ProjectPath = $env:ECC_PROJECT_PATH

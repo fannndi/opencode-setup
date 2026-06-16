@@ -102,6 +102,9 @@ function RouteWithLLM {
     $grouped = $filtered | Group-Object category
     $skillText = ($grouped | ForEach-Object { "$($_.Name): $($_.Group.name -join ', ')" }) -join "`n"
 
+    $enrichedQuery = Invoke-LLMEnrich -Text $Query -Context "skill selection"
+    if (-not $enrichedQuery) { $enrichedQuery = $Query }
+
     $prompt = @"
 Select the 8-12 most relevant skills for this project. Output ONLY a JSON array.
 
@@ -125,8 +128,6 @@ $skillText
             $prompt = "Output ONLY a raw JSON array starting with [. No markdown, no code fences, no explanation. Array of skill names for project: $($Intent.domain)/$($Intent.module)"
         }
 
-        $enrichedQuery = Invoke-LLMEnrich -Text $Query -Context "skill selection"
-        if (-not $enrichedQuery) { $enrichedQuery = $Query }
         $result = Invoke-LLM -Prompt $prompt -System "Output ONLY a JSON array of skill names. No explanation." -MaxTokens 1024 -Temperature 0.2 -TimeoutSec 60
         if (-not $result) { return $null }
 

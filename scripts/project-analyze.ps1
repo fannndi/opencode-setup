@@ -42,6 +42,8 @@ if (-not (Test-Path $PROJECT_DIR)) {
 # Ensure session exists for this project
 Resolve-Project -Path $PROJECT_DIR | Out-Null
 
+$AI_NOTES = "$PROJECT_DIR\ai-notes.md"
+
 $PRD_FILE = "$PROJECT_DIR\prd.md"
 
 

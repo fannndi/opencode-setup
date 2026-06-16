@@ -19,7 +19,8 @@ $OPENCODE_CONFIG_DIR = "$env:USERPROFILE\.config\opencode"
 $OPENCODE_CONFIG = "$OPENCODE_CONFIG_DIR\opencode.jsonc"
 $PROFILE_CONFIG = "$ROOT_DIR\profiles\$Profile\opencode.jsonc"
 $API_URL = "http://localhost:20128"
-$API_PASS = "123456"
+$ROUTER_ENV = "$ROOT_DIR\9router\.env"
+$API_PASS = if ($env:NINEROUTER_PASSWORD) { $env:NINEROUTER_PASSWORD } elseif (Test-Path $ROUTER_ENV) { (Select-String 'INITIAL_PASSWORD=(.+)' (Get-Content $ROUTER_ENV)).Matches.Groups[1].Value } else { "admin" }
 
 # Source LLM adapter (optional, graceful fallback)
 try { . "$PSScriptRoot\llm-adapter.ps1" } catch {}

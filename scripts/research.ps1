@@ -14,7 +14,8 @@ $ProgressPreference = "SilentlyContinue"
 $SETUP_DIR = Split-Path -Parent $MyInvocation.MyCommand.Path
 $ROOT_DIR = Split-Path -Parent $SETUP_DIR
 $API_URL = "http://localhost:20128"
-$API_PASS = "123456"
+$ROUTER_ENV = "$ROOT_DIR\9router\.env"
+$API_PASS = if ($env:NINEROUTER_PASSWORD) { $env:NINEROUTER_PASSWORD } elseif (Test-Path $ROUTER_ENV) { (Select-String 'INITIAL_PASSWORD=(.+)' (Get-Content $ROUTER_ENV)).Matches.Groups[1].Value } else { "admin" }
 . "$SETUP_DIR\llm-adapter.ps1"
 
 # ============================================================
