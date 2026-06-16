@@ -5,11 +5,29 @@
 
 ## Core Rules
 
-1. Footer WAJIB di SETIAP respons
-2. LLMEnrich WAJIB [On] di mode BALANCED/PERFORMANCE
-3. Mode harus sesuai: [User] untuk coding, [Admin] untuk setup/maintenance
+1. **SESSION INIT** (first input, SILENT — no footer) → baca config, setup mode/role
+2. **REGULAR** (every response, INCLUDING first) → enrich → respond → footer
+3. LLMEnrich WAJIB [On] di mode BALANCED/PERFORMANCE
+4. Mode harus sesuai: [User] untuk coding, [Admin] untuk setup/maintenance
 
-## Architecture
+## SESSION INIT (First Input Only — Silent, No Footer)
+
+Jalankan di INPUT PERTAMA saja, SEBELUM menjawab:
+
+```
+1. Read .opencode/context.md         → state terkini
+2. Read .opencode/llm-mode.json      → mode (ECO/BALANCED/PERFORMANCE)
+3. Detect User/Admin mode:
+   - /admin, /setup, /llm, /audit → Admin
+   - else → User
+4. Update .opencode/context.md       → "Session initialized"
+5. Write .opencode/llm-status.json   → setup state
+6. JAWAB user (TANPA footer)
+```
+
+Setelah Step 6, session init selesai. Input berikutnya masuk ke pipeline REGULAR.
+
+## REGULAR Pipeline (Every Response — Includes First Response AFTER Init)
 
 ```
 User Input
@@ -22,10 +40,10 @@ Invoke-LLMEnrich() ← WAJIB di SETIAP input
    └── ECO     → LLMEnrich [Off], raw input → Cloud AI
    │
    ▼
-Cloud AI responds + footer
+Execute → Respond + Footer
 ```
 
-## Step 1: Gather Info
+### Step 1: Gather Info
 
 ```powershell
 $llmMode = "eco"
@@ -47,7 +65,7 @@ else { $cloudModel = "?" }
 Mode mapping: `eco` → ECO, `balanced` → BALANCED, `performance` → PERFORMANCE.
 User mode: `/admin`, `/setup`, `/llm`, `/audit` → Admin. Default → User.
 
-## Step 2: Write Status File
+### Step 2: Write Status File
 
 ```powershell
 $status = @{
@@ -62,7 +80,7 @@ $status = @{
 $status | Set-Content -Path ".opencode\llm-status.json" -Encoding UTF8
 ```
 
-## Step 3: Append Footer
+### Step 3: Append Footer (ALWAYS after response, never on Session Init)
 
 ```
 Mode : [ User ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - EnrichTime : [ 4.2s ] - Profile : [ Gratis ] - Cloud : [ gratis ]
@@ -80,9 +98,10 @@ Mode : [ User ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - EnrichTime : [ 4.
 
 ## Enforcement
 
+- Jika sesi baru → Session Init dulu (tanpa footer), baru pipeline REGULAR
 - LLMEnrich [Off] di BALANCED/PERFORMANCE = AI tidak comply → koreksi
 - Mode: [Admin] dengan input User = mode salah → AI harus deteksi otomatis
-- Footer tidak boleh skip atau di-simplify
+- Footer tidak boleh skip atau di-simplify di mode REGULAR
 
 ## VRAM Lifecycle (5 min timeout)
 
