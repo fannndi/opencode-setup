@@ -206,31 +206,59 @@ Mode : [ User ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - EnrichTime : [ 4.
 
 ---
 
-## Quick Start
+## Quick Setup (WAJIB — JANGAN SKIP)
+
+> **Peringatan:** Jangan langsung chat tanpa setup. AI akan **MENOLAK** menjawab sampai setup selesai.
+
+### First Install (sekali doang)
 
 ```powershell
-# 1. Clone
+# 1. Clone repo
 git clone https://github.com/fannndi/opencode-setup.git
 cd opencode-setup
 
-# 2. Setup
+# 2. Install semua dependencies (Node, npm, OpenCode, 9Router, ECC)
 .\scripts\setup.ps1
-# Fill api-key.txt, then:
+
+# 3. Isi API key
+#    Buka file api-key.txt, ganti YOUR-API-KEY-HERE dengan key dari 9Router
+#    Dashboard: http://localhost:20128/dashboard (password: 123456)
+
+# 4. Apply + verify
 .\scripts\setup.ps1 --apply
+```
 
-# 3. Start
+### Setiap Mulai Sesi Baru (daily)
+
+```powershell
+# Cara 1: Lewat terminal
+.\scripts\start.ps1 -Profile gratis
 opencode
-/go "bikin aplikasi kasir"
+
+# Cara 2: Lewat OpenCode CLI (di terminal)
+opencode
+/start-free    # Morning routine
+/go "bikin CRUD"  # Mulai kerja
+
+# Cara 3: Lewat IDE (VS Code, dll)
+#    Buka folder opencode-setup di IDE
+#    Jalankan terminal di dalam IDE
+#    Ketik: /setup atau /start-free
 ```
 
-### Via OpenCode Commands
+### Command Reference
 
-```
-/setup             # Full installation
-/setup --apply     # Apply API key + verify
-/start-free        # Morning routine (free models)
-/admin             # Update + changelog + doctor
-```
+| Command | Fungsi | Kapan Dipake |
+|---------|--------|--------------|
+| `/setup` | Install lengkap (dependencies + config) | Pertama kali |
+| `/setup --apply` | Apply API key + verify | Setelah isi api-key.txt |
+| `/start-free` | Morning routine (free models) | Setiap hari |
+| `/admin` | Update + changelog + doctor check | Maintenance |
+
+### ⛔ JANGAN lakukan ini:
+- Langsung chat tanpa `/setup` atau `/start-free` dulu
+- Skip langkah `.\scripts\setup.ps1`
+- Lupa isi `api-key.txt`
 
 ---
 
