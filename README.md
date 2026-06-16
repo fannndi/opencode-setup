@@ -2,6 +2,8 @@
 
 Buat aplikasi tanpa coding. AI yang kerja. Semua gratis.
 
+Local LLM (Ollama) + Cloud AI (OpenCode) = pipeline 2-stage.
+
 ---
 
 ## The Story
@@ -38,6 +40,107 @@ opencode
 /setup           # Install everything
 /setup --apply   # Apply api-key, verify, done
 ```
+
+---
+
+## Architecture: 2-Stage AI Pipeline
+
+```
+┌──────────────────────────────────────────────────┐
+│ USER INPUT                                       │
+│ "hai"                                            │
+└──────────────────────┬───────────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────────┐
+│ STAGE 1: Local LLM (Ollama, GPU)                 │
+│                                                   │
+│  Invoke-LLMEnrich()                               │
+│    ├─ ECO:        pass-through, no LLM            │
+│    ├─ BALANCED:   qwen3:1.7b-s, ~250 tok enrich  │
+│    └─ PERFORMANCE: qwen2.5-coder:3b-s, ~512 tok  │
+│                                                   │
+│  Output: enriched context (internal, user ga liat)│
+└──────────────────────┬───────────────────────────┘
+                       │
+                       ▼
+┌──────────────────────────────────────────────────┐
+│ STAGE 2: Cloud AI (OpenCode model)               │
+│                                                   │
+│  Menerima enriched context dari Stage 1           │
+│  Menjawab user dengan konteks yang lebih kaya     │
+│  Append footer status setiap response             │
+└──────────────────────────────────────────────────┘
+```
+
+**Konsep kunci:** User tidak pernah lihat output local LLM. Local LLM cuma memproses input, menghasilkan enriched context, lalu Cloud AI yang jawab menggunakan konteks itu.
+
+---
+
+## GPU Pipeline: 3 Operating Modes
+
+Didesain untuk GPU minimal (MX150 2GB VRAM, 16GB RAM). Tiga mode dengan manajemen VRAM otomatis:
+
+| Mode | Model Lokal (Ollama) | Quant | VRAM | GPU | Enrich Tokens |
+|------|---------------------|-------|------|-----|---------------|
+| **ECO** | ❌ Unloaded | — | 0 MB | idle | 0 (passthrough) |
+| **BALANCED** | qwen3:1.7b-s | Q4_K_M | ~1493 MB | 100% | ~250 tok |
+| **PERFORMANCE** | qwen2.5-coder:3b-s | Q4_K_S | ~1951 MB | 100% | ~512 tok |
+
+**VRAM Lifecycle:**
+```
+ECO         → VRAM 0 MB   (ollama stop → unload)
+Switch BAL  → Cold load ~6s → VRAM 1493 MB
+Switch PERF → Cold load ~10s → VRAM 1951 MB (unloads BAL dulu)
+ECO lagi    → Unload → VRAM 0 MB
+```
+
+```powershell
+/llm eco          # GPU idle, all LLM skip, VRAM 0
+/llm balanced     # qwen3:1.7b-s, enrich 250 tok
+/llm performance  # qwen2.5-coder:3b-s (Q4_K_S), enrich 512 tok
+/llm status       # Cek mode + model + VRAM
+```
+
+**Setiap input user — bahkan "Hai":**
+1. AI baca `.opencode/llm-mode.json` → tau mode
+2. Kalo bukan ECO → `Invoke-LLMEnrich()` di GPU → enriched context
+3. Kalo ECO → raw input langsung (no LLM)
+4. Cloud AI jawab pake enriched context
+5. Append footer: `LLM : [ MODE ] - Tokens : [ X ] - Profile : [ Y ] - Model : [ Z ]`
+
+---
+
+## GPU Optimization Details
+
+| Aspek | Detail |
+|-------|--------|
+| **Model kustom** | `qwen3:1.7b-s`, `qwen2.5-coder:3b-s` — Modelfile dgn `num_gpu 99`, `num_ctx 2048` |
+| **Forced GPU** | Parameter `num_gpu=99` di adapter dan Modelfile — paksa semua layer ke GPU |
+| **VRAM fit** | Q4_K_S (1.71 GB → 97% layer di GPU) vs Q4_K_M (1.9 GB → hanya 28%) |
+| **KEEP_ALIVE** | `-1` = model stay di VRAM selama mode balanced/performance |
+| **ECO cleanup** | `ollama stop` → unload model dari VRAM, GPU free buat aplikasi lain |
+| **Cold load** | ~6s (balanced) / ~10s (performance) — terjadi pas switch mode |
+| **Inference** | ~400ms-3s per enrich tergantung token count |
+
+**Kenapa Q4_K_S?** Q4_K_M (1.9 GB) + KV cache (200 MB) = 2.1 GB > 2 GB VRAM → spill ke CPU. Q4_K_S (1.71 GB) + KV cache = 1.95 GB → **100% GPU**.
+
+---
+
+## Footer System
+
+Setiap respons AI menyertakan status footer:
+
+```
+LLM : [ PERFORMANCE ] - Tokens : [ 18 ] - Profile : [ Gratis ] - Model : [ DS V4 Flash ]
+```
+
+| Field | Arti |
+|-------|------|
+| `MODE` | Mode local Ollama: ECO / BALANCED / PERFORMANCE |
+| `Tokens` | Estimasi token output respons ini |
+| `Profile` | Profile opencode aktif: Gratis / Go |
+| `Model` | Cloud AI model yang menjawab (DS V4 Flash, MiMo V2.5, dll) |
 
 ---
 
@@ -81,74 +184,12 @@ opencode
 /admin --doctor     # Doctor check only
 ```
 
-| Step | Action |
-|------|--------|
-| 1 | LLM: 9Router health + combos |
-| 2 | Pull ECC |
-| 3 | Pull 9Router |
-| 4 | ECC changelog (full, tagged) |
-| 5 | 9Router changelog (full, tagged) |
-| 6 | Analyze: rework needed? (keyword-based) |
-| 7 | Rebuild plugin if opencode changes |
-| 8 | Doctor check |
-| 9 | Save admin log |
-| 10 | Summary + recommendations |
-
-**Changelog Tags:**
-- `[setup]` - Setup rework needed -> re-run /setup
-- `[config]` - Config changes -> update config
-- `[plugin]` - Plugin changes -> auto-rebuild
-- `[skill]` - New/updated skills -> auto-load
-- `[breaking]` - Breaking changes -> manual review
-- `[info]` - No action needed
+Changelog Tags: `[setup]` `[config]` `[plugin]` `[skill]` `[breaking]` `[info]`
 
 ---
 
-## Operating Modes
+## Self-Improvement Loop
 
-Didesain untuk GPU minimal (MX150 2GB VRAM, 16GB RAM). Tiga mode:
-
-| Mode | LLM | Model | VRAM | Context Window | Chunk Size | Cocok |
-|------|-----|-------|------|----------------|------------|-------|
-| **ECO** | ❌ Mati | — | 0 GB | N/A | N/A | Outdoor, baterai tipis |
-| **BALANCED** | ✅ | qwen3:1.7b | ~1.4 GB | ~1500 tokens | 1000 chars | Default daily |
-| **PERFORMANCE** | ✅ | qwen2.5-coder:3b | ~2 GB | ~800 tokens | 600 chars | Charger connected |
-
-```powershell
-/llm eco          # GPU idle, all LLM skip
-/llm balanced     # Default
-/llm performance  # Full power
-/llm status       # Cek mode + model
-```
-
-Setiap input user — bahkan "Hai" — lewat `Invoke-LLMEnrich` dulu sebelum model AI. ECO mode: pass-through tanpa LLM. 100% coverage.
-
----
-
-## Architecture
-
-### LLM Pipeline
-```
-Input User
-   │
-   ▼
-┌──────────────────────────────────┐
-│  Invoke-LLMEnrich (universal)    │
-│  ├─ ECO:        pass-through     │
-│  ├─ BALANCED:   enrich ~250 tok  │
-│  └─ PERFORMANCE: enrich ~512 tok │
-└──────────┬───────────────────────┘
-           │
-           ▼
-┌──────────────────────────────────┐
-│  Intent-Compiler (NL → JSON)     │
-│  Skill-Router (pick 3-10 skills) │
-│  Invoke-LLM (Ollama API)         │
-│  Invoke-LLMChunk (mode-aware)    │
-└──────────────────────────────────┘
-```
-
-### Self-Improvement Loop
 ```
 Session Start → LLM-Evolve (config)
    ↓
@@ -157,15 +198,6 @@ User Works → Usage Telemetry
 Session End → Knowledge-Miner (session → patterns)
    ↓
 Next Session → LLM-Feedback (failure analysis)
-```
-
-### Modular Code Constraint
-```
-1000 chars soft / 1500 hard max per file
-Satu file = satu function + doc
-Dependency tracking: # Requires: / # Exports:
-Max 5 file per dir, index.ps1 wajib
-Generator: .\create-function.ps1 -Name "Func" -Module "mod"
 ```
 
 ---
@@ -185,14 +217,14 @@ Generator: .\create-function.ps1 -Name "Func" -Module "mod"
 
 ---
 
-## Scripts
+## Scripts Reference
 
 ### LLM Layer
 
 | Script | Fungsi |
 |--------|--------|
-| `llm-adapter.ps1` | Universal wrapper: Invoke-LLM, Invoke-LLMEnrich, Invoke-LLMChunk, failure logging, usage telemetry |
-| `llm-mode.ps1` | 3-mode toggle: eco/balanced/performance |
+| `llm-adapter.ps1` | Universal wrapper: Invoke-LLM, Invoke-LLMEnrich, Invoke-LLMChunk, failure logging, usage telemetry, `num_gpu=99` |
+| `llm-mode.ps1` | 3-mode toggle: eco/balanced/performance + auto VRAM management |
 | `llm-preprocess.ps1` | Universal input pipeline: stack → skill → feature → memory → knowledge → intent → route |
 | `intent-compiler.ps1` | Natural language → structured JSON spec (dual path: LLM + regex) |
 | `skill-router.ps1` | Select 3-10 skills from 270 ECC skills by intent |
@@ -209,13 +241,12 @@ Generator: .\create-function.ps1 -Name "Func" -Module "mod"
 | `task-queue.ps1` | Autonomous DAG execution — decompose goal → dependency resolve → execute |
 | `agent-dashboard.ps1` | System overview: health, sessions, LLM usage, model status |
 | `tool-creator.ps1` | Template-based script/command generator |
-| `create-function.ps1` | Boilerplate function generator (ps1/ts/py/go) with 1500 char limit |
 
 ### Knowledge Layer
 
 | Script | Fungsi |
 |--------|--------|
-| `knowledge.ps1` | Structured, categorized, searchable knowledge base (semantic + keyword) |
+| `knowledge.ps1` | Structured, categorized, searchable knowledge base |
 | `knowledge-miner.ps1` | Session logs → LLM extract patterns → auto-save to knowledge |
 | `memory.ps1` | Per-project session memory: logs, patterns, error solutions |
 | `profile-optimizer.ps1` | Track skill usage → recommend load/unload |
@@ -225,7 +256,7 @@ Generator: .\create-function.ps1 -Name "Func" -Module "mod"
 | Script | Fungsi |
 |--------|--------|
 | `setup.ps1` | Smart setup: detect 9Router, clone ECC, build plugin, apply profile |
-| `start.ps1` | Auto-heal morning routine: LLM check, ECC, plugin, config, model test |
+| `start.ps1` | Auto-heal morning routine + `$env:OLLAMA_KEEP_ALIVE = "-1"` |
 | `admin-update.ps1` | Changelog + update + rebuild + doctor check |
 | `generate-prd.ps1` | Idea -> LLM-enriched PRD document |
 | `project-analyze.ps1` | PRD → semantic stack + feature detection |
@@ -233,9 +264,6 @@ Generator: .\create-function.ps1 -Name "Func" -Module "mod"
 | `analyze-project.ps1` | File indicator → stack detection → skill loading |
 | `research.ps1` | Web search + LLM summarization via 9Router |
 | `quality-gate.ps1` | Multi-stage quality check + LLM analysis |
-| `wizard.ps1` | Interactive onboarding wizard (Indonesian) |
-| `create.ps1` | Component boilerplate: widget/api/test/model |
-| `template-loader.ps1` | Project template copier |
 | `session-manager.ps1` | CRUD session JSON files |
 | `project-resolve.ps1` | Active project resolution + slug management |
 | `token-tracker.ps1` | 9Router token usage display |
@@ -246,7 +274,7 @@ Generator: .\create-function.ps1 -Name "Func" -Module "mod"
 |------|---------|--------|
 | `self-heal.ps1` | After Edit/Write | Check types → LLM suggest fix |
 | `eval-gate.ps1` | After editing test files | Auto-run tests → LLM analyze |
-| `instinct-extract.ps1` | Session end | Session log → LLM pattern extraction → save to memory + knowledge |
+| `instinct-extract.ps1` | Session end | Session log → LLM pattern extraction → save to knowledge |
 | `proactive-research.ps1` | Before Edit/Write | Unknown library detection → LLM research → save |
 
 ---
@@ -262,17 +290,14 @@ opencode-setup/
 ├── scripts/                   # 40+ automation scripts
 │   └── hooks/                 # 4 auto-trigger hooks
 ├── commands/                  # OpenCode command templates
-├── profiles/                  # Config profiles
+├── profiles/                  # Config profiles (gratis/go)
+├── instructions/              # AI behavioral instructions
 ├── templates/                 # Project templates
-├── rules/                     # Code constraints
-│   └── common/
-│       └── modular-code.md    # 1000 char rule
-├── Feature/                   # 600+ feature inventory
-├── Skill/                     # 270 skills catalog
-├── docs/                      # Documentation
 ├── ecc/                       # ECC repo (auto-cloned)
 ├── 9router/                   # 9Router repo (auto-cloned)
-├── .opencode/                 # Telemetry, usage logs (gitignored)
+├── Modelfile                  # qwen2.5-coder:3b-s (GPU optimized)
+├── Modelfile.qwen3            # qwen3:1.7b-s (GPU optimized)
+├── .opencode/                 # Mode state, telemetry (gitignored)
 ├── README.md
 ├── DEV-PLAN.md                # Self-improvement roadmap
 └── CHANGELOG.md               # Release history
@@ -284,10 +309,10 @@ opencode-setup/
 
 | Komponen | Biaya | Kegunaan |
 |----------|-------|----------|
-| OpenCode Free | ✅ $0 | AI coding assistant |
+| OpenCode Free | ✅ $0 | AI coding assistant (Cloud AI) |
 | 9Router | ✅ $0 | AI gateway + free model combos |
 | ECC (270 skills) | ✅ $0 | Knowledge base |
-| Ollama (qwen3:1.7b / qwen2.5-coder:3b) | ✅ $0 | Local LLM |
+| Ollama (qwen3:1.7b / qwen2.5-coder:3b) | ✅ $0 | Local LLM preprocessing |
 
 **Total: $0.00.** Tidak perlu API key. Tidak perlu kartu kredit.
 

@@ -4,6 +4,69 @@ Semua perubahan penting di project ini.
 
 ---
 
+## [5.3.0] — 2026-06-16 — GPU Pipeline: Local Enrich → Cloud Respond
+
+### Added — Q4_K_S Quantized Models for 100% GPU
+- **qwen2.5-coder:3b-s** (1.71 GB) — Q4_K_S quantization fits 2GB VRAM fully
+- **qwen3:1.7b-s** (1.27 GB) — With `num_gpu 99` force all layers to GPU
+- Modelfiles created with `num_gpu 99`, `num_ctx 2048`
+- Download dari bartowski/Qwen2.5-Coder-3B-Instruct-GGUF via curl + resume
+
+### Added — Forced GPU via `num_gpu = 99`
+- `llm-adapter.ps1` — Every `Invoke-LLM` call passes `num_gpu = 99` in API options
+- Modelfiles — `PARAMETER num_gpu 99` embedded at model level
+- **100% GPU:** qwen2.5-coder:3b-s = 1951/2048 MB (95%), qwen3:1.7b-s = 1493/2048 MB (73%)
+
+### Added — ECO Mode VRAM Unload
+- `llm-mode.ps1` — ECO switch runs `ollama stop` on both models → VRAM 0 MB
+- BALANCED mode unloads PERFORMANCE model first (and vice versa) — prevents OOM
+- Cold load: ~6s (balanced), ~10s (performance)
+
+### Added — Thinking Field Fallback for Qwen3
+- `llm-adapter.ps1` — When `message.content` empty but `message.thinking` exists, use thinking as fallback response
+
+### Added — LLM Status Footer System
+- `instructions/llm-status-footer.md` — AI wajib append footer setiap respons
+- Footer format: `LLM : [ MODE ] - Tokens : [ X ] - Profile : [ Y ] - Model : [ Z ]`
+- Shows local Ollama mode + Cloud AI model identity
+- Profile auto-detection via config name matching
+
+### Added — Preprocess Instruction Enforcement
+- `ecc/.opencode/instructions/llm-preprocess.md` — Step-by-step AI behavioral contract
+- Wajib: baca mode → Invoke-LLMEnrich → enriched context → jawab → footer
+- Architecture: Local Ollama = preprocessor only. Cloud AI = responder.
+
+### Added — `$env:OLLAMA_KEEP_ALIVE = "-1"`
+- `scripts/start.ps1` — Model stays loaded in VRAM during balanced/performance mode
+- Prevents cold start on every inference
+
+### Changes
+- `llm-mode.ps1` — balanced model `qwen3:1.7b` → `qwen3:1.7b-s`, performance model `qwen2.5-coder:3b` → `qwen2.5-coder:3b-s`
+- `Modelfile` — FROM absolute GGUF blob, num_ctx 2048, num_gpu 99
+- `Modelfile.qwen3` — FROM qwen3:1.7b, num_ctx 2048, num_gpu 99
+- README.md — Full rewrite: 2-stage pipeline, GPU section, VRAM lifecycle, footer docs, tables
+
+### Behavioral Contract
+- AI wajib panggil `Invoke-LLMEnrich` pada SETIAP user input sebelum merespons
+- AI wajib append `LLM Status Footer` setelah SETIAP respons
+- ECO = passthrough (no LLM). BALANCED = 250 tok enrich. PERFORMANCE = 512 tok enrich.
+
+---
+
+## [5.2.0] — 2026-06-16 — Bugfix: Adapter, Intent Compiler, Skill Router
+
+### Fixed
+- **llm-adapter.ps1** — Qwen3 thinking field fallback (empty content → use thinking field)
+- **intent-compiler.ps1** — Variable order bug (`$enrichedQuery` referenced before assignment)
+- **intent-compiler.ps1** — Mode `off` not recognized (only checked `eco`, not `off`)
+- **skill-router.ps1** — Mode `off` not recognized (same fix)
+- **llm-status-footer.md** — Footer format rapi + profile detection + model alias vs cloud model
+
+### Added
+- `.opencode/llm-mode.json` — Initialized (was missing, caused ECO fallback despite showing BALANCED)
+
+---
+
 ## [5.1.0] — 2026-06-16 — Workflow Rework: 3 Main Workflows
 
 ### Reworked — Setup Workflow
