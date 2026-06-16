@@ -83,3 +83,14 @@ Mode : [ User ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - Tokens : [ X ] - 
 - LLMEnrich [Off] di BALANCED/PERFORMANCE = AI tidak comply → koreksi
 - Mode: [Admin] dengan input User = mode salah → AI harus deteksi otomatis
 - Footer tidak boleh skip atau di-simplify
+
+## VRAM Lifecycle (5 min timeout)
+
+```
+Default:     VRAM 0 MB (model unloaded, 5 min timeout)
+User input:  Warmup → cold load ~6-10s → VRAM ~1-2 GB → enrichment → response
+During chat: Model stays loaded (< 5 min gap)
+Idle 5 min:  Model auto-unloads → VRAM 0 MB
+```
+
+Model stays in VRAM selama user aktif chat. Setelah 5 menit idle, auto-unload.

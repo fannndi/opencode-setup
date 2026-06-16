@@ -48,10 +48,10 @@ This means: better responses, lower cloud token usage, and full control over you
 │  │  Output: enriched context (kept internal, never shown to user)      │   │
 │  └─────────────────────────────────────────────────────────────────────┘   │
 │                                                                             │
-│  VRAM:  0 MB (ECO)  │  ~1 GB (BALANCED)  │  ~1 GB (PERFORMANCE)            │
+│  VRAM:  0 MB (idle) │  ~1 GB (enriching) │  ~1 GB (enriching)              │
 │  GPU:   idle        │  25-60% utilization │  25-60% utilization             │
-│  Keep:  Forever loaded (keep_alive=-1)                                     │
-│  Auto:  Warmup on mode switch, unload on ECO                               │
+│  Keep:  5 min timeout — auto-unload setelah idle                            │
+│  Auto:  Warmup on input, unload setelah 5 min idle                         │
 └───────────────────────────────────┬─────────────────────────────────────────┘
                                     │
                                     ▼
@@ -89,33 +89,22 @@ Like a car transmission: three gears for different driving conditions.
 └─────────────┴─────────────────┴────────┴──────────┴──────────┴──────────────────┘
 ```
 
-### VRAM Lifecycle
+### VRAM Lifecycle (5 min timeout)
 
 ```
-  /llm eco
-    └→ ollama stop both models → VRAM: 0 MB ✅
-    └→ GPU free for Chrome, games, etc.
-
-  /llm balanced
-    └→ Unload performance model
-    └→ Set OLLAMA_KEEP_ALIVE=-1 (persistent env var)
-    └→ Warmup: 1 inference → model loaded
-    └→ VRAM: ~1 GB ✅  |  Forever loaded
-
-  /llm performance
-    └→ Unload balanced model
-    └→ Same env var + warmup
-    └→ VRAM: ~1 GB ✅  |  Forever loaded
+Default:     VRAM 0 MB (model unloaded)
+User input:  Warmup → cold load ~6-10s → VRAM ~1 GB → enrichment → response
+During chat: Model stays loaded (< 5 min gap between inputs)
+Idle 5 min:  Model auto-unloads → VRAM 0 MB
 ```
 
 ### Switching Cost
 
-| Transition | Time | What Happens |
-|-----------|------|-------------|
-| ECO ↔ BALANCED | ~6s | Cold load model to VRAM |
-| ECO ↔ PERFORMANCE | ~10s | Cold load model to VRAM |
-| BALANCED ↔ PERFORMANCE | ~10s | Unload old, warmup new |
-| Inference (warm) | ~4-15s | GPU enrichment |
+| Event | Time | What Happens |
+|-------|------|-------------|
+| First input (cold) | ~6-10s | Model loads to VRAM |
+| Subsequent inputs (< 5 min) | ~0.1-1s | Model still in VRAM |
+| After 5 min idle | 0s | Model auto-unloads, VRAM 0 MB |
 
 ---
 
@@ -317,8 +306,7 @@ opencode-setup/
 | VRAM Usage | ~1 GB (52% of available) |
 | GPU Utilization | 25-60% during enrichment |
 | Inference Speed | ~6.5 tokens/second |
-| Keep-Alive | `keep_alive=-1` — model Forever in VRAM |
-| Persistence | `[Environment]::SetEnvironmentVariable` — survives reboot |
+| Keep-Alive | Default 5 min timeout — model auto-unloads setelah idle |
 
 ### Why This Model?
 
