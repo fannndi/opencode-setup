@@ -32,8 +32,6 @@ $llmMode = "eco"
 $enrichSuccess = $false
 $userMode = "User"  # "User" or "Admin"
 $profileName = "?"
-$cloudModel = "DS V4 Flash"
-
 if (Test-Path ".opencode/llm-mode.json") {
   $m = Get-Content ".opencode/llm-mode.json" -Raw | ConvertFrom-Json
   $llmMode = $m.mode
@@ -41,8 +39,9 @@ if (Test-Path ".opencode/llm-mode.json") {
 
 $gratisCfg = Get-Content "profiles/gratis/opencode.jsonc" -Raw 2>$null
 $goCfg = Get-Content "profiles/go/opencode.jsonc" -Raw 2>$null
-if ($gratisCfg -match '"9router/gratis"') { $profileName = "Gratis" }
-elseif ($goCfg -match '"9router/go"') { $profileName = "Go" }
+if ($gratisCfg -match '"9router/gratis"') { $profileName = "Gratis"; $cloudModel = "gratis" }
+elseif ($goCfg -match '"9router/go"') { $profileName = "Go"; $cloudModel = "go" }
+else { $cloudModel = "?" }
 ```
 
 Mode mapping: `eco` → ECO, `balanced` → BALANCED, `performance` → PERFORMANCE.
@@ -66,7 +65,7 @@ $status | Set-Content -Path ".opencode\llm-status.json" -Encoding UTF8
 ## Step 3: Append Footer
 
 ```
-Mode : [ User ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - EnrichTime : [ 4.2s ] - Profile : [ Gratis ] - Cloud : [ DS V4 Flash ]
+Mode : [ User ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - EnrichTime : [ 4.2s ] - Profile : [ Gratis ] - Cloud : [ gratis ]
 ```
 
 | Field | Arti | Enforcement |
@@ -77,7 +76,7 @@ Mode : [ User ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - EnrichTime : [ 4.
 | `LLMEnrich: [Off]` | **AI GAGAL COMPLY** | User langsung lihat |
 | `EnrichTime` | Waktu GPU enrichment (0ms=ECO, 4s=warm, 10s=cold) | |
 | `Profile` | Gratis / Go | |
-| `Cloud` | Cloud AI model alias | |
+| `Cloud` | Cloud AI model name (from profile config) | |
 
 ## Enforcement
 

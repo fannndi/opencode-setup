@@ -18,7 +18,7 @@ Mode: **Admin** — goal-oriented, eksplorasi, boleh clarify.
 ## Footer
 
 ```
-Mode : [ Admin ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - EnrichTime : [ 4.2s ] - Profile : [ Gratis ] - Cloud : [ DS V4 Flash ]
+Mode : [ Admin ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - EnrichTime : [ 4.2s ] - Profile : [ Gratis ] - Cloud : [ gratis ]
 ```
 
 ## Commands

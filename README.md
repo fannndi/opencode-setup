@@ -179,7 +179,7 @@ STEP 3: Footer (COMPLIANCE HOOK)
 Every response includes a footer that acts as a **compliance enforcement hook**:
 
 ```
-Mode : [ User ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - EnrichTime : [ 4.2s ] - Profile : [ Gratis ] - Cloud : [ DS V4 Flash ]
+Mode : [ User ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - EnrichTime : [ 4.2s ] - Profile : [ Gratis ] - Cloud : [ gratis ]
 ```
 
 | Field | Meaning | Enforcement |
@@ -190,7 +190,7 @@ Mode : [ User ] | LLM : [ PERFORMANCE ] - LLMEnrich : [ On ] - EnrichTime : [ 4.
 | `LLMEnrich: [Off]` | **AI GAGAL COMPLY** | User langsung lihat kegagalan |
 | `EnrichTime` | Waktu GPU enrichment (0ms=ECO, 4s=warm, 10s=cold) | |
 | `Profile` | Gratis / Go | |
-| `Cloud` | Cloud AI model alias | |
+| `Cloud` | Cloud AI model name (from profile config) | |
 
 **Footer bukan dekorasi** — ini enforcement hook. LLMEnrich [Off] berarti enrichment tidak berjalan.
 
