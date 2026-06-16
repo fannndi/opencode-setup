@@ -16,8 +16,8 @@ $OLLAMA_URL = "http://localhost:11434"
 
 $MODEL_MAP = @{
     "eco"         = $null
-    "balanced"    = "qwen3:1.7b-s"
-    "performance" = "qwen2.5-coder:3b-s"
+    "balanced"    = "qwen2.5:1.5b-s"
+    "performance" = "qwen2.5:1.5b-s"
 }
 
 function Get-Mode {
@@ -117,7 +117,7 @@ switch ($Action) {
         Write-Host "  [MODE] Loading $model to GPU..." -ForegroundColor Gray
         Invoke-Warmup -ModelName $model
         Write-Host "  [MODE] BALANCED — $model" -ForegroundColor Cyan
-        Write-Host "  [MODE] qwen3:1.7b-s GPU ~1.5GB, enrich 250 tok" -ForegroundColor Gray
+        Write-Host "  [MODE] qwen2.5:1.5b-s GPU ~1GB, enrich 100 tok" -ForegroundColor Gray
     }
 
     "performance" {
@@ -137,7 +137,7 @@ switch ($Action) {
         Write-Host "  [MODE] Loading $model to GPU..." -ForegroundColor Gray
         Invoke-Warmup -ModelName $model
         Write-Host "  [MODE] PERFORMANCE — $model" -ForegroundColor Magenta
-        Write-Host "  [MODE] qwen2.5-coder:3b-s GPU ~2GB, enrich 512 tok" -ForegroundColor Gray
+        Write-Host "  [MODE] qwen2.5:1.5b-s GPU ~1GB, enrich 200 tok" -ForegroundColor Gray
     }
 
     "status" {
@@ -168,8 +168,8 @@ switch ($Action) {
         Write-Host ""
         Write-Host "  Mode behaviors:" -ForegroundColor Cyan
         Write-Host "    ECO:         regex fallback, no LLM calls" -ForegroundColor Gray
-        Write-Host "    BALANCED:    qwen3:1.7b-s (GPU), enrich 250 tok" -ForegroundColor Gray
-        Write-Host "    PERFORMANCE: qwen2.5-coder:3b-s (Q4_K_S, GPU), deep analysis" -ForegroundColor Gray
+        Write-Host "    BALANCED:    qwen2.5:1.5b-s (GPU), enrich 250 tok, ~1GB VRAM" -ForegroundColor Gray
+        Write-Host "    PERFORMANCE: qwen2.5:1.5b-s (GPU), enrich 200 tok, deep analysis" -ForegroundColor Gray
         Write-Host ""
     }
 }

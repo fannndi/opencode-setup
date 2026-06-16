@@ -4,6 +4,40 @@ Semua perubahan penting di project ini.
 
 ---
 
+## [5.5.0] — 2026-06-16 — Balanced Mode 1GB VRAM + Real GPU Enrichment Pipeline
+
+### Added — qwen2.5:1.5b-s for Balanced Mode
+- **qwen2.5:1.5b-s** — Model 1.5B parameter dengan `num_ctx 1024`, `num_gpu 99`
+- VRAM target ~1GB tercapai: **1075/2048 MB** (52%)
+- 100% GPU, keep_alive Forever
+- Download via `ollama pull qwen2.5:1.5b` (986 MB)
+- Modelfile: `Modelfile.qwen2-1.5b`
+
+### Changed — Performance Mode Now Uses 1.5B Model
+- qwen2.5-coder:3b-s dihapus karena terlalu lambat di MX150 (~2 tok/s)
+- qwen2.5:1.5b-s: **6.5 tok/s, enrich 200 tok dalam ~4s**
+- Tok/s 3x lebih cepat dari 3B model, VRAM ~1GB vs ~2GB
+- Status display updated di llm-mode.ps1
+
+### Real GPU Enrichment — VERIFIED WORKING
+- PERFORMANCE: Invoke-LLMEnrich 200 tok → **✅ 4.2s, GPU 25%, enriched output meaningful**
+- BALANCED: Invoke-LLMEnrich 100 tok → **✅ ~15s, GPU spike confirmed**
+- ECO: pass-through, no LLM — same as before
+- Invoke-LLMEnrich no longer uses Get-PSCallStack (fixed Split-Path null error)
+
+### Config Updates
+- `llm-mode.ps1` — MODEL_MAP: balanced+performance both = `qwen2.5:1.5b-s`
+- `llm-adapter.ps1` — Invoke-LLMEnrich tokens: PERFORMANCE=200, BALANCED=100
+- `llm-adapter.ps1` — Timeouts: PERFORMANCE=45s, BALANCED=30s
+- `llm-adapter.ps1` — Removed broken Get-PSCallStack in caller detection
+
+### Behavioral Enforcement
+- AI (opencode model) mulai comply: Invoke-LLMEnrich dijalankan tiap user input
+- GPU utilization spike 25-100% selama enrichment
+- Footer: `LLM : [ PERFORMANCE ] - Tokens : [ X ] - Profile : [ Y ] - Model : [ DS V4 Flash ]`
+
+---
+
 ## [5.4.0] — 2026-06-16 — Forever VRAM: keep_alive=-1 + Auto-Warmup + Self-Improvement Audit
 
 ### Added — `keep_alive = -1` di Semua API Call

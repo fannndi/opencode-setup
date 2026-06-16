@@ -137,10 +137,8 @@ function Invoke-LLMEnrich {
     }
 
     $prompt = if ($Context) { "Context: $Context`n`nInput: $Text" } else { $Text }
-    $callerInfo = Get-PSCallStack | Select-Object -Skip 1 -First 1
-    $callerScript = if ($callerInfo) { Split-Path $callerInfo.ScriptName -Leaf } else { "unknown" }
-    $tokens = if ($mode -eq "performance") { 512 } else { $MaxTokens }
-    $timeout = if ($mode -eq "performance") { 60 } else { 30 }
+    $tokens = if ($mode -eq "performance") { 200 } else { 100 }
+    $timeout = if ($mode -eq "performance") { 45 } else { 30 }
 
     $result = Invoke-LLM -Prompt $prompt -System $System -MaxTokens $tokens -Temperature 0.3 -TimeoutSec $timeout
     if (-not $result) { return $Text }
@@ -294,8 +292,7 @@ function Invoke-LLM {
 
         # Log usage + update status
         try {
-            $callerInfo = Get-PSCallStack | Select-Object -Skip 2 -First 1
-            $callerScript = if ($callerInfo) { Split-Path $callerInfo.ScriptName -Leaf } else { "unknown" }
+            $callerScript = "unknown"
             $tps = if ($response.total_duration -and $response.total_duration -gt 0) {
                 [math]::Round($response.eval_count / ($response.total_duration / 1e9), 2)
             } else { 0 }
