@@ -58,6 +58,34 @@ function Test-OllamaRunning {
     } catch { return $false }
 }
 
+function Set-KeepAlivePersistent {
+    try {
+        [Environment]::SetEnvironmentVariable("OLLAMA_KEEP_ALIVE", "-1", "User")
+        # Restart Ollama to pick up new env var
+        $running = Test-OllamaRunning
+        if ($running) {
+            Stop-Process -Name ollama -Force -ErrorAction SilentlyContinue
+            Start-Sleep -Seconds 2
+        }
+        Start-Process -FilePath "ollama" -ArgumentList "serve" -WindowStyle Minimized
+        Start-Sleep -Seconds 3
+    } catch {}
+}
+
+function Invoke-Warmup {
+    param([string]$ModelName)
+    try {
+        $body = @{
+            model = $ModelName
+            messages = @(@{ role = "user"; content = "ok" })
+            stream = $false
+            keep_alive = -1
+            options = @{ num_predict = 2; num_gpu = 99 }
+        } | ConvertTo-Json -Depth 5 -Compress
+        $null = Invoke-RestMethod -Uri "$OLLAMA_URL/api/chat" -Method POST -Body $body -ContentType "application/json" -TimeoutSec 120 -ErrorAction SilentlyContinue
+    } catch {}
+}
+
 # Resolve alias
 if ($Action -eq "on") { $Action = "balanced" }
 if ($Action -eq "off") { $Action = "eco" }
@@ -85,6 +113,9 @@ switch ($Action) {
             } catch {}
         }
         Set-Mode -Mode "balanced" -Model $model
+        Set-KeepAlivePersistent
+        Write-Host "  [MODE] Loading $model to GPU..." -ForegroundColor Gray
+        Invoke-Warmup -ModelName $model
         Write-Host "  [MODE] BALANCED — $model" -ForegroundColor Cyan
         Write-Host "  [MODE] qwen3:1.7b-s GPU ~1.5GB, enrich 250 tok" -ForegroundColor Gray
     }
@@ -102,6 +133,9 @@ switch ($Action) {
             } catch {}
         }
         Set-Mode -Mode "performance" -Model $model
+        Set-KeepAlivePersistent
+        Write-Host "  [MODE] Loading $model to GPU..." -ForegroundColor Gray
+        Invoke-Warmup -ModelName $model
         Write-Host "  [MODE] PERFORMANCE — $model" -ForegroundColor Magenta
         Write-Host "  [MODE] qwen2.5-coder:3b-s GPU ~2GB, enrich 512 tok" -ForegroundColor Gray
     }
