@@ -65,12 +65,17 @@ if ($Action -eq "off") { $Action = "eco" }
 switch ($Action) {
     "eco" {
         Set-Mode -Mode "eco" -Model $null
+        # Unload models from VRAM — free GPU memory
+        ollama stop qwen2.5-coder:3b-s 2>$null
+        ollama stop qwen3:1.7b-s 2>$null
         Write-Host "  [MODE] ECO — no LLM, regex fallback only" -ForegroundColor Green
-        Write-Host "  [MODE] Battery optimized, zero GPU usage" -ForegroundColor Gray
+        Write-Host "  [MODE] VRAM freed. Battery optimized, zero GPU usage" -ForegroundColor Gray
     }
 
     "balanced" {
         $model = $MODEL_MAP["balanced"]
+        # Free VRAM by unloading other model first
+        ollama stop qwen2.5-coder:3b-s 2>$null
         $running = Test-OllamaRunning
         if (-not $running) {
             Write-Host "  [MODE] Ollama not running. Starting..." -ForegroundColor Yellow
@@ -81,11 +86,13 @@ switch ($Action) {
         }
         Set-Mode -Mode "balanced" -Model $model
         Write-Host "  [MODE] BALANCED — $model" -ForegroundColor Cyan
-        Write-Host "  [MODE] LLM for intent + routing. Memory first, LLM second." -ForegroundColor Gray
+        Write-Host "  [MODE] qwen3:1.7b-s GPU ~1.5GB, enrich 250 tok" -ForegroundColor Gray
     }
 
     "performance" {
         $model = $MODEL_MAP["performance"]
+        # Free VRAM by unloading other model first
+        ollama stop qwen3:1.7b-s 2>$null
         $running = Test-OllamaRunning
         if (-not $running) {
             Write-Host "  [MODE] Ollama not running. Starting..." -ForegroundColor Yellow
@@ -96,7 +103,7 @@ switch ($Action) {
         }
         Set-Mode -Mode "performance" -Model $model
         Write-Host "  [MODE] PERFORMANCE — $model" -ForegroundColor Magenta
-        Write-Host "  [MODE] Full LLM pipeline. Heavy analysis allowed." -ForegroundColor Gray
+        Write-Host "  [MODE] qwen2.5-coder:3b-s GPU ~2GB, enrich 512 tok" -ForegroundColor Gray
     }
 
     "status" {
