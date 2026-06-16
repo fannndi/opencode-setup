@@ -1,18 +1,17 @@
 # Project Resolve — Per-project session & memory management
 # Usage: Source this file in other scripts, or run directly for testing
 #
-# New directory structure:
+# Directory structure:
 #   Project/
 #     <slug>/                ← cloned source code
-#     Session/
-#       <slug>/
-#         session.json
-#     Memory/
-#       <slug>/
-#         sessions/
-#         patterns/
-#         errors/
-#     registry.json
+#     Knowledge/<slug>/      ← knowledge base
+#     Session/<slug>/        ← session state
+#       session.json
+#     Memory/<slug>/         ← memory
+#       sessions/
+#       patterns/
+#       errors/
+#     registry.json          ← project index
 #
 # Direct execution:
 #   .\project-resolve.ps1 resolve "C:\path" "https://github.com/user/repo"
@@ -90,6 +89,7 @@ function Ensure-ProjectDirs {
     param([string]$Slug)
     $dirs = @(
         "$PROJECT_ROOT\$Slug",
+        "$PROJECT_ROOT\Knowledge\$Slug",
         "$PROJECT_ROOT\Session\$Slug",
         "$PROJECT_ROOT\Memory\$Slug",
         "$PROJECT_ROOT\Memory\$Slug\sessions",
@@ -161,6 +161,16 @@ function Resolve-Project {
         Write-Host "  [PROJECT] Created new: $slug" -ForegroundColor Green
     }
 
+    # Auto-clone if GitHub URL provided and not already cloned
+    if ($GitHubUrl) {
+        $sourceDir = "$PROJECT_ROOT\$slug"
+        if (-not (Test-Path "$sourceDir\.git")) {
+            Clone-Project -Url $GitHubUrl -Destination $sourceDir
+        } else {
+            Write-Host "  [CLONE] Already cloned" -ForegroundColor Gray
+        }
+    }
+
     # Create session.json if not exists
     $sessionFile = Get-SessionFile -ProjectPath $normalized
     if (-not (Test-Path $sessionFile)) {
@@ -207,8 +217,8 @@ function Clone-Project {
     }
 
     if (Test-Path $Destination) {
-        Write-Host "  [CLONE] Path exists but not a git repo" -ForegroundColor Yellow
-        return $false
+        Write-Host "  [CLONE] Path exists but not a git repo — removing and re-cloning" -ForegroundColor Yellow
+        Remove-Item -Path $Destination -Recurse -Force
     }
 
     Write-Host "  [CLONE] Cloning $Url" -ForegroundColor Cyan

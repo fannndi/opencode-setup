@@ -223,7 +223,14 @@ opencode
 ```
 opencode-setup/
 │
-├── scripts/                    # 40+ PowerShell automation scripts
+├── Project/                    # Per-project data (gitignored)
+│   ├── <slug>/                 # Cloned source code
+│   ├── Knowledge/<slug>/       # Project knowledge base
+│   ├── Session/<slug>/         # Session state per project
+│   ├── Memory/<slug>/          # Logs, patterns, errors
+│   └── registry.json           # Project index + active tracking
+│
+├── scripts/                    # 45+ PowerShell automation scripts
 │   ├── llm-adapter.ps1         # Core: Ollama API wrapper + enrichment
 │   ├── llm-mode.ps1            # Mode toggle + VRAM management
 │   ├── llm-preprocess.ps1      # Full preprocessing pipeline
@@ -241,7 +248,11 @@ opencode-setup/
 ├── Modelfile.qwen3             # (legacy, preserved for reference)
 ├── Modelfile.qwen2-1.5b        # Active balanced/performance model
 │
-├── .opencode/                  # Runtime state (gitignored)
+├── .opencode/                  # AI system state (gitignored)
+│   ├── context.md              # Compiled session state
+│   ├── active-instructions.md  # Mode-compiled instructions
+│   ├── session-summary.md      # End-of-session report
+│   ├── file-index.json         # Content hash cache
 │   ├── llm-mode.json           # Current operating mode
 │   ├── llm-status.json         # Last response footer data
 │   └── llm-usage.jsonl         # Token usage history
