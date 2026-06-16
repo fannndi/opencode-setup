@@ -14,13 +14,7 @@
       },
       "models": {
         "gratis": { "name": "Gratis Combo" },
-        "emergency": { "name": "Emergency Combo" },
-        "mmf/mimo-auto": { "name": "MiMo Auto" },
-        "oc/mimo-v2.5-free": { "name": "MiMo V2.5 Free" },
-        "oc/deepseek-v4-flash-free": { "name": "DeepSeek V4 Flash Free" },
-        "oc/nemotron-3-ultra-free": { "name": "Nemotron 3 Ultra Free" },
-        "oc/big-pickle": { "name": "Big Pickle" },
-        "oc/north-mini-code-free": { "name": "North Mini Code Free" }
+        "emergency": { "name": "Emergency Combo" }
       }
     }
   },
