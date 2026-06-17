@@ -352,3 +352,18 @@ Write-Host ""
 Write-Host "  Next: opencode" -ForegroundColor Cyan
 Write-Host ""
 
+# Create llm-status.json so AI knows setup is done
+$statusFile = "$ROOT_DIR\.opencode\llm-status.json"
+New-Item -ItemType Directory -Path (Split-Path $statusFile -Parent) -Force | Out-Null
+$status = @{
+    mode = "PERFORMANCE"
+    user_mode = "User"
+    enrich = "On"
+    enrich_time = 0
+    profile = $Profile
+    cloud = $Profile
+    last_updated = (Get-Date).ToString("yyyy-MM-ddTHH:mm:ss")
+} | ConvertTo-Json -Depth 3
+Set-Content -Path $statusFile -Value $status -Encoding UTF8
+Write-Host "  [OK] llm-status.json created" -ForegroundColor Green
+

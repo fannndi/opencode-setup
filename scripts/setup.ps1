@@ -87,8 +87,9 @@ if ($Apply) {
         exit 1
     }
 
-    $keyContent = (Get-Content $API_KEY_FILE -Raw).Trim()
-    $keyLines = $keyContent -split "`n" | Where-Object { $_ -notmatch '^\s*#' -and $_.Trim() -ne '' }
+    $keyContent = Get-Content $API_KEY_FILE -ErrorAction SilentlyContinue
+    if (-not $keyContent) { $keyContent = @() }
+    $keyLines = @($keyContent | Where-Object { $_ -notmatch '^\s*#' -and $_.Trim() -ne '' })
 
     if ($keyLines.Count -eq 0) {
         Write-Fail "api-key.txt is empty or all lines are comments"
@@ -96,7 +97,7 @@ if ($Apply) {
         exit 1
     }
 
-    $apiKey = $keyLines[0].Trim()
+    $apiKey = [string]$keyLines[0].Trim()
     if ($apiKey -match '=') {
         $apiKey = ($apiKey -split '=', 2)[1].Trim()
     }
@@ -165,6 +166,22 @@ if ($Apply) {
     Write-Host "    2. Type: opencode" -ForegroundColor White
     Write-Host "    3. Start coding!" -ForegroundColor White
     Write-Host ""
+
+    # Create llm-status.json so AI knows setup is done
+    $statusFile = "$ROOT_DIR\.opencode\llm-status.json"
+    New-Item -ItemType Directory -Path (Split-Path $statusFile -Parent) -Force | Out-Null
+    $status = @{
+        mode = "PERFORMANCE"
+        user_mode = "Admin"
+        enrich = "On"
+        enrich_time = 0
+        profile = $Profile
+        cloud = $Profile
+        last_updated = (Get-Date).ToString("yyyy-MM-ddTHH:mm:ss")
+    } | ConvertTo-Json -Depth 3
+    Set-Content -Path $statusFile -Value $status -Encoding UTF8
+    Write-Host "  [OK] llm-status.json created" -ForegroundColor Green
+
     exit 0
 }
 
