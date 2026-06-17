@@ -19,7 +19,7 @@ $OPENCODE_CONFIG = "$OPENCODE_CONFIG_DIR\opencode.jsonc"
 $PROFILE_CONFIG = "$ROOT_DIR\profiles\$Profile\opencode.jsonc"
 $API_URL = "http://localhost:20128"
 $ROUTER_ENV = "$ROOT_DIR\9router\.env"
-$API_PASS = if ($env:NINEROUTER_PASSWORD) { $env:NINEROUTER_PASSWORD } elseif (Test-Path $ROUTER_ENV) { (Select-String 'INITIAL_PASSWORD=(.+)' (Get-Content $ROUTER_ENV)).Matches.Groups[1].Value } else { "admin" }
+$API_PASS = if ($env:NINEROUTER_PASSWORD) { $env:NINEROUTER_PASSWORD } elseif (Test-Path $ROUTER_ENV) { $envContent = Get-Content $ROUTER_ENV -Raw; if ($envContent -match 'INITIAL_PASSWORD=(.+)') { $Matches[1].Trim() } else { "123456" } } else { "123456" }
 
 # Source LLM adapter (optional, graceful fallback)
 try { . "$PSScriptRoot\llm-adapter.ps1" } catch {}
@@ -260,21 +260,11 @@ if ($configExists -and $profileExists) {
 
 Write-Step "6/$totalSteps" "Model test..."
 
-# Login
-$httpSession = $null
-try {
-    Invoke-RestMethod -Uri "$API_URL/api/auth/login" `
-        -Method POST `
-        -Body "{`"password`":`"$API_PASS`"}" `
-        -ContentType "application/json" `
-        -SessionVariable httpSession | Out-Null
-    Write-OK "API login"
-} catch {
-    Write-Fail "API login failed"
-}
+# Use API key for model test (not session cookies)
+$modelHeaders = @{ "X-API-Key" = $env:NINEROUTER_API_KEY }
 
 # Test models
-if ($httpSession) {
+if ($env:NINEROUTER_API_KEY) {
     $modelsToTest = if ($Profile -eq "gratis") {
         @("mmf/mimo-auto", "oc/deepseek-v4-flash-free", "oc/mimo-v2.5-free")
     } else {
@@ -283,28 +273,30 @@ if ($httpSession) {
 
     foreach ($model in $modelsToTest) {
         try {
-            $response = Invoke-RestMethod -Uri "$API_URL/v1/chat/completions" `
+            $response = Invoke-WebRequest -Uri "$API_URL/v1/chat/completions" `
                 -Method POST `
                 -Body "{`"model`":`"$model`",`"messages`":[{`"role`":`"user`",`"content`":`"hi`"}],`"max_tokens`":10}" `
                 -ContentType "application/json" `
-                -WebSession $httpSession `
+                -Headers $modelHeaders `
+                -UseBasicParsing `
                 -TimeoutSec 15
 
             $reply = ""
-            if ($response -is [string]) {
-                $lines = $response -split "`n"
+            $raw = if ($response -is [string]) { $response } else { $response.Content }
+            if ($raw) {
+                $lines = $raw -split "`n"
                 foreach ($line in $lines) {
                     if ($line -match '^data: (.+)$' -and $Matches[1] -ne "[DONE]") {
                         try {
                             $json = $Matches[1] | ConvertFrom-Json
                             if ($json.choices[0].message.content) {
                                 $reply = $json.choices[0].message.content
+                            } elseif ($json.choices[0].message.reasoning_content) {
+                                $reply = $json.choices[0].message.reasoning_content
                             }
                         } catch {}
                     }
                 }
-            } elseif ($response.choices) {
-                $reply = $response.choices[0].message.content
             }
 
             if ($reply) {
@@ -316,6 +308,8 @@ if ($httpSession) {
             Write-Skip "$model : $($_.Exception.Message)"
         }
     }
+} else {
+    Write-Skip "API key not set, skipping model test"
 }
 
 # ============================================================
